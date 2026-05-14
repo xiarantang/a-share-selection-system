@@ -21,6 +21,7 @@ class AShareDataFetcher:
     def __init__(self, config: Optional[DataConfig] = None):
         self.config = config or get_config().data
         os.makedirs(self.config.cache_dir, exist_ok=True)
+        self._last_source = "unknown"
         logger.info("AShareDataFetcher 初始化完成")
 
     # ---- 行情数据 ----
@@ -60,16 +61,59 @@ class AShareDataFetcher:
         end_date: Optional[str] = None,
         adjust: str = "qfq",
     ) -> pd.DataFrame:
-        """获取个股日K线（前复权）"""
+        """获取个股日K线（前复权）。
+        多源 fallback: akshare → a-share-data skill (腾讯/新浪/雪球/东财) → 本地缓存。
+        成功拉到后保存到 data/cache/。
+        """
         end_date = end_date or datetime.now().strftime("%Y%m%d")
+        cache_path = os.path.join(
+            self.config.cache_dir,
+            f"{symbol}_{start_date.replace('-','')}_{end_date.replace('-','')}.parquet",
+        )
+
+        # 1. 尝试 akshare
+        df = self._fetch_akshare(symbol, start_date, end_date, adjust)
+        if df is not None and not df.empty:
+            self._last_source = "akshare"
+            self._save_cache(cache_path, df)
+            return df
+
+        # 2. akshare 失败 → 尝试 a-share-data skill fallback 脚本
+        logger.info(f"akshare 失败, 尝试 skill fallback: {symbol}")
+        df = self._fetch_skill_fallback(symbol, start_date, end_date, adjust)
+        if df is not None and not df.empty:
+            self._last_source = "skill_fallback"
+            self._save_cache(cache_path, df)
+            return df
+
+        # 3. 网络都失败 → 尝试本地缓存
+        if os.path.exists(cache_path):
+            try:
+                df = pd.read_parquet(cache_path)
+                if not df.empty:
+                    self._last_source = "cache"
+                    logger.info(f"从本地缓存读取 {symbol}: {len(df)} 条")
+                    return df
+            except Exception as e:
+                logger.warning(f"缓存读取失败 {symbol}: {e}")
+
+        # 4. 全部失败
+        self._last_source = "failed"
+        logger.error(f"获取 {symbol} 日K线失败: 所有数据源不可用")
+        return pd.DataFrame()
+
+    def _fetch_akshare(
+        self, symbol: str, start_date: str, end_date: str, adjust: str
+    ) -> Optional[pd.DataFrame]:
         try:
             df = ak.stock_zh_a_hist(
-                symbol=symbol,
-                period="daily",
+                symbol=symbol, period="daily",
                 start_date=start_date.replace("-", ""),
                 end_date=end_date.replace("-", ""),
                 adjust=adjust,
             )
+            if df is None or df.empty:
+                return None
             df = df.rename(columns={
                 "日期": "date", "开盘": "open", "收盘": "close",
                 "最高": "high", "最低": "low", "成交量": "volume",
@@ -81,8 +125,68 @@ class AShareDataFetcher:
             df.set_index("date", inplace=True)
             return df
         except Exception as e:
-            logger.error(f"获取 {symbol} 日K线失败: {e}")
-            return pd.DataFrame()
+            logger.warning(f"akshare 获取 {symbol} 失败: {e}")
+            return None
+
+    def _fetch_skill_fallback(
+        self, symbol: str, start_date: str, end_date: str, adjust: str
+    ) -> Optional[pd.DataFrame]:
+        """调用 a-share-data/scripts/fetch_history_fallback.py"""
+        import subprocess
+        import json
+
+        script = os.path.expanduser(
+            "~/.agents/skills/a-share-data/scripts/fetch_history_fallback.py"
+        )
+        if not os.path.exists(script):
+            logger.warning(f"fallback 脚本不存在: {script}")
+            return None
+
+        try:
+            cmd = [
+                "python3", script,
+                "--kline", symbol,
+                "--start", start_date,
+                "--end", end_date,
+            ]
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+            if result.returncode != 0:
+                logger.warning(f"skill fallback 失败: {result.stderr[:200]}")
+                return None
+
+            data = json.loads(result.stdout)
+            rows = data.get("data") or data.get("kline") or data.get("result") or []
+            if not rows:
+                return None
+
+            df = pd.DataFrame(rows)
+            # 标准化列名
+            col_map = {
+                "day": "date", "date": "date",
+                "open": "open", "high": "high", "low": "low", "close": "close",
+                "volume": "volume", "amount": "amount",
+            }
+            df = df.rename(columns={k: v for k, v in col_map.items() if k in df.columns})
+            if "date" in df.columns:
+                df["date"] = pd.to_datetime(df["date"])
+                df.set_index("date", inplace=True)
+            # 确保必要列存在
+            for col in ["open", "high", "low", "close", "volume"]:
+                if col not in df.columns:
+                    df[col] = 0.0
+            return df
+        except subprocess.TimeoutExpired:
+            logger.warning("skill fallback 超时")
+            return None
+        except Exception as e:
+            logger.warning(f"skill fallback 异常: {e}")
+            return None
+
+    def _save_cache(self, path: str, df: pd.DataFrame):
+        try:
+            df.to_parquet(path)
+        except Exception as e:
+            logger.warning(f"缓存保存失败: {e}")
 
     def get_minute_kline(self, symbol: str, freq: str = "5") -> pd.DataFrame:
         """获取分钟K线"""

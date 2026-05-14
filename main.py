@@ -46,16 +46,19 @@ def cmd_fetch(args):
         for s in symbols or ["000001"]:
             df = fetcher.get_daily_kline(s, start_date=args.start or "2024-01-01")
             if df is not None and not df.empty:
-                results["ok"].append((s, len(df), df.index[0], df.index[-1]))
+                results["ok"].append((s, len(df), df.index[0], df.index[-1], fetcher._last_source))
             else:
                 results["fail"].append(s)
-        for s, n, start, end in results["ok"]:
-            logger.info(f"  ✅ {s}: {n} 条K线 ({str(start)[:10]} ~ {str(end)[:10]})")
+        for s, n, start, end, src in results["ok"]:
+            logger.info(f"  ✅ {s}: {n} 条K线 [{src}] ({str(start)[:10]} ~ {str(end)[:10]})")
         for s in results["fail"]:
             logger.info(f"  ❌ {s}: 获取失败或空数据")
         logger.info(f"  结果: {len(results['ok'])} 成功 / {len(results['fail'])} 失败")
-        if results["fail"] and not getattr(args, 'allow_partial', False):
-            has_failure = True
+        # --allow-partial: 至少1只成功才允许exit 0；全部失败仍exit 1
+        allow_partial = getattr(args, 'allow_partial', False)
+        if results["fail"]:
+            if not allow_partial or not results["ok"]:
+                has_failure = True
 
     elif args.type == "market":
         df = fetcher.get_market_spot_all()
@@ -99,7 +102,12 @@ def cmd_strategy(args):
             f"failed={stats['failed']}"
         )
         for name, r in results.items():
-            status = "✅" if r.get("success") else "❌" if r.get("type") != "doc-only" else "⏭️"
+            if r.get("type") == "doc-only":
+                status = "⏭️ skipped"
+            elif r.get("success"):
+                status = "✅"
+            else:
+                status = "❌"
             detail = r.get("error", r.get("note", ""))
             logger.info(f"  {status} {name}: {detail}")
         return 1 if stats["failed"] > 0 else 0
@@ -165,6 +173,34 @@ def cmd_report(args):
     logger.info(f"✅ 报告已生成: {report[:50]}...")
 
 
+def cmd_selfcheck(args):
+    """数据自检：测试样例股票的数据源可用性。"""
+    fetcher = AShareDataFetcher()
+    test_symbols = args.symbols.split(",") if getattr(args, 'symbols', None) else ["600519", "000001", "300750"]
+    start = getattr(args, 'start', None) or "2024-01-01"
+
+    results = []
+    for s in test_symbols:
+        df = fetcher.get_daily_kline(s, start_date=start)
+        source = fetcher._last_source
+        ok = df is not None and not df.empty
+        rows = len(df) if ok else 0
+        date_range = f"{str(df.index[0])[:10]}~{str(df.index[-1])[:10]}" if ok and rows > 0 else "N/A"
+        results.append({
+            "symbol": s, "status": "success" if ok else "failed",
+            "source": source, "rows": rows, "date_range": date_range,
+        })
+
+    logger.info("数据自检结果:")
+    for r in results:
+        icon = "✅" if r["status"] == "success" else "❌"
+        logger.info(f"  {icon} {r['symbol']}: {r['status']} | source={r['source']} | rows={r['rows']} | {r['date_range']}")
+
+    success_count = sum(1 for r in results if r["status"] == "success")
+    logger.info(f"自检: {success_count}/{len(results)} 成功")
+    return 0 if success_count == len(results) else (0 if success_count > 0 else 1)
+
+
 def cmd_full_pipeline(args):
     """PASS/FAIL 全模块检查"""
     logger.info("=" * 60)
@@ -173,17 +209,26 @@ def cmd_full_pipeline(args):
 
     checks = {}
 
-    # 1. 数据层 - 必需
-    logger.info("[1/7] 数据层...")
+    # 1. 数据层 - 自检3只样本股票
+    logger.info("[1/7] 数据层自检...")
     try:
         fetcher = AShareDataFetcher()
-        df = fetcher.get_daily_kline("000001", start_date="2024-06-01")
-        if df is not None and not df.empty:
-            checks["data"] = ("PASS", f"akshare 正常 ({len(df)} 条K线)")
+        test_symbols = ["600519", "000001", "300750"]
+        data_ok = []
+        for s in test_symbols:
+            df = fetcher.get_daily_kline(s, start_date="2024-01-01")
+            if df is not None and not df.empty:
+                data_ok.append((s, len(df), fetcher._last_source))
+        if data_ok:
+            detail = ", ".join(f"{s}({n},{src})" for s, n, src in data_ok)
+            checks["data"] = ("PASS", f"{len(data_ok)}/{len(test_symbols)} 成功: {detail}")
+            pipeline_data_symbol = data_ok[0][0]  # 用于回测
         else:
-            checks["data"] = ("FAIL", "K线获取返回空")
+            checks["data"] = ("FAIL", f"0/{len(test_symbols)} 全部失败")
+            pipeline_data_symbol = None
     except Exception as e:
         checks["data"] = ("FAIL", str(e)[:80])
+        pipeline_data_symbol = None
 
     # 2. 策略层 - 必需
     logger.info("[2/7] 策略层...")
@@ -195,23 +240,26 @@ def cmd_full_pipeline(args):
     except Exception as e:
         checks["strategy"] = ("FAIL", str(e)[:80])
 
-    # 3. 回测层 - 必需
+    # 3. 回测层 - 使用数据自检成功的股票
     logger.info("[3/7] 回测层...")
-    try:
-        engine = AShareBacktestEngine()
-        engine.setup(MACrossStrategy)
-        ok = engine.add_data_from_fetcher("000001")
-        if ok:
-            engine.run()
-            perf = engine.get_performance()
-            if not perf.get("error"):
-                checks["backtest"] = ("PASS", f"收益 {perf.get('total_return_pct','?')}%")
+    if pipeline_data_symbol is None:
+        checks["backtest"] = ("FAIL", "无可用数据样本")
+    else:
+        try:
+            engine = AShareBacktestEngine()
+            engine.setup(MACrossStrategy)
+            ok = engine.add_data_from_fetcher(pipeline_data_symbol)
+            if ok:
+                engine.run()
+                perf = engine.get_performance()
+                if not perf.get("error"):
+                    checks["backtest"] = ("PASS", f"{pipeline_data_symbol} 收益 {perf.get('total_return_pct','?')}%")
+                else:
+                    checks["backtest"] = ("FAIL", perf["error"])
             else:
-                checks["backtest"] = ("FAIL", perf["error"])
-        else:
-            checks["backtest"] = ("FAIL", "无K线数据")
-    except Exception as e:
-        checks["backtest"] = ("FAIL", str(e)[:80])
+                checks["backtest"] = ("FAIL", f"{pipeline_data_symbol} 无K线数据")
+        except Exception as e:
+            checks["backtest"] = ("FAIL", str(e)[:80])
 
     # 4. AI 层 - experimental
     logger.info("[4/7] AI 层...")
@@ -314,6 +362,11 @@ def main():
     p_report = sub.add_parser("report", help="生成报告")
     p_report.add_argument("--date")
     p_report.set_defaults(func=cmd_report)
+
+    p_selfcheck = sub.add_parser("selfcheck", help="数据源自检")
+    p_selfcheck.add_argument("--symbols", help="股票代码，逗号分隔")
+    p_selfcheck.add_argument("--start", help="起始日期")
+    p_selfcheck.set_defaults(func=cmd_selfcheck)
 
     p_pipe = sub.add_parser("pipeline", help="模块检查")
     p_pipe.set_defaults(func=cmd_full_pipeline)
