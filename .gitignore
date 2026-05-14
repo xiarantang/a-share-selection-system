@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+*.egg-info/
+
+# 环境变量（包含密钥）
+.env
+
+# 数据缓存
+data/cache/
+
+# 报告输出
+reports/output/*.md
+reports/output/*.json
+
+# 模拟盘数据
+paper_trading/accounts.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# macOS
+.DS_Store
+
+# qlib 数据
+~/.qlib/
