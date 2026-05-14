@@ -234,12 +234,18 @@ def cmd_select(args):
     logger.info(f"Top {top} 候选:")
     for r in top_results:
         cov = " ⚠️" if r.get("coverage_warning") else ""
+        dec = r.get("decision", "?")
+        rl = r.get("risk_level", "?")
+        rl_icon = {"low":"🟢","medium":"🟡","high":"🔴"}.get(rl, "")
         logger.info(f"  #{r['rank']} {r['symbol']} {r.get('name','')} [{r.get('sector','')}]: "
-                    f"{r['score']}/100 | {r['latest_close']} | {r['data_source']} | {r['rows']}行{cov}")
+                    f"{r['score']}/100 {dec} {rl_icon} | "
+                    f"{r['latest_close']} | {r['data_source']} | {r['rows']}行{cov}")
 
     date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
     csv_path = os.path.join("reports", "output", f"selection_{date_str}.csv")
-    csv_fields = ["rank","symbol","name","sector","score","latest_close","data_source","rows",
+    csv_fields = ["rank","symbol","name","sector","score","decision","risk_level",
+                  "trend_score","momentum_score","volume_score","risk_score","data_quality_score","pattern_score",
+                  "latest_close","data_source","rows",
                   "requested_start","actual_start","actual_end","coverage_warning",
                   "universe_source","is_fallback"]
     with open(csv_path, "w", newline="") as f:
@@ -247,6 +253,13 @@ def cmd_select(args):
         w.writeheader()
         for r in all_results:
             row = {k: r.get(k, "") for k in csv_fields}
+            fs = r.get("factor_scores", {})
+            row["trend_score"] = fs.get("trend", "")
+            row["momentum_score"] = fs.get("momentum", "")
+            row["volume_score"] = fs.get("volume", "")
+            row["risk_score"] = fs.get("risk", "")
+            row["data_quality_score"] = fs.get("data_quality", "")
+            row["pattern_score"] = fs.get("pattern", "")
             row["requested_start"] = req_start
             row["universe_source"] = meta["universe_source"]
             row["is_fallback"] = meta["is_fallback"]

@@ -77,6 +77,8 @@ class ReportGenerator:
                 name = r.get("name", "")
                 sector = r.get("sector", "")
                 score = r.get("score", 0)
+                dec = r.get("decision", "?")
+                rl = r.get("risk_level", "?")
                 close = r.get("latest_close", "?")
                 src = r.get("data_source", "?")
                 rows = r.get("rows", "?")
@@ -85,8 +87,11 @@ class ReportGenerator:
                 reasons = ", ".join(r.get("reasons", [])[:3])
                 risks_text = ", ".join(r.get("risks", [])[:2])
                 cov = " ⚠️ 覆盖不全" if r.get("coverage_warning") else ""
+                fs = r.get("factor_scores", {})
+                fs_str = f"趋势{fs.get('trend','?')}/动量{fs.get('momentum','?')}/量能{fs.get('volume','?')}/风控{fs.get('risk','?')}/质量{fs.get('data_quality','?')}/形态{fs.get('pattern','?')}"
                 label = f"{sym} {name} [{sector}]" if name else sym
-                lines.append(f"- #{r.get('rank','?')} **{label}** 评分{score}/100 收盘{close}{cov}")
+                lines.append(f"- #{r.get('rank','?')} **{label}** 评分{score}/100 {dec} 风险{rl} 收盘{close}{cov}")
+                lines.append(f"  > 因子: {fs_str}")
                 lines.append(f"  > 理由: {reasons}")
                 if risks_text:
                     lines.append(f"  > 风险: {risks_text}")
@@ -96,6 +101,7 @@ class ReportGenerator:
             lines.extend(["", "---", "", "## 🤖 AI 综合分析", "", ai_analysis])
 
         lines.extend(["", "---", "", "## ⚠️ 免责声明", "",
+            "> 当前选股模型为规则因子评分（多因子分组，满分100），不是收益预测。",
             "> 本报告由系统根据数据和规则自动生成，仅供研究学习，不构成投资建议。投资有风险，入市需谨慎。"])
 
         report = "\n".join(lines)

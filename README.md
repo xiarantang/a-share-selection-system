@@ -75,6 +75,22 @@ python3 main.py backtest --symbol 000001  # 回测
 python3 main.py paper-trading          # 模拟交易
 ```
 
+## 📊 评分模型
+
+当前为**规则因子评分模型**（非机器学习预测）。满分 100，分 6 组：
+
+| 因子组 | 满分 | 说明 |
+|--------|------|------|
+| data_quality | 10 | 数据条数、覆盖完整性 |
+| trend | 25 | MA5/MA20/MA60 多头排列 |
+| momentum | 20 | 20日/60日涨跌幅、回撤 |
+| volume | 15 | 量能放大倍数 |
+| risk | 20 | RSI、追高风险、波动率（越高越好） |
+| pattern | 10 | MACD、回踩形态 |
+
+**决策标签**：strong_watch（强观察）→ watch（观察）→ neutral（中性）→ avoid（回避）
+**风险等级**：low / medium / high
+
 ## 🏗️ 架构
 
 ```
