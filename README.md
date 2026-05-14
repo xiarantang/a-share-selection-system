@@ -4,7 +4,7 @@
 
 基于 **akshare + skill fallback + backtrader** 的 A 股选股系统。
 
-**🎯 产品目标**：最终形态是小白也能用的可视化 A 股选股系统。当前仍处于 CLI 引擎阶段，所有命令行只是底层引擎和验收入口。后续将逐步产品化：可视化界面 → 一键选股 → 报告展示 → AI 辅助解释。暂不碰实盘交易。
+**🎯 产品目标**：最终形态是小白也能用的可视化 A 股选股系统。CLI 命令是底层引擎和验收入口。当前已有 Streamlit 可视化界面（P6.0），后续将逐步产品化：一键选股 → 报告展示 → AI 辅助解释。暂不碰实盘交易。
 
 > 继续开发请先阅读 PROJECT_STATE.md 和 NEXT_PROMPT.md
 
@@ -14,6 +14,7 @@
 - ✅ 批量选股：MA/MACD/RSI 五维评分，Top N 排序，CSV/JSON/Markdown 报告
 - ✅ 回测层：backtrader A 股适配（佣金/印花税/T+1）
 - ✅ 报告层：Markdown 日报，含选股结果+来源+覆盖警告
+- ✅ 可视化：Streamlit 本地 UI（P6.0），小白一键选股/验证/复盘/报告
 - ✅ Pipeline：PASS/FAIL 模块检查表，退出码可信
 - 🧪 AI/Agent/qlib：experimental，未真实跑通
 
@@ -23,9 +24,27 @@
 
 ## 🚀 快速开始
 
+### 🖥️ 小白一键启动（推荐）
+
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
+
+# 安装数据 fallback（仅首次，详见下方 Skill 安装）
+cd /tmp && git clone https://github.com/shouldnotappearcalm/a-share-skill.git
+cp -R /tmp/a-share-skill/a-share-data ~/.agents/skills/
+cp -R /tmp/a-share-skill/a-share-paper-trading ~/.agents/skills/
+cp -R /tmp/a-share-skill/a-share-strategy-mainboard-multi-swing-defensive ~/.agents/skills/
+cp -R /tmp/a-share-skill/macd-trend-resonance-stock-picker ~/.agents/skills/
+cp -R /tmp/a-share-skill/macd-second-golden-cross ~/.agents/skills/
+
+# 启动可视化界面
+.venv/bin/streamlit run app.py
 ```
+
+浏览器打开 **http://localhost:8501**，左侧栏选择股票池和参数，点击「🚀 开始选股」即可。  
+选股完成后可切换 Tab 查看候选表格、验证摘要、历史复盘和完整报告。
 
 ### Skill 安装（数据 fallback）
 
@@ -38,7 +57,7 @@ cp -R /tmp/a-share-skill/macd-trend-resonance-stock-picker ~/.agents/skills/
 cp -R /tmp/a-share-skill/macd-second-golden-cross ~/.agents/skills/
 ```
 
-## 📖 命令
+## 📖 CLI 命令（开发者/验收入口）
 
 ### 查看股票池
 
@@ -125,6 +144,7 @@ python3 main.py paper-trading          # 模拟交易
 ## 🏗️ 架构
 
 ```
+app.py                     # Streamlit 可视化界面 (P6.0)
 config/settings.py         # 全局配置
 data/
   fetcher.py              # akshare + fallback + 缓存
