@@ -6,6 +6,7 @@ A股智能选股系统 - 主入口 (v0.1)
 """
 
 import argparse
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -22,6 +23,7 @@ from backtest.engine import AShareBacktestEngine, MACrossStrategy
 from agent.bridge import AgentBridge
 from paper_trading.engine import PaperTradingEngine
 from reports.generator import ReportGenerator
+from strategies.selection import SelectionEngine
 
 
 def cmd_fetch(args):
@@ -162,13 +164,67 @@ def cmd_paper_trading(args):
         logger.info(f"✅ 账户 {summary['account_id']}: 总资产 {summary['total_value']}, 现金 {summary['cash']}")
 
 
+def cmd_select(args):
+    """基础选股：基于K线因子评分的候选股列表"""
+    engine = SelectionEngine()
+    symbols = args.symbols.split(",")
+    top = int(getattr(args, 'top', 10) or 10)
+    results = engine.select_top(symbols, top=top)
+    logger.info(f"选股结果 (Top {top}):")
+    for r in results:
+        if r.get("error"):
+            logger.info(f"  #{r['rank']} ❌ {r['symbol']}: {r['error']}")
+        else:
+            logger.info(
+                f"  #{r['rank']} {r['symbol']}: 评分{r['score']}/100 | "
+                f"收盘{r['latest_close']} | 数据源={r['data_source']} | 行数={r['rows']}"
+            )
+            for reason in r.get("reasons", [])[:3]:
+                logger.info(f"    👍 {reason}")
+            for risk in r.get("risks", [])[:2]:
+                logger.info(f"    ⚠️  {risk}")
+            logger.info(f"    📅 实际覆盖: {r['actual_start']}~{r['actual_end']}")
+
+    # 保存 CSV
+    import csv
+    date_str = datetime.now().strftime("%Y%m%d")
+    csv_path = os.path.join("reports", "output", f"selection_{date_str}.csv")
+    with open(csv_path, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=["rank","symbol","score","latest_close","data_source","rows","actual_start","actual_end"])
+        w.writeheader()
+        for r in results:
+            w.writerow({k: r.get(k, "") for k in w.fieldnames})
+    logger.info(f"CSV已保存: {csv_path}")
+
+    # 保存 JSON
+    import json
+    json_path = os.path.join("reports", "output", f"selection_{date_str}.json")
+    with open(json_path, "w") as f:
+        json.dump({"generated_at": datetime.now().isoformat(), "results": results}, f, ensure_ascii=False, indent=2)
+    logger.info(f"JSON已保存: {json_path}")
+
+    return 0
+
+
 def cmd_report(args):
-    """生成报告"""
+    """生成报告，读取最新 selection 结果"""
     reporter = ReportGenerator()
+    # 尝试读取最新 selection
+    import glob
+    sel_files = sorted(glob.glob(os.path.join(reporter.config.output_dir, "selection_*.json")))
+    selection_data = {}
+    if sel_files:
+        import json
+        try:
+            with open(sel_files[-1]) as f:
+                selection_data = json.load(f)
+        except Exception:
+            pass
     report = reporter.generate_markdown_report(
         date=args.date or datetime.now().strftime("%Y-%m-%d"),
         market_summary={},
         strategy_signals={},
+        selection_data=selection_data,
     )
     logger.info(f"✅ 报告已生成: {report[:50]}...")
 
@@ -177,24 +233,32 @@ def cmd_selfcheck(args):
     """数据自检：测试样例股票的数据源可用性。"""
     fetcher = AShareDataFetcher()
     test_symbols = args.symbols.split(",") if getattr(args, 'symbols', None) else ["600519", "000001", "300750"]
-    start = getattr(args, 'start', None) or "2024-01-01"
+    req_start = getattr(args, 'start', None) or "2024-01-01"
 
     results = []
     for s in test_symbols:
-        df = fetcher.get_daily_kline(s, start_date=start)
+        df = fetcher.get_daily_kline(s, start_date=req_start)
         source = fetcher._last_source
         ok = df is not None and not df.empty
         rows = len(df) if ok else 0
-        date_range = f"{str(df.index[0])[:10]}~{str(df.index[-1])[:10]}" if ok and rows > 0 else "N/A"
+        actual_start = str(df.index[0])[:10] if ok and rows > 0 else "N/A"
+        actual_end = str(df.index[-1])[:10] if ok and rows > 0 else "N/A"
+        coverage_ok = ok and actual_start <= req_start[:10] if actual_start != "N/A" else False
         results.append({
             "symbol": s, "status": "success" if ok else "failed",
-            "source": source, "rows": rows, "date_range": date_range,
+            "source": source, "rows": rows,
+            "req_start": req_start, "actual_start": actual_start, "actual_end": actual_end,
+            "coverage_ok": coverage_ok,
         })
 
     logger.info("数据自检结果:")
     for r in results:
         icon = "✅" if r["status"] == "success" else "❌"
-        logger.info(f"  {icon} {r['symbol']}: {r['status']} | source={r['source']} | rows={r['rows']} | {r['date_range']}")
+        cov = "" if r.get("coverage_ok") else " ⚠️ coverage_warning" if r["status"] == "success" else ""
+        logger.info(
+            f"  {icon} {r['symbol']}: {r['status']}{cov} | source={r['source']} | "
+            f"rows={r['rows']} | requested={r['req_start']} actual={r['actual_start']}~{r['actual_end']}"
+        )
 
     success_count = sum(1 for r in results if r["status"] == "success")
     logger.info(f"自检: {success_count}/{len(results)} 成功")
@@ -362,6 +426,11 @@ def main():
     p_report = sub.add_parser("report", help="生成报告")
     p_report.add_argument("--date")
     p_report.set_defaults(func=cmd_report)
+
+    p_select = sub.add_parser("select", help="基础选股")
+    p_select.add_argument("--symbols", required=True, help="股票代码，逗号分隔")
+    p_select.add_argument("--top", type=int, default=10, help="输出 Top N")
+    p_select.set_defaults(func=cmd_select)
 
     p_selfcheck = sub.add_parser("selfcheck", help="数据源自检")
     p_selfcheck.add_argument("--symbols", help="股票代码，逗号分隔")

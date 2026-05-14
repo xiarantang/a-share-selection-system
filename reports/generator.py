@@ -28,6 +28,7 @@ class ReportGenerator:
         market_summary: Dict,
         strategy_signals: Dict[str, List[Dict]],
         ai_analysis: Optional[str] = None,
+        selection_data: Optional[Dict] = None,
     ) -> str:
         """生成 Markdown 格式报告"""
         lines = [
@@ -74,6 +75,26 @@ class ReportGenerator:
                 lines.append(f"- {emoji} **{symbol}** {name} | 评分:{score} | {action}")
                 if reason:
                     lines.append(f"  > {reason}")
+            lines.append("")
+
+        # 选股结果
+        if selection_data and selection_data.get("results"):
+            lines.extend(["", "---", "", "## 🎯 基础选股 Top 候选", ""])
+            for r in selection_data["results"][:5]:
+                sym = r.get("symbol", "?")
+                score = r.get("score", 0)
+                close = r.get("latest_close", "?")
+                src = r.get("data_source", "?")
+                rows = r.get("rows", "?")
+                start = r.get("actual_start", "?")
+                end = r.get("actual_end", "?")
+                reasons = ", ".join(r.get("reasons", [])[:3])
+                risks_text = ", ".join(r.get("risks", [])[:2])
+                lines.append(f"- #{r.get('rank','?')} **{sym}** 评分{score}/100 收盘{close}")
+                lines.append(f"  > 理由: {reasons}")
+                if risks_text:
+                    lines.append(f"  > 风险: {risks_text}")
+                lines.append(f"  > 数据: {src} / {rows}行 / {start}~{end}")
             lines.append("")
 
         # AI 分析
