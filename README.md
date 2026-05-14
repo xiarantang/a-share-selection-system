@@ -106,6 +106,21 @@ paper_trading/engine.py   # 模拟交易
 
 本系统由程序根据数据和规则自动生成选股结果，仅供研究学习，不构成投资建议。A 股市场风险较高，投资需谨慎。
 
+## 📦 产物说明
+
+`reports/output/` 下的文件：
+
+| 文件 | 说明 |
+|------|------|
+| `selection_YYYYMMDD_HHMMSS.json` | 每次选股结果（时间戳命名） |
+| `selection_YYYYMMDD_HHMMSS.csv` | 选股CSV |
+| `selection_latest.json` | 最近一次选股（覆盖更新） |
+| `selection_latest.csv` | 最近一次选股CSV |
+| `report_YYYYMMDD_HHMMSS.md` | 每次报告（时间戳命名） |
+| `report_latest.md` | 最近一次报告（覆盖更新） |
+
+`data/cache/`：K线缓存文件，不提交 Git。
+
 ## 📄 License
 
 MIT

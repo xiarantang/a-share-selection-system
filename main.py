@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-A股智能选股系统 - 主入口 (v0.1)
+A股智能选股系统 - 主入口 (v0.4)
 =========================
 系统总调度，串联数据→策略→回测→AI→Agent→模拟交易→报告全流程。
 """
@@ -237,7 +237,7 @@ def cmd_select(args):
         logger.info(f"  #{r['rank']} {r['symbol']} {r.get('name','')} [{r.get('sector','')}]: "
                     f"{r['score']}/100 | {r['latest_close']} | {r['data_source']} | {r['rows']}行{cov}")
 
-    date_str = datetime.now().strftime("%Y%m%d")
+    date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
     csv_path = os.path.join("reports", "output", f"selection_{date_str}.csv")
     csv_fields = ["rank","symbol","name","sector","score","latest_close","data_source","rows",
                   "requested_start","actual_start","actual_end","coverage_warning",
@@ -265,31 +265,48 @@ def cmd_select(args):
         json.dump(payload, f, ensure_ascii=False, indent=2)
     logger.info(f"JSON: {json_path}")
 
+    # 覆盖 latest
+    import shutil
+    shutil.copy(json_path, os.path.join("reports", "output", "selection_latest.json"))
+    shutil.copy(csv_path, os.path.join("reports", "output", "selection_latest.csv"))
+
     return 0 if stats["success"] > 0 else 1
 
 
 def cmd_report(args):
-    """生成报告。--selection 指定JSON文件，否则自动读最新。"""
-    import json
+    """生成报告。--selection 指定JSON文件，否则自动读 latest。"""
+    import json, glob
     reporter = ReportGenerator()
     selection_data = {}
     sel_path = getattr(args, 'selection', None)
-    if sel_path and os.path.exists(sel_path):
+
+    if sel_path:
+        if not os.path.exists(sel_path):
+            logger.info(f"❌ selection 文件不存在: {sel_path}")
+            return 1
         with open(sel_path) as f:
             selection_data = json.load(f)
-    elif not sel_path:
-        import glob
-        sel_files = sorted(glob.glob(os.path.join(reporter.config.output_dir, "selection_*.json")))
-        if sel_files:
-            with open(sel_files[-1]) as f:
+    else:
+        latest_path = os.path.join("reports", "output", "selection_latest.json")
+        if os.path.exists(latest_path):
+            with open(latest_path) as f:
                 selection_data = json.load(f)
+        else:
+            sel_files = sorted(glob.glob(os.path.join("reports", "output", "selection_*.json")))
+            sel_files = [f for f in sel_files if "latest" not in f]
+            if sel_files:
+                with open(sel_files[-1]) as f:
+                    selection_data = json.load(f)
+            else:
+                logger.info("❌ 无可用 selection 文件，无法生成报告")
+                return 1
+
     report = reporter.generate_markdown_report(
         date=args.date or datetime.now().strftime("%Y-%m-%d"),
-        market_summary={},
-        strategy_signals={},
-        selection_data=selection_data,
+        market_summary={}, strategy_signals={}, selection_data=selection_data,
     )
     logger.info(f"✅ 报告已生成: {report[:50]}...")
+    return 0
 
 
 def cmd_selfcheck(args):
@@ -331,7 +348,7 @@ def cmd_selfcheck(args):
 def cmd_full_pipeline(args):
     """PASS/FAIL 全模块检查"""
     logger.info("=" * 60)
-    logger.info("A股智能选股系统 v0.1 - 模块检查")
+    logger.info("A股智能选股系统 v0.4 - 模块检查")
     logger.info("=" * 60)
 
     checks = {}
@@ -447,7 +464,7 @@ def cmd_full_pipeline(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="A股智能选股系统 v0.1",
+        description="A股智能选股系统 v0.4",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例:

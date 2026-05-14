@@ -99,11 +99,15 @@ class ReportGenerator:
             "> 本报告由系统根据数据和规则自动生成，仅供研究学习，不构成投资建议。投资有风险，入市需谨慎。"])
 
         report = "\n".join(lines)
-        filename = f"report_{date.replace('-', '')}.md"
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"report_{ts}.md"
         filepath = os.path.join(self.config.output_dir, filename)
         with open(filepath, "w") as f:
             f.write(report)
-        logger.info(f"报告已保存: {filepath}")
+        # 覆盖 latest
+        import shutil
+        shutil.copy(filepath, os.path.join(self.config.output_dir, "report_latest.md"))
+        logger.info(f"报告已保存: {filepath} (+ report_latest.md)")
         return report
 
     def generate_json_signals(self, strategy_signals: Dict[str, List[Dict]]) -> str:
