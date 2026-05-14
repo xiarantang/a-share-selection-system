@@ -169,15 +169,27 @@ def cmd_select(args):
     engine = SelectionEngine()
     symbols = args.symbols.split(",")
     top = int(getattr(args, 'top', 10) or 10)
-    results = engine.select_top(symbols, top=top)
-    logger.info(f"选股结果 (Top {top}):")
+    req_start = getattr(args, 'start', None) or "2024-01-01"
+    results = engine.select_top(symbols, top=top, start_date=req_start)
+
+    # 确保输出目录存在
+    os.makedirs("reports/output", exist_ok=True)
+
+    # coverage_warning 检查
+    for r in results:
+        if not r.get("error") and r.get("actual_start", "N/A") > req_start[:10]:
+            r["coverage_warning"] = True
+
+    ok_count = sum(1 for r in results if not r.get("error"))
+    logger.info(f"选股结果 (Top {top}, 请求起始={req_start}):")
     for r in results:
         if r.get("error"):
             logger.info(f"  #{r['rank']} ❌ {r['symbol']}: {r['error']}")
         else:
+            cov = " ⚠️ coverage_warning" if r.get("coverage_warning") else ""
             logger.info(
                 f"  #{r['rank']} {r['symbol']}: 评分{r['score']}/100 | "
-                f"收盘{r['latest_close']} | 数据源={r['data_source']} | 行数={r['rows']}"
+                f"收盘{r['latest_close']} | 数据源={r['data_source']} | 行数={r['rows']}{cov}"
             )
             for reason in r.get("reasons", [])[:3]:
                 logger.info(f"    👍 {reason}")
@@ -185,24 +197,24 @@ def cmd_select(args):
                 logger.info(f"    ⚠️  {risk}")
             logger.info(f"    📅 实际覆盖: {r['actual_start']}~{r['actual_end']}")
 
-    # 保存 CSV
-    import csv
+    import csv, json
     date_str = datetime.now().strftime("%Y%m%d")
     csv_path = os.path.join("reports", "output", f"selection_{date_str}.csv")
     with open(csv_path, "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["rank","symbol","score","latest_close","data_source","rows","actual_start","actual_end"])
+        w = csv.DictWriter(f, fieldnames=["rank","symbol","score","latest_close","data_source","rows","actual_start","actual_end","coverage_warning"])
         w.writeheader()
         for r in results:
             w.writerow({k: r.get(k, "") for k in w.fieldnames})
     logger.info(f"CSV已保存: {csv_path}")
 
-    # 保存 JSON
-    import json
     json_path = os.path.join("reports", "output", f"selection_{date_str}.json")
     with open(json_path, "w") as f:
-        json.dump({"generated_at": datetime.now().isoformat(), "results": results}, f, ensure_ascii=False, indent=2)
+        json.dump({"generated_at": datetime.now().isoformat(), "requested_start": req_start, "results": results}, f, ensure_ascii=False, indent=2)
     logger.info(f"JSON已保存: {json_path}")
 
+    if ok_count == 0:
+        logger.info("❌ 选股失败: 所有股票数据获取失败")
+        return 1
     return 0
 
 
@@ -430,6 +442,7 @@ def main():
     p_select = sub.add_parser("select", help="基础选股")
     p_select.add_argument("--symbols", required=True, help="股票代码，逗号分隔")
     p_select.add_argument("--top", type=int, default=10, help="输出 Top N")
+    p_select.add_argument("--start", default="2024-01-01", help="起始日期")
     p_select.set_defaults(func=cmd_select)
 
     p_selfcheck = sub.add_parser("selfcheck", help="数据源自检")

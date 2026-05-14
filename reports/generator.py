@@ -90,19 +90,19 @@ class ReportGenerator:
                 end = r.get("actual_end", "?")
                 reasons = ", ".join(r.get("reasons", [])[:3])
                 risks_text = ", ".join(r.get("risks", [])[:2])
-                lines.append(f"- #{r.get('rank','?')} **{sym}** 评分{score}/100 收盘{close}")
+                cov_note = " ⚠️ 实际覆盖不全" if r.get("coverage_warning") else ""
+                lines.append(f"- #{r.get('rank','?')} **{sym}** 评分{score}/100 收盘{close}{cov_note}")
                 lines.append(f"  > 理由: {reasons}")
                 if risks_text:
                     lines.append(f"  > 风险: {risks_text}")
                 lines.append(f"  > 数据: {src} / {rows}行 / {start}~{end}")
-            lines.append("")
 
         # AI 分析
         if ai_analysis:
             lines.extend(["", "---", "", "## 🤖 AI 综合分析", "", ai_analysis])
 
         lines.extend(["", "---", "", "## ⚠️ 免责声明", "",
-            "> 本报告由 AI 自动生成，仅供研究学习，不构成投资建议。投资有风险，入市需谨慎。"])
+            "> 本报告由系统根据数据和规则自动生成，仅供研究学习，不构成投资建议。投资有风险，入市需谨慎。"])
 
         report = "\n".join(lines)
 

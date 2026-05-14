@@ -15,6 +15,7 @@ data/cache/
 # 报告输出
 reports/output/*.md
 reports/output/*.json
+reports/output/*.csv
 
 # 模拟盘数据
 paper_trading/accounts.json
