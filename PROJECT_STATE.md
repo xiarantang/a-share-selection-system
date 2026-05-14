@@ -36,8 +36,9 @@
 | P6.0收尾 | `f8f8fb9` | README小白启动方式/.venv入口/架构更新 |
 | P6.1 | `87a30f6` | 一键启动脚本/状态交接/README完善 |
 | P6.1.1 | `72e0185` | 轻量依赖/状态同步/README入口优化 |
+| P6.1.2 | `c1baabc` | 状态交接修正/P7准备 |
 
-- 最新 commit: `72e0185`
+- 最新 commit: `c1baabc`
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-A股智能选股系统 - Streamlit 本地可视化 UI (P6.0)
+A股智能选股系统 - Streamlit 本地可视化 UI (P7.0)
 =================================================
-小白也能用的一键选股界面。
+小白也能用的一键选股界面。三步引导、错误提示友好化、数据覆盖可视化。
 复用全部现有底层模块，不复制评分逻辑。
 仅供研究学习，不构成投资建议。
 """
@@ -89,7 +89,6 @@ def run_backtest(data: dict, top: int):
     """执行历史窗口复盘。复用 validation.backtest_validator。"""
     fetcher = AShareDataFetcher()
     per_stock, summary = run_backtest_validation(data, top=top, fetcher=fetcher)
-    # 回写到 data
     data["backtest_validation"] = summary
     data["backtest_validation_details"] = per_stock
     return per_stock, summary
@@ -114,6 +113,7 @@ def build_candidates_df(top_results: list) -> pd.DataFrame:
     rows = []
     for r in top_results:
         fs = r.get("factor_scores", {})
+        data_range = f"{r.get('actual_start','?')}~{r.get('actual_end','?')}"
         rows.append({
             "排名": r.get("rank", "?"),
             "代码": r.get("symbol", "?"),
@@ -130,9 +130,10 @@ def build_candidates_df(top_results: list) -> pd.DataFrame:
             "风控": fs.get("risk", "?"),
             "数据质量": fs.get("data_quality", "?"),
             "形态": fs.get("pattern", "?"),
+            "数据区间": data_range,
             "数据源": r.get("data_source", "?"),
             "K线条数": r.get("rows", "?"),
-            "覆盖不全": "⚠️" if r.get("coverage_warning") else "",
+            "覆盖": "⚠️不全" if r.get("coverage_warning") else "✓",
         })
     return pd.DataFrame(rows)
 
@@ -173,6 +174,27 @@ def build_backtest_df(per_stock: list) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+# ========== 辅助：构建数据覆盖摘要 ==========
+def build_coverage_summary(all_results: list, requested_start: str) -> dict:
+    """从选股结果中汇总数据覆盖情况。"""
+    success = [r for r in all_results if not r.get("error")]
+    if not success:
+        return {"min_rows": 0, "max_rows": 0, "avg_rows": 0,
+                "coverage_warn_count": 0, "total_success": 0,
+                "earliest_actual": "N/A", "latest_actual": "N/A"}
+    rows_list = [r.get("rows", 0) for r in success]
+    cov_warn = sum(1 for r in success if r.get("coverage_warning"))
+    starts = [r.get("actual_start", "9999") for r in success if r.get("actual_start")]
+    ends = [r.get("actual_end", "0000") for r in success if r.get("actual_end")]
+    return {
+        "min_rows": min(rows_list), "max_rows": max(rows_list),
+        "avg_rows": round(sum(rows_list) / len(rows_list)),
+        "coverage_warn_count": cov_warn, "total_success": len(success),
+        "earliest_actual": min(starts) if starts else "N/A",
+        "latest_actual": max(ends) if ends else "N/A",
+    }
+
+
 # ========== 辅助：渲染验证摘要 ==========
 def render_validation(v: dict):
     """渲染验证摘要区域。"""
@@ -182,13 +204,15 @@ def render_validation(v: dict):
 
     quality = v.get("overall_quality", "?")
     quality_icon = {"good": "🟢", "usable_with_caution": "🟡", "poor": "🔴"}.get(quality, "")
+    quality_label = {"good": "数据充足，风险可控", "usable_with_caution": "覆盖不足或置信度偏低，结果仅供参考", "poor": "数据质量差，不建议参考"}.get(quality, "")
     st.markdown(f"### {quality_icon} 整体质量: **{quality}**")
+    st.caption(quality_label)
 
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("总数", v.get("total_count", "?"))
-    col2.metric("成功", v.get("success_count", "?"))
+    col1.metric("总候选数", v.get("total_count", "?"))
+    col2.metric("选股成功", v.get("success_count", "?"))
     col3.metric("覆盖不足率", f"{v.get('coverage_warning_ratio',0)*100:.0f}%")
-    col4.metric("平均分/最高分", f"{v.get('avg_score','?')}/{v.get('top_score','?')}")
+    col4.metric("平均分 / 最高分", f"{v.get('avg_score','?')} / {v.get('top_score','?')}")
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -210,7 +234,8 @@ def render_validation(v: dict):
 
     warnings = v.get("warnings", [])
     if warnings:
-        st.warning("⚠️ " + " | ".join(warnings))
+        for w in warnings:
+            st.warning(f"⚠️ {w}")
 
 
 # ========== 辅助：渲染复盘摘要 ==========
@@ -221,6 +246,7 @@ def render_backtest_summary(summary: dict, per_stock: list):
         return
 
     st.markdown("### 📊 复盘汇总 (In-Sample，不预测未来)")
+    st.caption("对已有K线做窗口内验证，不代表未来收益。")
 
     col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric("验证总数", summary.get("total_checked", "?"))
@@ -244,19 +270,41 @@ def render_backtest_summary(summary: dict, per_stock: list):
     st.dataframe(df, use_container_width=True, hide_index=True)
 
 
+# ========== 辅助：三步引导卡片 ==========
+def render_step_guide():
+    """未选股前的引导卡片。"""
+    st.markdown("### 👋 欢迎使用 A 股智能选股系统")
+    st.caption("三步完成选股，小白也能轻松上手。")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        with st.container(border=True):
+            st.markdown("#### ① 选参数")
+            st.markdown("在左侧栏选择：\n- 股票池（精选55只/沪深300/成交额TOP）\n- 扫描数量和展示数量\n- 数据起始日期")
+    with col2:
+        with st.container(border=True):
+            st.markdown("#### ② 开始选股")
+            st.markdown("点击左侧 **🚀 开始选股** 按钮\n系统会自动拉取数据、评分、排序\n稍等片刻即可看到结果")
+    with col3:
+        with st.container(border=True):
+            st.markdown("#### ③ 看结果")
+            st.markdown("选股完成后切换 Tab：\n- 🎯 候选表格\n- 📋 验证摘要\n- 📈 历史复盘\n- 📄 完整报告")
+
+
 # ========== 主界面 ==========
 st.title("🏦 A股智能选股系统")
-st.caption("小白也能用的一键选股 · 仅供研究学习，不构成投资建议")
+st.caption("三步完成选股 · 小白也能用 · 仅供研究学习，不构成投资建议")
 
 # ---- 左侧栏 ----
 with st.sidebar:
     st.header("⚙️ 选股参数")
 
+    st.markdown("**① 选择股票池**")
     universe = st.selectbox(
         "股票池",
         options=["static", "hs300", "top_amount"],
         format_func=lambda x: {"static": "static (55只精选)", "hs300": "沪深300", "top_amount": "成交额TOP"}.get(x, x),
         help="static: 55只精选A股 | hs300: 沪深300成分股 | top_amount: 全市场成交额排序",
+        label_visibility="collapsed",
     )
     limit = st.slider("扫描数量", min_value=10, max_value=55, value=20, step=5,
                       help="从股票池中取多少只来评分")
@@ -271,6 +319,7 @@ with st.sidebar:
     start_str = start_date.strftime("%Y-%m-%d") if hasattr(start_date, "strftime") else str(start_date)
 
     st.markdown("---")
+    st.markdown("**② 一键运行**")
 
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
@@ -281,11 +330,15 @@ with st.sidebar:
                                  help="对 Top 候选做 In-Sample 窗口验证（较慢）")
 
     st.markdown("---")
-    st.caption("""**免责声明**：本系统根据数据和规则自动生成选股结果，仅供研究学习，不构成投资建议。A股市场风险较高，投资需谨慎。""")
+    st.markdown("**③ 查看结果**")
+    st.caption("选股完成后，在右侧切换 Tab 查看候选表格、验证摘要、历史复盘和完整报告。")
+
+    st.markdown("---")
+    st.caption("""⚠️ **免责声明**：本系统根据数据和规则自动生成选股结果，仅供研究学习，不构成投资建议。A股市场风险较高，投资需谨慎。""")
 
 # ---- 主区域 ----
 if btn_select:
-    with st.spinner("正在选股中，请稍候..."):
+    with st.spinner("⏳ 正在选股中，请稍候（拉取数据、计算评分…）..."):
         try:
             data = run_selection(universe, limit, top, start_str)
             st.session_state.selection_data = data
@@ -294,19 +347,42 @@ if btn_select:
             st.session_state.last_params = {
                 "universe": universe, "limit": limit, "top": top, "start": start_str,
             }
-            st.success(f"选股完成！扫描 {data['stats']['total']} 只，成功 {data['stats']['success']} 只")
+
+            # 人性化提示
+            success_count = data["stats"]["success"]
+            failed_count = data["stats"]["failed"]
+            total_count = data["stats"]["total"]
+            source_dist = data["stats"].get("source_dist", {})
+
+            if success_count > 0:
+                msg = f"✅ 选股完成！成功 {success_count}/{total_count} 只"
+                # 提示数据源情况
+                if source_dist.get("skill_fallback", 0) > 0 and "akshare" not in source_dist:
+                    msg += "。数据来自备用源（akshare 暂不可用），覆盖可能不全。"
+                elif source_dist.get("skill_fallback", 0) > 0:
+                    msg += "。部分数据来自备用源。"
+                st.success(msg)
+            else:
+                st.error(f"❌ 选股异常：{total_count} 只股票全部获取失败。请检查网络或稍后重试。")
+
         except Exception as e:
-            st.error(f"选股失败: {e}")
+            st.error(f"❌ 选股过程出错。可能原因：网络不通、数据接口临时故障。\n\n技术详情: {e}")
 
 if btn_backtest and st.session_state.selection_data is not None:
-    with st.spinner("正在复盘验证中，请稍候（较慢）..."):
+    with st.spinner("⏳ 正在复盘验证中，请稍候（需重新拉取数据，较慢）..."):
         try:
             per_stock, summary = run_backtest(st.session_state.selection_data, top)
             st.session_state.backtest_per_stock = per_stock
             st.session_state.backtest_summary = summary
-            st.success("复盘完成")
+
+            checked = summary.get("total_checked", 0)
+            skipped = summary.get("skipped", 0)
+            if skipped > 0:
+                st.success(f"复盘完成：验证 {checked} 只，跳过 {skipped} 只")
+            else:
+                st.success(f"复盘完成：验证 {checked} 只")
         except Exception as e:
-            st.error(f"复盘失败: {e}")
+            st.error(f"❌ 复盘过程出错。可能原因：网络不通、数据接口临时故障。\n\n技术详情: {e}")
 
 # ---- 结果展示 ----
 if st.session_state.selection_data is not None:
@@ -317,12 +393,25 @@ if st.session_state.selection_data is not None:
     stats = data.get("stats", {})
     info_cols = st.columns(4)
     info_cols[0].info(f"**股票池**: {universe_meta.get('universe_source','?')}")
-    info_cols[1].info(f"**是否fallback**: {'是' if universe_meta.get('is_fallback') else '否'}")
-    info_cols[2].info(f"**扫描/成功/失败**: {stats.get('total','?')}/{stats.get('success','?')}/{stats.get('failed','?')}")
-    info_cols[3].info(f"**数据请求起始**: {data.get('requested_start','?')}")
+    info_cols[1].info(f"**数据起始请求**: {data.get('requested_start','?')}")
+    info_cols[2].info(f"**扫描 / 成功 / 失败**: {stats.get('total','?')} / {stats.get('success','?')} / {stats.get('failed','?')}")
+    source_dist = stats.get("source_dist", {})
+    source_str = " ".join(f"{k}:{v}" for k, v in source_dist.items())
+    info_cols[3].info(f"**数据源**: {source_str or 'N/A'}")
 
     if universe_meta.get("is_fallback"):
-        st.warning(f"⚠️ 股票池 fallback: {universe_meta.get('fallback_reason','?')}")
+        st.warning(f"⚠️ 股票池回退到 static: {universe_meta.get('fallback_reason','?')}")
+
+    # 数据覆盖摘要卡片
+    cov = build_coverage_summary(data.get("all", []), data.get("requested_start", ""))
+    if cov["total_success"] > 0:
+        cov_cols = st.columns(5)
+        cov_cols[0].metric("数据范围", f"{cov['earliest_actual']} ~ {cov['latest_actual']}")
+        cov_cols[1].metric("最少K线", cov["min_rows"])
+        cov_cols[2].metric("最多K线", cov["max_rows"])
+        cov_cols[3].metric("平均K线", cov["avg_rows"])
+        cov_cols[4].metric("覆盖不全", f"{cov['coverage_warn_count']}/{cov['total_success']}只",
+                           delta="⚠️" if cov["coverage_warn_count"] > cov["total_success"]//2 else None)
 
     # Tab 切换
     tab1, tab2, tab3, tab4 = st.tabs(["🎯 候选表格", "📋 验证摘要", "📈 历史复盘", "📄 报告"])
@@ -330,19 +419,30 @@ if st.session_state.selection_data is not None:
     with tab1:
         top_results = data.get("top", [])
         if not top_results:
-            st.warning("无候选结果")
+            st.warning("无候选结果。可能原因：数据全部获取失败，请检查网络或稍后重试。")
         else:
-            st.caption(f"Top {len(top_results)} 候选 | 评分从高到低")
+            st.caption(f"Top {len(top_results)} 候选 | 评分从高到低 | 数据区间供参考")
 
             df = build_candidates_df(top_results)
+            # 决策列着色
+            def color_decision(val):
+                if val == "strong_watch":
+                    return "background-color: #d4edda; color: #155724"
+                elif val == "watch":
+                    return "background-color: #e8f5e9"
+                elif val == "avoid":
+                    return "background-color: #f8d7da; color: #721c24"
+                return ""
+
+            styled_df = df.style.applymap(color_decision, subset=["决策"])
             st.dataframe(
-                df,
+                styled_df,
                 use_container_width=True,
                 hide_index=True,
                 column_config={
-                    "决策": st.column_config.TextColumn(help="strong_watch>watch>neutral>avoid"),
+                    "决策": st.column_config.TextColumn(help="strong_watch(强观察)>watch(观察)>neutral(中性)>avoid(回避)"),
                     "风险": st.column_config.TextColumn(help="low/medium/high"),
-                    "覆盖不全": st.column_config.TextColumn(width="small"),
+                    "覆盖": st.column_config.TextColumn(width="small", help="✓正常 ⚠️不全=数据起始日晚于请求日"),
                 },
             )
 
@@ -358,16 +458,25 @@ if st.session_state.selection_data is not None:
                 conf = r.get("confidence", "?")
                 reasons = ", ".join(r.get("reasons", [])[:5])
                 risks_text = ", ".join(r.get("risks", [])[:5])
-                cov = " ⚠️ 覆盖不全" if r.get("coverage_warning") else ""
+                cov_warn = r.get("coverage_warning")
                 fs = r.get("factor_scores", {})
                 fv = r.get("factor_values", {})
+                actual_start = r.get("actual_start", "?")
+                actual_end = r.get("actual_end", "?")
 
-                with st.expander(f"#{r.get('rank','?')} {sym} {name} [{r.get('sector','')}] — {score}/100 {dec} {rl}"):
+                # 标题加覆盖警告
+                title = f"#{r.get('rank','?')} {sym} {name} [{r.get('sector','')}] — {score}/100 {dec} {rl}"
+                if cov_warn:
+                    title += " ⚠️覆盖不全"
+
+                with st.expander(title):
                     col_a, col_b = st.columns(2)
                     with col_a:
                         st.markdown(f"**评分**: {score}/100 | **决策**: {dec} | **风险**: {rl} | **置信度**: {conf}")
-                        st.markdown(f"**收盘价**: {r.get('latest_close','?')} | **数据源**: {r.get('data_source','?')} | **K线条数**: {r.get('rows','?')}{cov}")
-                        st.markdown(f"**数据区间**: {r.get('actual_start','?')} ~ {r.get('actual_end','?')}")
+                        st.markdown(f"**收盘价**: {r.get('latest_close','?')} | **数据源**: {r.get('data_source','?')} | **K线条数**: {r.get('rows','?')}")
+                        st.markdown(f"**数据区间**: {actual_start} ~ {actual_end}")
+                        if cov_warn:
+                            st.warning(f"⚠️ 数据覆盖不全：请求起始日早于实际数据起始日 {actual_start}，模型已自动下调评分和置信度。")
                     with col_b:
                         st.markdown("**因子得分**:")
                         st.markdown(f"趋势{fs.get('trend','?')}/动量{fs.get('momentum','?')}/量能{fs.get('volume','?')}/风控{fs.get('risk','?')}/数据质量{fs.get('data_quality','?')}/形态{fs.get('pattern','?')}")
@@ -386,21 +495,22 @@ if st.session_state.selection_data is not None:
         if st.session_state.backtest_per_stock is not None:
             render_backtest_summary(st.session_state.backtest_summary, st.session_state.backtest_per_stock)
         else:
-            st.info("请点击左侧「📈 历史复盘」按钮进行 In-Sample 窗口验证（较慢，需要重新拉取数据）")
+            st.info("💡 尚未运行历史复盘。请点击左侧「📈 历史复盘」按钮，对 Top 候选做 In-Sample 窗口验证。")
+            st.caption("复盘需要重新拉取数据，较慢。结果仅供参考，不代表未来收益。")
 
     with tab4:
-        with st.spinner("正在生成报告..."):
+        with st.spinner("⏳ 正在生成报告..."):
             report_md = generate_report(data)
         st.markdown(report_md)
         st.info("📁 报告已保存至 `reports/output/report_latest.md`")
 
     # 底部产品目标提示
     st.markdown("---")
-    st.caption("🎯 产品目标：打造小白也能用的可视化 A 股选股系统。当前为本地 Streamlit 第一版。CLI 命令仍是底层引擎和验收入口。")
+    st.caption("🎯 产品目标：打造小白也能用的可视化 A 股选股系统。当前为本地 Streamlit 版。CLI 命令仍是底层引擎和验收入口。")
 
 else:
-    # 未选股时的占位提示
-    st.info("👈 在左侧栏设置参数，点击「🚀 开始选股」按钮开始")
+    # 未选股时的三步引导
+    render_step_guide()
 
 
 # ========== 底部免责 ==========
@@ -411,5 +521,6 @@ st.markdown(
     "A 股市场风险较高，投资需谨慎。"
     "\n\n"
     "> 📊 **数据说明**：数据来源 akshare + 多源 fallback（腾讯/新浪/雪球/东财）+ 本地缓存。"
-    "当 akshare 不可用时会自动降级。若出现「覆盖不全」提示，表示数据起始日晚于请求起始日，模型已自动下调评分和置信度。"
+    "当 akshare 不可用时会自动降级到备用数据源。若出现「覆盖不全」提示，表示数据起始日晚于请求起始日，"
+    "模型已自动下调评分和置信度。数据覆盖不足时不构成选股建议。"
 )
