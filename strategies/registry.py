@@ -140,9 +140,20 @@ class StrategyRegistry:
         except Exception as e:
             return {"strategy": strategy_name, "success": False, "error": str(e)}
 
-    def run_all_strategies(self) -> Dict[str, Dict]:
+    def run_all_strategies(self):
+        """执行所有策略，返回 (results, stats) 元组。
+        stats: {"executed": int, "skipped_doc_only": int, "failed": int}
+        """
         results = {}
+        stats = {"executed": 0, "skipped_doc_only": 0, "failed": 0}
         for s in self.config.enabled_strategies:
             logger.info(f"执行策略: {s}")
-            results[s] = self.execute_strategy(s)
-        return results
+            r = self.execute_strategy(s)
+            results[s] = r
+            if r.get("type") == "doc-only":
+                stats["skipped_doc_only"] += 1
+            elif r.get("success"):
+                stats["executed"] += 1
+            else:
+                stats["failed"] += 1
+        return results, stats

@@ -25,9 +25,10 @@ from reports.generator import ReportGenerator
 
 
 def cmd_fetch(args):
-    """数据获取"""
+    """数据获取。返回 0=全部成功, 1=有失败。"""
     fetcher = AShareDataFetcher()
     symbols = args.symbols.split(",") if args.symbols else None
+    has_failure = False
 
     if args.type == "quote":
         for s in symbols or ["000001"]:
@@ -38,6 +39,7 @@ def cmd_fetch(args):
                 logger.info(f"  ✅ {s}: {name} {price}")
             else:
                 logger.info(f"  ❌ {s}: 获取失败")
+                has_failure = True
 
     elif args.type == "kline":
         results = {"ok": [], "fail": []}
@@ -52,6 +54,8 @@ def cmd_fetch(args):
         for s in results["fail"]:
             logger.info(f"  ❌ {s}: 获取失败或空数据")
         logger.info(f"  结果: {len(results['ok'])} 成功 / {len(results['fail'])} 失败")
+        if results["fail"] and not getattr(args, 'allow_partial', False):
+            has_failure = True
 
     elif args.type == "market":
         df = fetcher.get_market_spot_all()
@@ -62,6 +66,7 @@ def cmd_fetch(args):
                 logger.info(f"  {r['代码']} {r['名称']} {r['最新价']} ({r['涨跌幅']:+.2f}%)")
         else:
             logger.info("❌ 全市场行情获取失败")
+            has_failure = True
 
     elif args.type == "financial":
         for s in symbols or ["000001"]:
@@ -71,6 +76,9 @@ def cmd_fetch(args):
                 logger.info(f"  ✅ {s}: 报表 {available}")
             else:
                 logger.info(f"  ❌ {s}: 财报获取失败")
+                has_failure = True
+
+    return 1 if has_failure else 0
 
 
 def cmd_strategy(args):
@@ -84,33 +92,39 @@ def cmd_strategy(args):
         logger.info(f"  {icon} {s['name']} [{s_type}]")
 
     if args.run:
-        results = registry.run_all_strategies()
-        ok = sum(1 for r in results.values() if r.get("success"))
-        fail = len(results) - ok
-        logger.info(f"策略执行完成: {ok} 成功 / {fail} 失败")
+        results, stats = registry.run_all_strategies()
+        logger.info(
+            f"策略执行统计: executed={stats['executed']} "
+            f"skipped_doc_only={stats['skipped_doc_only']} "
+            f"failed={stats['failed']}"
+        )
         for name, r in results.items():
-            status = "✅" if r.get("success") else "❌"
+            status = "✅" if r.get("success") else "❌" if r.get("type") != "doc-only" else "⏭️"
             detail = r.get("error", r.get("note", ""))
             logger.info(f"  {status} {name}: {detail}")
+        return 1 if stats["failed"] > 0 else 0
+
+    return 0
 
 
 def cmd_backtest(args):
-    """回测"""
+    """回测。返回 0=成功, 1=失败。"""
     engine = AShareBacktestEngine()
     engine.setup(MACrossStrategy)
     ok = engine.add_data_from_fetcher(args.symbol or "000001")
     if not ok:
         logger.info(f"❌ 回测失败: {args.symbol} 无K线数据，无法运行")
-        return
+        return 1
     results = engine.run()
     if results is None:
         logger.info("❌ 回测失败: 无数据或执行异常")
-        return
+        return 1
     perf = engine.get_performance()
     if perf.get("error"):
         logger.info(f"❌ 回测失败: {perf['error']}")
-    else:
-        logger.info(f"✅ 回测完成: 收益 {perf.get('total_return_pct', '?')}%")
+        return 1
+    logger.info(f"✅ 回测完成: 收益 {perf.get('total_return_pct', '?')}%")
+    return 0
 
 
 def cmd_ai(args):
@@ -253,6 +267,7 @@ def cmd_full_pipeline(args):
         logger.info(f"❌ 核心模块未通过: {failed_core}")
     logger.info("⚠️  AI 层为 experimental，Agent 层需配置 API Key")
     logger.info("=" * 60)
+    return 0 if core_pass else 1
 
 
 def main():
@@ -274,6 +289,7 @@ def main():
     p_fetch.add_argument("--type", choices=["quote","kline","market","financial"], default="quote")
     p_fetch.add_argument("--symbols", help="股票代码，逗号分隔")
     p_fetch.add_argument("--start", help="起始日期 YYYY-MM-DD")
+    p_fetch.add_argument("--allow-partial", action="store_true", help="允许部分失败仍返回0")
     p_fetch.set_defaults(func=cmd_fetch)
 
     p_strat = sub.add_parser("strategy", help="策略管理")
@@ -304,7 +320,8 @@ def main():
 
     args = parser.parse_args()
     if hasattr(args, "func"):
-        args.func(args)
+        exit_code = args.func(args)
+        sys.exit(exit_code if exit_code is not None else 0)
     else:
         parser.print_help()
 
