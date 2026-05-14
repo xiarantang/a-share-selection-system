@@ -26,6 +26,7 @@ from reports.generator import ReportGenerator
 from strategies.selection import SelectionEngine
 from data.universe import get_universe, lookup_meta
 from validation.selection_validator import validate_selection
+from validation.backtest_validator import run_backtest_validation
 
 
 def cmd_fetch(args):
@@ -314,6 +315,43 @@ def cmd_validate(args):
     return 0 if v['overall_quality'] != "poor" else 1
 
 
+def cmd_backtest_validate(args):
+    """历史窗口复盘验证。不预测未来。"""
+    import json, shutil
+    sel_path = getattr(args, 'selection', None) or os.path.join("reports", "output", "selection_latest.json")
+    if not os.path.exists(sel_path):
+        logger.info(f"❌ selection文件不存在: {sel_path}")
+        return 1
+    with open(sel_path) as f:
+        data = json.load(f)
+    top = int(getattr(args, 'top', 10) or 10)
+    per_stock, summary = run_backtest_validation(data, top=top)
+    logger.info("="*50)
+    logger.info("历史窗口复盘（非未来收益预测）")
+    logger.info(f"  total_checked: {summary['total_checked']} skipped: {summary['skipped']}")
+    logger.info(f"  win: {summary['win_count']} flat: {summary['flat_count']} loss: {summary['loss_count']}")
+    logger.info(f"  avg_forward_return_pct: {summary['avg_forward_return_pct']}%")
+    logger.info(f"  avg_max_drawdown_pct: {summary['avg_max_drawdown_pct']}%")
+    logger.info(f"  best: {summary['best']}% worst: {summary['worst']}%")
+    if summary['warnings']:
+        for w in summary['warnings']:
+            logger.info(f"  ⚠️  {w}")
+    logger.info("="*50)
+
+    # 写入 selection JSON
+    data["backtest_validation"] = summary
+    data["backtest_validation_details"] = per_stock
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # 生成时间戳副本
+    if "selection_latest.json" in sel_path:
+        shutil.copy(sel_path, sel_path.replace("latest", ts))
+    with open(sel_path, "w") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    logger.info(f"backtest_validation 已更新: {sel_path}")
+
+    return 0 if summary['total_checked'] > summary['skipped'] else 1
+
+
 def cmd_report(args):
     """生成报告。--selection 指定JSON文件，否则自动读 latest。"""
     import json, glob
@@ -565,6 +603,11 @@ def main():
     p_validate = sub.add_parser("validate", help="验证选股结果质量")
     p_validate.add_argument("--selection", help="selection JSON路径")
     p_validate.set_defaults(func=cmd_validate)
+
+    p_btv = sub.add_parser("backtest-validate", help="历史窗口复盘")
+    p_btv.add_argument("--selection", help="selection JSON路径")
+    p_btv.add_argument("--top", type=int, default=10, help="验证Top N")
+    p_btv.set_defaults(func=cmd_backtest_validate)
 
     p_selfcheck = sub.add_parser("selfcheck", help="数据源自检")
     p_selfcheck.add_argument("--symbols", help="股票代码，逗号分隔")

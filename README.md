@@ -60,6 +60,14 @@ python3 main.py validate
 python3 main.py validate --selection reports/output/selection_latest.json
 ```
 
+### 历史复盘
+
+```bash
+python3 main.py backtest-validate
+python3 main.py backtest-validate --selection reports/output/selection_latest.json --top 10
+```
+> 历史窗口复盘：对已有K线做 in-sample 验证，不代表未来收益。
+
 ### 生成报告
 
 ```bash

@@ -26,7 +26,7 @@
 | P5.2 | `b197370` | coverage降权/confidence/决策联动 |
 | P5.3 | `973fe09` | selection validation/质量摘要/报告复盘 |
 
-- 最新 commit: `973fe09`
+- 最新 commit: `fab4dda`
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 

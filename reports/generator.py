@@ -114,6 +114,19 @@ class ReportGenerator:
                     lines.append(f"  > 风险: {risks_text}")
                 lines.append(f"  > 数据: {src} / {rows}行 / {start}~{end}")
 
+        # 历史窗口复盘
+        bt = (selection_data or {}).get("backtest_validation")
+        if bt:
+            lines.extend(["", "---", "", "## 📈 历史窗口复盘（非未来收益预测）", ""])
+            lines.append(f"- 验证数量: {bt.get('total_checked','?')} 跳过: {bt.get('skipped','?')}")
+            lines.append(f"- win: {bt.get('win_count','?')} flat: {bt.get('flat_count','?')} loss: {bt.get('loss_count','?')}")
+            lines.append(f"- 平均 forward return: {bt.get('avg_forward_return_pct','?')}%")
+            lines.append(f"- 平均 max drawdown: {bt.get('avg_max_drawdown_pct','?')}%")
+            lines.append(f"- best: {bt.get('best','?')}% worst: {bt.get('worst','?')}%")
+            if bt.get('warnings'):
+                for w in bt['warnings']:
+                    lines.append(f"- ⚠️ {w}")
+
         if ai_analysis:
             lines.extend(["", "---", "", "## 🤖 AI 综合分析", "", ai_analysis])
 
