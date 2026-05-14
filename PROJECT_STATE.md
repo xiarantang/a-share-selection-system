@@ -24,8 +24,9 @@
 | P4.3 | `4f69bd2` | report失败退出/产物时间戳/latest文件/v0.4 |
 | P5.1 | `cc61377` | 多因子评分(6组100分)/decision/risk_level |
 | P5.2 | `b197370` | coverage降权/confidence/决策联动 |
+| P5.3 | `973fe09` | selection validation/质量摘要/报告复盘 |
 
-- 最新 commit: `b197370`
+- 最新 commit: `973fe09`
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 
@@ -37,6 +38,7 @@
 - ✅ 回测：backtrader A股适配(佣金/印花税/T+1)，空数据拒绝
 - ✅ 报告：Markdown日报 + JSON/CSV，含因子拆分/来源说明/覆盖警告
 - ✅ Pipeline：PASS/FAIL/WARN/SKIP检查表，退出码可信
+- ✅ 验证层：validate命令 + selection validation + overall_quality/warnings
 - 🧪 AI/qlib：experimental
 - ⚠️ 限制：fallback仅~120条K线，coverage_warning；akshare经常失败
 
@@ -50,7 +52,7 @@
 
 ## 5. 下一阶段
 
-- P5.x 选股模型持续收口（调优因子权重/阈值、与回测联动）
+- P5.4：回测联动/历史滚动验证
 - 不碰 AI/qlib/UI/实盘
 
 ## 6. 关键文件

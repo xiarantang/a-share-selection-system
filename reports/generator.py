@@ -57,7 +57,7 @@ class ReportGenerator:
         if v:
             lines.extend(["", "---", "", "## 📋 验证摘要（非收益预测）", ""])
             lines.append(f"- 整体质量: {v.get('overall_quality','?')}")
-            lines.append(f"- 覆盖不足率: {v.get('coverage_warning_ratio','?')}")
+            lines.append(f"- 覆盖不足率: {v.get('coverage_warning_ratio','?')} ({v.get('coverage_warning_ratio',0)*100:.0f}%)")
             lines.append(f"- 置信度分布: {v.get('confidence_dist',{})}")
             lines.append(f"- 决策分布: {v.get('decision_dist',{})}")
             lines.append(f"- 风险分布: {v.get('risk_level_dist',{})}")

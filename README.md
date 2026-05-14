@@ -86,8 +86,6 @@ python3 main.py paper-trading          # 模拟交易
 
 当前为**规则因子评分模型**（非机器学习预测）。满分 100，分 6 组：
 
-当前为**规则因子评分模型**（非机器学习预测）。满分 100，分 6 组：
-
 | 因子组 | 满分 | 说明 |
 |--------|------|------|
 | data_quality | 10 | 数据条数、覆盖完整性 |
@@ -100,6 +98,17 @@ python3 main.py paper-trading          # 模拟交易
 **决策标签**：strong_watch（强观察）→ watch（观察）→ neutral（中性）→ avoid（回避）
 **风险等级**：low / medium / high
 **置信度**：high / medium / low。coverage_warning 或 rows<120 时会降低 data_quality 和 confidence；若 confidence=low 或 data_quality 过低，decision 会被下调；若仍为 strong_watch，报告必须提示覆盖不足风险。
+
+## 📋 验证摘要说明
+
+`validate` 命令评估本次选股结果质量，不预测收益。`selection_latest.json` 自动包含 validation 字段。
+
+**overall_quality**：
+- `good` — 数据充足、风险可控
+- `usable_with_caution` — 覆盖不足或置信度偏低
+- `poor` — 无可用结果
+
+**关键指标**：coverage_warning_ratio（覆盖不足比例）、confidence_dist（置信度分布）、decision_dist（决策分布）、risk_level_dist（风险分布）、sector_dist（行业分布）
 
 ## 🏗️ 架构
 
