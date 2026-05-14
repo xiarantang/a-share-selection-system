@@ -269,19 +269,20 @@ def cmd_select(args):
 
 
 def cmd_report(args):
-    """生成报告，读取最新 selection 结果"""
+    """生成报告。--selection 指定JSON文件，否则自动读最新。"""
+    import json
     reporter = ReportGenerator()
-    # 尝试读取最新 selection
-    import glob
-    sel_files = sorted(glob.glob(os.path.join(reporter.config.output_dir, "selection_*.json")))
     selection_data = {}
-    if sel_files:
-        import json
-        try:
+    sel_path = getattr(args, 'selection', None)
+    if sel_path and os.path.exists(sel_path):
+        with open(sel_path) as f:
+            selection_data = json.load(f)
+    elif not sel_path:
+        import glob
+        sel_files = sorted(glob.glob(os.path.join(reporter.config.output_dir, "selection_*.json")))
+        if sel_files:
             with open(sel_files[-1]) as f:
                 selection_data = json.load(f)
-        except Exception:
-            pass
     report = reporter.generate_markdown_report(
         date=args.date or datetime.now().strftime("%Y-%m-%d"),
         market_summary={},
@@ -487,6 +488,7 @@ def main():
 
     p_report = sub.add_parser("report", help="生成报告")
     p_report.add_argument("--date")
+    p_report.add_argument("--selection", help="selection JSON路径")
     p_report.set_defaults(func=cmd_report)
 
     p_universe = sub.add_parser("universe", help="查看股票池")
