@@ -24,6 +24,7 @@ from agent.bridge import AgentBridge
 from paper_trading.engine import PaperTradingEngine
 from reports.generator import ReportGenerator
 from strategies.selection import SelectionEngine
+from data.universe import get_universe
 
 
 def cmd_fetch(args):
@@ -165,54 +166,82 @@ def cmd_paper_trading(args):
 
 
 def cmd_select(args):
-    """基础选股：基于K线因子评分的候选股列表"""
-    engine = SelectionEngine()
-    symbols = args.symbols.split(",")
-    top = int(getattr(args, 'top', 10) or 10)
-    req_start = getattr(args, 'start', None) or "2024-01-01"
-    results = engine.select_top(symbols, top=top, start_date=req_start)
+    """批量选股：支持 universe 参数扩大股票池"""
+    import csv, json
 
-    # 确保输出目录存在
+    # 获取股票池
+    req_start = getattr(args, 'start', None) or "2024-01-01"
+    universe = getattr(args, 'universe', None) or "sample"
+    limit = int(getattr(args, 'limit', 50) or 50)
+    top = int(getattr(args, 'top', 10) or 10)
+    manual_symbols = args.symbols.split(",") if getattr(args, 'symbols', None) else None
+
+    if manual_symbols:
+        symbols, universe_src = get_universe("manual", limit=limit, symbols=manual_symbols)
+    else:
+        symbols, universe_src = get_universe(universe, limit=limit)
+
     os.makedirs("reports/output", exist_ok=True)
 
-    # coverage_warning 检查
-    for r in results:
-        if not r.get("error") and r.get("actual_start", "N/A") > req_start[:10]:
-            r["coverage_warning"] = True
+    # 批量选股
+    engine = SelectionEngine()
+    all_results = engine.select(symbols, start_date=req_start)
 
-    ok_count = sum(1 for r in results if not r.get("error"))
-    logger.info(f"选股结果 (Top {top}, 请求起始={req_start}):")
-    for r in results:
+    # 统计
+    stats = {"total": len(symbols), "success": 0, "failed": 0, "source_dist": {}}
+    for r in all_results:
         if r.get("error"):
-            logger.info(f"  #{r['rank']} ❌ {r['symbol']}: {r['error']}")
+            stats["failed"] += 1
         else:
-            cov = " ⚠️ coverage_warning" if r.get("coverage_warning") else ""
-            logger.info(
-                f"  #{r['rank']} {r['symbol']}: 评分{r['score']}/100 | "
-                f"收盘{r['latest_close']} | 数据源={r['data_source']} | 行数={r['rows']}{cov}"
-            )
-            for reason in r.get("reasons", [])[:3]:
-                logger.info(f"    👍 {reason}")
-            for risk in r.get("risks", [])[:2]:
-                logger.info(f"    ⚠️  {risk}")
-            logger.info(f"    📅 实际覆盖: {r['actual_start']}~{r['actual_end']}")
+            stats["success"] += 1
+            # coverage check
+            if r.get("actual_start", "N/A") > req_start[:10]:
+                r["coverage_warning"] = True
+            # source distribution
+            src = r.get("data_source", "unknown")
+            stats["source_dist"][src] = stats["source_dist"].get(src, 0) + 1
 
-    import csv, json
+    # Top N
+    top_results = [r for r in all_results if not r.get("error")][:top]
+
+    logger.info(f"选股统计: universe={universe_src}, total={stats['total']}, "
+                f"success={stats['success']}, failed={stats['failed']}, "
+                f"sources={stats['source_dist']}")
+    logger.info(f"Top {top} 候选:")
+    for r in top_results:
+        cov = " ⚠️" if r.get("coverage_warning") else ""
+        logger.info(f"  #{r['rank']} {r['symbol']}: {r['score']}/100 | {r['latest_close']} | "
+                    f"{r['data_source']} | {r['rows']}行{cov}")
+
+    # 保存 CSV
     date_str = datetime.now().strftime("%Y%m%d")
     csv_path = os.path.join("reports", "output", f"selection_{date_str}.csv")
+    csv_fields = ["rank","symbol","score","latest_close","data_source","rows",
+                  "requested_start","actual_start","actual_end","coverage_warning"]
     with open(csv_path, "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["rank","symbol","score","latest_close","data_source","rows","actual_start","actual_end","coverage_warning"])
+        w = csv.DictWriter(f, fieldnames=csv_fields)
         w.writeheader()
-        for r in results:
-            w.writerow({k: r.get(k, "") for k in w.fieldnames})
+        for r in all_results:
+            row = {k: r.get(k, "") for k in csv_fields}
+            row["requested_start"] = req_start
+            w.writerow(row)
     logger.info(f"CSV已保存: {csv_path}")
 
+    # 保存 JSON
     json_path = os.path.join("reports", "output", f"selection_{date_str}.json")
+    payload = {
+        "generated_at": datetime.now().isoformat(),
+        "universe": universe_src,
+        "requested_start": req_start,
+        "stats": stats,
+        "top": top_results,
+        "all": all_results,
+    }
     with open(json_path, "w") as f:
-        json.dump({"generated_at": datetime.now().isoformat(), "requested_start": req_start, "results": results}, f, ensure_ascii=False, indent=2)
+        json.dump(payload, f, ensure_ascii=False, indent=2)
     logger.info(f"JSON已保存: {json_path}")
 
-    if ok_count == 0:
+    if stats["success"] == 0:
         logger.info("❌ 选股失败: 所有股票数据获取失败")
         return 1
     return 0
@@ -439,8 +468,10 @@ def main():
     p_report.add_argument("--date")
     p_report.set_defaults(func=cmd_report)
 
-    p_select = sub.add_parser("select", help="基础选股")
-    p_select.add_argument("--symbols", required=True, help="股票代码，逗号分隔")
+    p_select = sub.add_parser("select", help="批量选股")
+    p_select.add_argument("--symbols", help="股票代码，逗号分隔(manual模式)")
+    p_select.add_argument("--universe", choices=["sample","hs300","top_amount","manual"], default="sample", help="股票池类型")
+    p_select.add_argument("--limit", type=int, default=50, help="股票池上限")
     p_select.add_argument("--top", type=int, default=10, help="输出 Top N")
     p_select.add_argument("--start", default="2024-01-01", help="起始日期")
     p_select.set_defaults(func=cmd_select)

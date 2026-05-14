@@ -77,10 +77,20 @@ class ReportGenerator:
                     lines.append(f"  > {reason}")
             lines.append("")
 
-        # 选股结果
-        if selection_data and selection_data.get("results"):
-            lines.extend(["", "---", "", "## 🎯 基础选股 Top 候选", ""])
-            for r in selection_data["results"][:5]:
+        # 选股结果（兼容 results 和 top 字段）
+        candidates = selection_data.get("top") or selection_data.get("results", [])
+        if candidates:
+            # 股票池统计
+            uni = selection_data.get("universe", "?")
+            stats = selection_data.get("stats", {})
+            req_start = selection_data.get("requested_start", "?")
+            lines.extend(["", "---", "", "## 🎯 批量选股结果", ""])
+            lines.append(f"- 股票池: {uni}")
+            lines.append(f"- 扫描: {stats.get('total','?')} 只 | 成功: {stats.get('success','?')} | 失败: {stats.get('failed','?')}")
+            lines.append(f"- 请求起始: {req_start}")
+            lines.append("")
+
+            for r in candidates[:5]:
                 sym = r.get("symbol", "?")
                 score = r.get("score", 0)
                 close = r.get("latest_close", "?")
