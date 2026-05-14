@@ -131,9 +131,10 @@ class AShareDataFetcher:
     def _fetch_skill_fallback(
         self, symbol: str, start_date: str, end_date: str, adjust: str
     ) -> Optional[pd.DataFrame]:
-        """调用 a-share-data/scripts/fetch_history_fallback.py"""
+        """调用 a-share-data/scripts/fetch_history_fallback.py --json"""
         import subprocess
         import json
+        import re
 
         script = os.path.expanduser(
             "~/.agents/skills/a-share-data/scripts/fetch_history_fallback.py"
@@ -148,35 +149,48 @@ class AShareDataFetcher:
                 "--kline", symbol,
                 "--start", start_date,
                 "--end", end_date,
+                "--json",
             ]
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+            result = subprocess.run(
+                cmd, capture_output=True, text=True, timeout=20,
+            )
             if result.returncode != 0:
-                logger.warning(f"skill fallback 失败: {result.stderr[:200]}")
+                logger.warning(f"skill fallback exit={result.returncode}: {result.stderr[:200]}")
                 return None
 
-            data = json.loads(result.stdout)
-            rows = data.get("data") or data.get("kline") or data.get("result") or []
-            if not rows:
+            raw = result.stdout.strip()
+            if not raw:
+                return None
+
+            # 提取第一个 JSON 数组（跳过前置 warning 行）
+            match = re.search(r'\[.*\]', raw, re.DOTALL)
+            if not match:
+                logger.warning(f"skill fallback 输出无JSON数组: {raw[:200]}")
+                return None
+
+            rows = json.loads(match.group())
+            if not isinstance(rows, list) or not rows:
                 return None
 
             df = pd.DataFrame(rows)
-            # 标准化列名
+            # 字段映射: time→date, pctChg→pct_change, preclose→pre_close
             col_map = {
-                "day": "date", "date": "date",
-                "open": "open", "high": "high", "low": "low", "close": "close",
-                "volume": "volume", "amount": "amount",
+                "time": "date", "pctChg": "pct_change", "preclose": "pre_close",
             }
-            df = df.rename(columns={k: v for k, v in col_map.items() if k in df.columns})
+            df = df.rename(columns=col_map)
             if "date" in df.columns:
                 df["date"] = pd.to_datetime(df["date"])
                 df.set_index("date", inplace=True)
-            # 确保必要列存在
             for col in ["open", "high", "low", "close", "volume"]:
                 if col not in df.columns:
                     df[col] = 0.0
+            logger.info(f"skill fallback 成功: {symbol} {len(df)} 条")
             return df
         except subprocess.TimeoutExpired:
-            logger.warning("skill fallback 超时")
+            logger.warning("skill fallback 超时(20s)")
+            return None
+        except json.JSONDecodeError as e:
+            logger.warning(f"skill fallback JSON解析失败: {e}")
             return None
         except Exception as e:
             logger.warning(f"skill fallback 异常: {e}")
