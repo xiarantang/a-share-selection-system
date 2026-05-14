@@ -1,0 +1,17 @@
+[browser]
+# 关闭 Streamlit 使用统计上报
+gatherUsageStats = false
+# 仅在本地使用
+serverAddress = "localhost"
+
+[server]
+# 固定端口 8501
+port = 8501
+# headless 模式（不自动打开浏览器）
+headless = true
+# 允许的最大上传大小（选股不需要上传）
+maxUploadSize = 50
+
+[client]
+# 不显示工具栏
+toolbarMode = "minimal"

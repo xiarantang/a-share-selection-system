@@ -1,13 +1,13 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-14
+> 最后更新：2026-05-15
 
 ## 1. 项目总目标
 
 打造长期可用、结果可信、可复盘的 A 股选股系统。
 
 **最终形态：小白可用的可视化选股系统。** 当前 CLI 命令只是底层引擎和验收入口。
-路线：P5 打磨引擎 → P6 可视化界面(Streamlit) → P7 一键启动 → P8 AI 辅助
+路线：P5 打磨引擎 → P6 可视化界面(Streamlit) → P7 产品化打磨 → P8 AI 辅助
 暂不碰实盘交易。
 
 **禁止事项**：不碰 AI/qlib/实盘交易/复杂前后端分离/数据库/登录系统。
@@ -32,8 +32,10 @@
 | P5.3.1| `fab4dda` | 文档收口 |
 | P5.4 | `9c6e156` | 历史窗口复盘 |
 | docs | `21eece8` | 产品目标文档化 |
+| P6.0 | `5983451` | Streamlit 本地 UI 第一版 |
+| P6.0收尾 | `f8f8fb9` | README小白启动方式/.venv入口/架构更新 |
 
-- 最新 commit: `21eece8`
+- 最新 commit: `f8f8fb9`
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 
@@ -42,13 +44,16 @@
 - ✅ 数据：akshare+fallback+缓存 | 股票池：static 55只
 - ✅ 选股：6因子评分 + decision/risk_level/confidence
 - ✅ 验证：validate + backtest-validate + report
+- ✅ 可视化：Streamlit 本地 UI，小白一键选股/验证/复盘/报告
 - ✅ Pipeline：PASS/FAIL退-出码可信
 - 🧪 AI/qlib：experimental
 
-## 4. 下一阶段 P6.0
+## 4. 下一阶段 P6.1 / P7
 
-Streamlit 本地 UI 第一版。见 NEXT_PROMPT.md。
+P6.1 小白一键启动与状态交接修复（当前）。
+P7 产品化打磨：界面优化、错误提示、数据覆盖可视化。
+见 NEXT_PROMPT.md。
 
 ## 5. 关键文件
 
-main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py

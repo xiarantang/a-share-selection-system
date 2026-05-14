@@ -113,6 +113,31 @@ python3 main.py backtest --symbol 000001  # 回测
 python3 main.py paper-trading          # 模拟交易
 ```
 
+## ❓ 常见问题
+
+**Q: 启动后选股没有数据怎么办？**
+A: 首次使用需要安装数据 fallback。详见上方「Skill 安装」章节。安装后重新点击「开始选股」即可。
+
+**Q: 选股结果都带"⚠️ 覆盖不全"标志？**
+A: 正常现象。当前 fallback 数据约 120 条 K 线（~6 个月），请求 2024-01-01 会触发 coverage_warning。模型已自动下调 data_quality 评分和 confidence 置信度，不影响使用。
+
+**Q: 如何更新数据？**
+A: 在界面左侧设置数据起始日期，重新点击「开始选股」即可。数据会自动缓存到 `data/cache/`。
+
+**Q: 端口 8501 被占用怎么办？**
+A: 手动指定端口启动：
+```bash
+.venv/bin/streamlit run app.py --server.port 8502
+```
+
+**Q: 选股结果质量如何判断？**
+A: 切换「验证摘要」Tab 查看 `overall_quality`。`good` 表示数据充足、风险可控；`usable_with_caution` 表示覆盖不足或置信度偏低。
+
+**Q: 双击 start_ui.command 没反应？**
+A: macOS 安全策略可能阻止。右键 → 打开，或在「系统设置 → 隐私与安全性」中允许。
+
+---
+
 ## 📊 评分模型
 
 当前为**规则因子评分模型**（非机器学习预测）。满分 100，分 6 组：
