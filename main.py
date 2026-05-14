@@ -211,11 +211,6 @@ def cmd_select(args):
         r["name"] = info.get("name", "")
         r["sector"] = info.get("sector", "")
 
-    # 覆盖检查
-    for r in all_results:
-        if not r.get("error") and r.get("actual_start", "N/A") > req_start[:10]:
-            r["coverage_warning"] = True
-
     stats = {"total": len(symbols), "success": 0, "failed": 0, "source_dist": {}}
     for r in all_results:
         if r.get("error"):
@@ -237,15 +232,16 @@ def cmd_select(args):
         dec = r.get("decision", "?")
         rl = r.get("risk_level", "?")
         rl_icon = {"low":"🟢","medium":"🟡","high":"🔴"}.get(rl, "")
+        conf = r.get("confidence", "?")
         logger.info(f"  #{r['rank']} {r['symbol']} {r.get('name','')} [{r.get('sector','')}]: "
-                    f"{r['score']}/100 {dec} {rl_icon} | "
+                    f"{r['score']}/100 {dec} {rl_icon} conf:{conf} | "
                     f"{r['latest_close']} | {r['data_source']} | {r['rows']}行{cov}")
 
     date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
     csv_path = os.path.join("reports", "output", f"selection_{date_str}.csv")
     csv_fields = ["rank","symbol","name","sector","score","decision","risk_level",
                   "trend_score","momentum_score","volume_score","risk_score","data_quality_score","pattern_score",
-                  "latest_close","data_source","rows",
+                  "latest_close","data_source","rows","confidence",
                   "requested_start","actual_start","actual_end","coverage_warning",
                   "universe_source","is_fallback"]
     with open(csv_path, "w", newline="") as f:

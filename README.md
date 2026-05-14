@@ -90,6 +90,7 @@ python3 main.py paper-trading          # 模拟交易
 
 **决策标签**：strong_watch（强观察）→ watch（观察）→ neutral（中性）→ avoid（回避）
 **风险等级**：low / medium / high
+**置信度**：high / medium / low。coverage_warning 或 rows<120 时会降低；若覆盖不足，strong_watch 自动降级。
 
 ## 🏗️ 架构
 
