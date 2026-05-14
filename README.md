@@ -1,8 +1,10 @@
-# 🏦 A 股智能选股系统
+# 🏦 A 股智能选股系统 v0.1
 
-> 七层架构 · AI 驱动 · 全流程自动化
+> 七层架构实验版 · 项目骨架已建立
 
-基于 **akshare + backtrader + qlib + a-share-skill + MCP** 的完整 A 股选股系统。
+基于 **akshare + backtrader + a-share-skill** 的 A 股选股系统实验版。
+
+**当前状态**: v0.1 — 数据层/策略层/报告层可用；回测层可运行；AI 层和 Agent 层为实验模块。
 
 ---
 
@@ -12,13 +14,13 @@
 ┌─────────────────────────────────────────────────────┐
 │                    main.py (总调度)                   │
 ├─────────────────────────────────────────────────────┤
-│  报告层 │ reports/         Markdown/JSON 报告生成     │
-│  实盘层 │ paper_trading/   模拟盘 + 实盘接口预留       │
-│  Agent层│ agent/           MCP桥接 + LLM 分析         │
-│  AI层   │ ai_models/       微软 qlib 机器学习选股      │
-│  回测层 │ backtest/        backtrader A股适配         │
-│  策略层 │ strategies/      a-share-skill 策略调度     │
-│  数据层 │ data/            akshare 全维度数据         │
+│  报告层 │ reports/         ✅ Markdown/JSON 报告生成   │
+│  实盘层 │ paper_trading/   ✅ 模拟盘引擎 (v0.1)       │
+│  Agent层│ agent/           ⚠️  桥接器可用,需 API Key   │
+│  AI层   │ ai_models/       🧪 qlib experimental      │
+│  回测层 │ backtest/        ✅ backtrader A股适配      │
+│  策略层 │ strategies/      ✅ Skill 注册+自动扫描     │
+│  数据层 │ data/            ✅ akshare 全维度数据       │
 ├─────────────────────────────────────────────────────┤
 │  配置层 │ config/          全局参数集中管理            │
 └─────────────────────────────────────────────────────┘
@@ -28,92 +30,58 @@
 
 ```
 a-share-selection-system/
-├── main.py                  # 主入口，支持子命令
+├── main.py                  # 主入口（支持子命令）
 ├── scripts/pipeline.py      # 一键运行脚本
-├── config/                  # 配置层
-│   └── settings.py          # 全局配置（dataclass）
-├── data/                    # 数据层
-│   └── fetcher.py           # akshare 封装（行情/财务/资金流/技术指标）
-├── strategies/              # 策略层
-│   └── registry.py          # a-share-skill 策略注册与调度
-├── backtest/                # 回测层
-│   └── engine.py            # backtrader A股回测引擎（T+1/手续费/印花税）
-├── ai_models/               # AI/ML 层
-│   └── qlib_runner.py       # 微软 qlib 集成（因子工程+LightGBM训练）
-├── agent/                   # Agent 层
-│   └── bridge.py            # MCP桥接 + DeepSeek LLM 分析
-├── paper_trading/           # 模拟交易层
-│   └── engine.py            # A股模拟盘引擎（100股/T+1/涨跌停）
-└── reports/                 # 报告层
-    └── generator.py         # Markdown/JSON 报告生成
+├── config/settings.py       # 全局配置
+├── data/fetcher.py          # akshare 封装
+├── strategies/registry.py   # Skill 注册调度
+├── backtest/engine.py       # backtrader 回测引擎
+├── ai_models/qlib_runner.py # qlib (experimental)
+├── agent/bridge.py          # MCP + LLM 桥接
+├── paper_trading/engine.py  # 模拟盘引擎
+└── reports/generator.py     # 报告生成
 ```
 
 ## 🚀 快速开始
 
 ### 1. 安装依赖
-
 ```bash
 pip install -r requirements.txt
 ```
 
-核心依赖：`akshare` `backtrader` `pyqlib` `pandas` `numpy` `matplotlib` `requests` `loguru`
-
 ### 2. 安装 Skill
-
 ```bash
-# 克隆 a-share-skill
 cd /tmp && git clone https://github.com/shouldnotappearcalm/a-share-skill.git
-
-# 安装到 Agent skills 目录
 cp -R /tmp/a-share-skill/a-share-data ~/.agents/skills/
 cp -R /tmp/a-share-skill/a-share-paper-trading ~/.agents/skills/
 cp -R /tmp/a-share-skill/a-share-strategy-mainboard-multi-swing-defensive ~/.agents/skills/
 cp -R /tmp/a-share-skill/macd-trend-resonance-stock-picker ~/.agents/skills/
 cp -R /tmp/a-share-skill/macd-second-golden-cross ~/.agents/skills/
-cp -R /tmp/a-share-skill/tuige-shortline-trading ~/.agents/skills/
 ```
 
 ### 3. 配置环境变量
-
 ```bash
 cp .env.example .env
-# 编辑 .env 填入 DeepSeek API Key
-```
-
-### 4. （可选）下载 qlib 数据
-
-```bash
-python -m qlib.cli.data qlib_data --target_dir ~/.qlib/qlib_data/cn_data --region cn
+# 编辑 .env 填入 DeepSeek API Key（Agent 层需要）
 ```
 
 ## 📖 使用
 
 ```bash
-# 一键全流程检查
+# 模块检查（PASS/FAIL 表）
 python main.py pipeline
 
-# 查看实时行情
-python main.py fetch --type quote --symbols 000001,600519
+# 数据获取
+python main.py fetch --type kline --symbols 600519,000001,300750 --start 2024-01-01
 
-# 查看全市场概况
-python main.py fetch --type market
-
-# 列出已注册策略
+# 策略管理
 python main.py strategy
-
-# 执行全部策略
 python main.py strategy --run
 
-# 运行回测（000001 双均线策略）
+# 回测
 python main.py backtest --symbol 000001
 
-# AI 选股（需要 qlib 数据）
-python main.py ai
-
-# Agent 分析某只股票
-python main.py agent --analyze 600519
-
-# 查看模拟账户
+# 模拟交易
 python main.py paper-trading
 
 # 生成报告
@@ -122,14 +90,20 @@ python main.py report
 
 ## 🔗 集成项目
 
-| 层级 | 项目 | 作用 |
+| 层级 | 项目 | 状态 |
 |------|------|------|
-| 数据 | [akshare](https://github.com/akfamily/akshare) | A 股全维度数据接口 |
-| 策略 | [a-share-skill](https://github.com/shouldnotappearcalm/a-share-skill) | 6 套选股策略 Skill |
-| 回测 | [backtrader](https://github.com/mementum/backtrader) | Python 事件驱动回测 |
-| AI | [qlib](https://github.com/microsoft/qlib) + [RD-Agent](https://github.com/microsoft/RD-Agent) | 微软 AI 量化平台 |
-| Agent | [mcp-cn-a-stock](https://github.com/elsejj/mcp-cn-a-stock) | A 股 MCP 数据服务 |
-| Agent | DeepSeek API | LLM 分析与报告生成 |
+| 数据 | [akshare](https://github.com/akfamily/akshare) | ✅ 已集成 |
+| 策略 | [a-share-skill](https://github.com/shouldnotappearcalm/a-share-skill) | ✅ 3 个 Skill 已注册 |
+| 回测 | [backtrader](https://github.com/mementum/backtrader) | ✅ A 股适配完成 |
+| AI | [qlib](https://github.com/microsoft/qlib) | 🧪 experimental |
+| Agent | [mcp-cn-a-stock](https://github.com/elsejj/mcp-cn-a-stock) | ⚠️  需 API Key |
+| 报告 | 内置 | ✅ 可用 |
+
+## 🧪 实验模块
+
+以下模块代码已写但未真实跑通，标记为 experimental：
+- `ai_models/qlib_runner.py` — 需先下载 qlib 数据
+- `agent/bridge.py` — 需配置 DeepSeek API Key 和 MCP 服务地址
 
 ## ⚠️ 免责声明
 
