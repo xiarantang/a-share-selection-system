@@ -23,6 +23,9 @@ matplotlib>=3.7.0
 # --- Agent 集成 ---
 requests>=2.31.0
 
+# --- 可视化 ---
+streamlit>=1.28.0
+
 # --- 工具 ---
 python-dotenv>=1.0.0
 pyyaml>=6.0

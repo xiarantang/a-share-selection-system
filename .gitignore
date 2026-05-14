@@ -25,6 +25,9 @@ paper_trading/accounts.json
 .idea/
 *.swp
 
+# pip 残留
+=*
+
 # macOS
 .DS_Store
 
