@@ -39,7 +39,7 @@ fi
 
 # ---- 3. 安装/更新依赖 ----
 echo "⏳ 检查依赖..."
-.venv/bin/pip install -r requirements.txt -q 2>&1 | tail -1
+.venv/bin/pip install -r requirements-ui.txt -q 2>&1 | tail -1
 echo "✅ 依赖就绪"
 
 # ---- 4. 检查 Skill fallback（非阻塞，只提示） ----

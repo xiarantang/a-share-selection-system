@@ -34,8 +34,9 @@
 | docs | `21eece8` | 产品目标文档化 |
 | P6.0 | `5983451` | Streamlit 本地 UI 第一版 |
 | P6.0收尾 | `f8f8fb9` | README小白启动方式/.venv入口/架构更新 |
+| P6.1 | `87a30f6` | 一键启动脚本/状态交接/README完善 |
 
-- 最新 commit: `f8f8fb9`
+- 最新 commit: `87a30f6`
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 
@@ -46,14 +47,13 @@
 - ✅ 验证：validate + backtest-validate + report
 - ✅ 可视化：Streamlit 本地 UI，小白一键选股/验证/复盘/报告
 - ✅ Pipeline：PASS/FAIL退-出码可信
-- 🧪 AI/qlib：experimental
+- 🧪 AI/qlib：experimental（未来 P8 阶段，不参与当前小白启动）
 
-## 4. 下一阶段 P6.1 / P7
+## 4. 下一阶段 P7
 
-P6.1 小白一键启动与状态交接修复（当前）。
 P7 产品化打磨：界面优化、错误提示、数据覆盖可视化。
 见 NEXT_PROMPT.md。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / requirements-ui.txt
