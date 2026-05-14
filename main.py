@@ -25,6 +25,7 @@ from paper_trading.engine import PaperTradingEngine
 from reports.generator import ReportGenerator
 from strategies.selection import SelectionEngine
 from data.universe import get_universe, lookup_meta
+from validation.selection_validator import validate_selection
 
 
 def cmd_fetch(args):
@@ -269,6 +270,7 @@ def cmd_select(args):
         "stats": dict(stats, **{k: meta[k] for k in ["universe_requested","universe_source","is_fallback","fallback_reason"]}),
         "top": top_results,
         "all": all_results,
+        "validation": validate_selection({"all": all_results, "top": top_results, "universe": meta, "stats": dict(stats, **{k: meta[k] for k in ["universe_requested","universe_source","is_fallback","fallback_reason"]})}),
     }
     with open(json_path, "w") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
@@ -280,6 +282,36 @@ def cmd_select(args):
     shutil.copy(csv_path, os.path.join("reports", "output", "selection_latest.csv"))
 
     return 0 if stats["success"] > 0 else 1
+
+
+def cmd_validate(args):
+    """验证选股结果质量，不预测收益。"""
+    import json
+    sel_path = getattr(args, 'selection', None) or os.path.join("reports", "output", "selection_latest.json")
+    if not os.path.exists(sel_path):
+        logger.info(f"❌ selection文件不存在: {sel_path}")
+        return 1
+    with open(sel_path) as f:
+        data = json.load(f)
+    v = validate_selection(data)
+    if not v:
+        logger.info("❌ 验证失败：无数据")
+        return 1
+    logger.info("="*50)
+    logger.info("验证摘要（非收益预测）")
+    logger.info(f"  overall_quality: {v['overall_quality']}")
+    logger.info(f"  total={v['total_count']} success={v['success_count']}")
+    logger.info(f"  coverage_warning_ratio: {v['coverage_warning_ratio']}")
+    logger.info(f"  confidence_dist: {v['confidence_dist']}")
+    logger.info(f"  decision_dist: {v['decision_dist']}")
+    logger.info(f"  risk_level_dist: {v['risk_level_dist']}")
+    logger.info(f"  sector_dist(top5): {dict(list(v['sector_dist'].items())[:5])}")
+    logger.info(f"  avg_score: {v['avg_score']} top_score: {v['top_score']}")
+    if v['warnings']:
+        for w in v['warnings']:
+            logger.info(f"  ⚠️  {w}")
+    logger.info("="*50)
+    return 0 if v['overall_quality'] != "poor" else 1
 
 
 def cmd_report(args):
@@ -529,6 +561,10 @@ def main():
     p_select.add_argument("--top", type=int, default=10, help="输出 Top N")
     p_select.add_argument("--start", default="2024-01-01", help="起始日期")
     p_select.set_defaults(func=cmd_select)
+
+    p_validate = sub.add_parser("validate", help="验证选股结果质量")
+    p_validate.add_argument("--selection", help="selection JSON路径")
+    p_validate.set_defaults(func=cmd_validate)
 
     p_selfcheck = sub.add_parser("selfcheck", help="数据源自检")
     p_selfcheck.add_argument("--symbols", help="股票代码，逗号分隔")

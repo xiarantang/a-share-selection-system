@@ -52,6 +52,22 @@ class ReportGenerator:
                 lines.append(f"- {emoji} **{symbol}** {name} | 评分:{score} | {action}")
             lines.append("")
 
+        # 验证摘要
+        v = (selection_data or {}).get("validation")
+        if v:
+            lines.extend(["", "---", "", "## 📋 验证摘要（非收益预测）", ""])
+            lines.append(f"- 整体质量: {v.get('overall_quality','?')}")
+            lines.append(f"- 覆盖不足率: {v.get('coverage_warning_ratio','?')}")
+            lines.append(f"- 置信度分布: {v.get('confidence_dist',{})}")
+            lines.append(f"- 决策分布: {v.get('decision_dist',{})}")
+            lines.append(f"- 风险分布: {v.get('risk_level_dist',{})}")
+            sd5 = dict(list((v.get('sector_dist') or {}).items())[:5])
+            lines.append(f"- 行业分布(top5): {sd5}")
+            if v.get('warnings'):
+                for w in v['warnings']:
+                    lines.append(f"- ⚠️ {w}")
+            lines.append("")
+
         # 选股结果
         candidates = (selection_data or {}).get("top") or (selection_data or {}).get("results", [])
         if candidates:

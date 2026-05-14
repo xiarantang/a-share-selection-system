@@ -23,9 +23,9 @@
 | P4.2 | `ed9f8fb` | README/report统计/selection参数化/版本统一 |
 | P4.3 | `4f69bd2` | report失败退出/产物时间戳/latest文件/v0.4 |
 | P5.1 | `cc61377` | 多因子评分(6组100分)/decision/risk_level |
-| P5.2 | *(current)* | coverage降权/confidence/决策联动 |
+| P5.2 | `b197370` | coverage降权/confidence/决策联动 |
 
-- 最新 commit: *(P5.2 in progress)*
+- 最新 commit: `b197370`
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 

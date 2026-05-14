@@ -53,6 +53,13 @@ python3 main.py select --universe top_amount --limit 50 --top 10 --start 2024-01
 python3 main.py select --symbols 600519,000001,300750 --top 3
 ```
 
+### 验证结果
+
+```bash
+python3 main.py validate
+python3 main.py validate --selection reports/output/selection_latest.json
+```
+
 ### 生成报告
 
 ```bash
@@ -79,6 +86,8 @@ python3 main.py paper-trading          # 模拟交易
 
 当前为**规则因子评分模型**（非机器学习预测）。满分 100，分 6 组：
 
+当前为**规则因子评分模型**（非机器学习预测）。满分 100，分 6 组：
+
 | 因子组 | 满分 | 说明 |
 |--------|------|------|
 | data_quality | 10 | 数据条数、覆盖完整性 |
@@ -90,7 +99,7 @@ python3 main.py paper-trading          # 模拟交易
 
 **决策标签**：strong_watch（强观察）→ watch（观察）→ neutral（中性）→ avoid（回避）
 **风险等级**：low / medium / high
-**置信度**：high / medium / low。coverage_warning 或 rows<120 时会降低；若覆盖不足，strong_watch 自动降级。
+**置信度**：high / medium / low。coverage_warning 或 rows<120 时会降低 data_quality 和 confidence；若 confidence=low 或 data_quality 过低，decision 会被下调；若仍为 strong_watch，报告必须提示覆盖不足风险。
 
 ## 🏗️ 架构
 
