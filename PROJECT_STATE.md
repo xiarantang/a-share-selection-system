@@ -35,8 +35,9 @@
 | P6.0 | `5983451` | Streamlit 本地 UI 第一版 |
 | P6.0收尾 | `f8f8fb9` | README小白启动方式/.venv入口/架构更新 |
 | P6.1 | `87a30f6` | 一键启动脚本/状态交接/README完善 |
+| P6.1.1 | `72e0185` | 轻量依赖/状态同步/README入口优化 |
 
-- 最新 commit: `87a30f6`
+- 最新 commit: `72e0185`
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 
@@ -51,7 +52,11 @@
 
 ## 4. 下一阶段 P7
 
-P7 产品化打磨：界面优化、错误提示、数据覆盖可视化。
+P7 产品化打磨：
+1. 界面体验优化
+2. 错误提示友好化
+3. 数据覆盖可视化
+
 见 NEXT_PROMPT.md。
 
 ## 5. 关键文件
