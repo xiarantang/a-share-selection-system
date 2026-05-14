@@ -24,7 +24,7 @@ from agent.bridge import AgentBridge
 from paper_trading.engine import PaperTradingEngine
 from reports.generator import ReportGenerator
 from strategies.selection import SelectionEngine
-from data.universe import get_universe
+from data.universe import get_universe, lookup_meta
 
 
 def cmd_fetch(args):
@@ -165,86 +165,107 @@ def cmd_paper_trading(args):
         logger.info(f"✅ 账户 {summary['account_id']}: 总资产 {summary['total_value']}, 现金 {summary['cash']}")
 
 
+def cmd_universe(args):
+    """显示股票池信息"""
+    universe = getattr(args, 'universe', None) or "static"
+    limit = int(getattr(args, 'limit', 50) or 50)
+    symbols, meta = get_universe(universe, limit=limit)
+
+    logger.info(f"股票池: requested={meta['universe_requested']} source={meta['universe_source']} "
+                f"fallback={meta['is_fallback']} count={meta['count']}")
+    if meta["is_fallback"]:
+        logger.info(f"  fallback原因: {meta['fallback_reason']}")
+
+    for i, s in enumerate(symbols[:min(20, len(symbols))]):
+        info = lookup_meta(s) or {}
+        logger.info(f"  {i+1:3d}. {s}  {info.get('name',''):8s}  {info.get('sector','')}")
+
+    if len(symbols) > 20:
+        logger.info(f"  ... 共 {len(symbols)} 只")
+    return 0
+
+
 def cmd_select(args):
     """批量选股：支持 universe 参数扩大股票池"""
     import csv, json
 
-    # 获取股票池
     req_start = getattr(args, 'start', None) or "2024-01-01"
-    universe = getattr(args, 'universe', None) or "sample"
+    universe = getattr(args, 'universe', None) or "static"
     limit = int(getattr(args, 'limit', 50) or 50)
     top = int(getattr(args, 'top', 10) or 10)
     manual_symbols = args.symbols.split(",") if getattr(args, 'symbols', None) else None
 
     if manual_symbols:
-        symbols, universe_src = get_universe("manual", limit=limit, symbols=manual_symbols)
+        symbols, meta = get_universe("manual", limit=limit, symbols=manual_symbols)
     else:
-        symbols, universe_src = get_universe(universe, limit=limit)
+        symbols, meta = get_universe(universe, limit=limit)
 
     os.makedirs("reports/output", exist_ok=True)
 
-    # 批量选股
     engine = SelectionEngine()
     all_results = engine.select(symbols, start_date=req_start)
 
-    # 统计
+    # 注入 name/sector
+    for r in all_results:
+        info = lookup_meta(r["symbol"])
+        r["name"] = info.get("name", "")
+        r["sector"] = info.get("sector", "")
+
+    # 覆盖检查
+    for r in all_results:
+        if not r.get("error") and r.get("actual_start", "N/A") > req_start[:10]:
+            r["coverage_warning"] = True
+
     stats = {"total": len(symbols), "success": 0, "failed": 0, "source_dist": {}}
     for r in all_results:
         if r.get("error"):
             stats["failed"] += 1
         else:
             stats["success"] += 1
-            # coverage check
-            if r.get("actual_start", "N/A") > req_start[:10]:
-                r["coverage_warning"] = True
-            # source distribution
             src = r.get("data_source", "unknown")
             stats["source_dist"][src] = stats["source_dist"].get(src, 0) + 1
 
-    # Top N
     top_results = [r for r in all_results if not r.get("error")][:top]
 
-    logger.info(f"选股统计: universe={universe_src}, total={stats['total']}, "
-                f"success={stats['success']}, failed={stats['failed']}, "
+    logger.info(f"选股统计: requested={meta['universe_requested']} source={meta['universe_source']} "
+                f"fallback={meta['is_fallback']} | "
+                f"total={stats['total']} success={stats['success']} failed={stats['failed']} "
                 f"sources={stats['source_dist']}")
     logger.info(f"Top {top} 候选:")
     for r in top_results:
         cov = " ⚠️" if r.get("coverage_warning") else ""
-        logger.info(f"  #{r['rank']} {r['symbol']}: {r['score']}/100 | {r['latest_close']} | "
-                    f"{r['data_source']} | {r['rows']}行{cov}")
+        logger.info(f"  #{r['rank']} {r['symbol']} {r.get('name','')} [{r.get('sector','')}]: "
+                    f"{r['score']}/100 | {r['latest_close']} | {r['data_source']} | {r['rows']}行{cov}")
 
-    # 保存 CSV
     date_str = datetime.now().strftime("%Y%m%d")
     csv_path = os.path.join("reports", "output", f"selection_{date_str}.csv")
-    csv_fields = ["rank","symbol","score","latest_close","data_source","rows",
-                  "requested_start","actual_start","actual_end","coverage_warning"]
+    csv_fields = ["rank","symbol","name","sector","score","latest_close","data_source","rows",
+                  "requested_start","actual_start","actual_end","coverage_warning",
+                  "universe_source","is_fallback"]
     with open(csv_path, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=csv_fields)
         w.writeheader()
         for r in all_results:
             row = {k: r.get(k, "") for k in csv_fields}
             row["requested_start"] = req_start
+            row["universe_source"] = meta["universe_source"]
+            row["is_fallback"] = meta["is_fallback"]
             w.writerow(row)
-    logger.info(f"CSV已保存: {csv_path}")
+    logger.info(f"CSV: {csv_path}")
 
-    # 保存 JSON
     json_path = os.path.join("reports", "output", f"selection_{date_str}.json")
     payload = {
         "generated_at": datetime.now().isoformat(),
-        "universe": universe_src,
-        "requested_start": req_start,
-        "stats": stats,
+        "universe": meta,
+        "stats": dict(stats, **{k: meta[k] for k in ["universe_requested","universe_source","is_fallback","fallback_reason"]}),
         "top": top_results,
         "all": all_results,
     }
     with open(json_path, "w") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
-    logger.info(f"JSON已保存: {json_path}")
+    logger.info(f"JSON: {json_path}")
 
-    if stats["success"] == 0:
-        logger.info("❌ 选股失败: 所有股票数据获取失败")
-        return 1
-    return 0
+    return 0 if stats["success"] > 0 else 1
 
 
 def cmd_report(args):
@@ -468,9 +489,14 @@ def main():
     p_report.add_argument("--date")
     p_report.set_defaults(func=cmd_report)
 
+    p_universe = sub.add_parser("universe", help="查看股票池")
+    p_universe.add_argument("--universe", choices=["static","hs300","top_amount","sample"], default="static", help="股票池类型")
+    p_universe.add_argument("--limit", type=int, default=50, help="上限")
+    p_universe.set_defaults(func=cmd_universe)
+
     p_select = sub.add_parser("select", help="批量选股")
     p_select.add_argument("--symbols", help="股票代码，逗号分隔(manual模式)")
-    p_select.add_argument("--universe", choices=["sample","hs300","top_amount","manual"], default="sample", help="股票池类型")
+    p_select.add_argument("--universe", choices=["static","sample","hs300","top_amount","manual"], default="static", help="股票池类型")
     p_select.add_argument("--limit", type=int, default=50, help="股票池上限")
     p_select.add_argument("--top", type=int, default=10, help="输出 Top N")
     p_select.add_argument("--start", default="2024-01-01", help="起始日期")

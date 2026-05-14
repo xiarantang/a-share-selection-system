@@ -44,19 +44,12 @@ class ReportGenerator:
 
         # 市场数据
         ms = market_summary
-        lines.append(f"- 上涨家数: {ms.get('up_count', 'N/A')}")
-        lines.append(f"- 下跌家数: {ms.get('down_count', 'N/A')}")
-        lines.append(f"- 涨停家数: {ms.get('limit_up_count', 'N/A')}")
-        lines.append(f"- 跌停家数: {ms.get('limit_down_count', 'N/A')}")
-        lines.append(f"- 成交额: {ms.get('total_amount', 'N/A')} 亿")
-        lines.append(f"- 北向资金: {ms.get('north_flow', 'N/A')} 亿")
+        if ms.get("up_count") is not None:
+            lines.append(f"- 上涨家数: {ms.get('up_count', 'N/A')}")
+            lines.append(f"- 下跌家数: {ms.get('down_count', 'N/A')}")
+        else:
+            lines.append("> 市场概况数据源不可用，本次报告仅基于个股K线评分")
 
-        # 热门板块
-        if ms.get("hot_sectors"):
-            lines.append("")
-            lines.append("### 热门板块")
-            for s in ms["hot_sectors"][:5]:
-                lines.append(f"- {s.get('name', '')} ({s.get('pct_change', 0):+.2f}%)")
 
         lines.extend(["", "---", "", "## 🎯 策略信号", ""])
 
@@ -81,17 +74,18 @@ class ReportGenerator:
         candidates = selection_data.get("top") or selection_data.get("results", [])
         if candidates:
             # 股票池统计
-            uni = selection_data.get("universe", "?")
-            stats = selection_data.get("stats", {})
-            req_start = selection_data.get("requested_start", "?")
-            lines.extend(["", "---", "", "## 🎯 批量选股结果", ""])
-            lines.append(f"- 股票池: {uni}")
-            lines.append(f"- 扫描: {stats.get('total','?')} 只 | 成功: {stats.get('success','?')} | 失败: {stats.get('failed','?')}")
-            lines.append(f"- 请求起始: {req_start}")
-            lines.append("")
+            uni = selection_data.get("universe", {})
+            if isinstance(uni, dict):
+                lines.extend(["", "---", "", "## 🎯 批量选股结果", ""])
+                lines.append(f"- 请求股票池: {uni.get('universe_requested','?')}")
+                lines.append(f"- 实际使用: {uni.get('universe_source','?')} {'(fallback: '+uni.get('fallback_reason','')+')' if uni.get('is_fallback') else ''}")
+            else:
+                lines.extend(["", "---", "", "## 🎯 批量选股结果", ""])
 
             for r in candidates[:5]:
                 sym = r.get("symbol", "?")
+                name = r.get("name", "")
+                sector = r.get("sector", "")
                 score = r.get("score", 0)
                 close = r.get("latest_close", "?")
                 src = r.get("data_source", "?")
@@ -101,7 +95,8 @@ class ReportGenerator:
                 reasons = ", ".join(r.get("reasons", [])[:3])
                 risks_text = ", ".join(r.get("risks", [])[:2])
                 cov_note = " ⚠️ 实际覆盖不全" if r.get("coverage_warning") else ""
-                lines.append(f"- #{r.get('rank','?')} **{sym}** 评分{score}/100 收盘{close}{cov_note}")
+                label = f"{sym} {name} [{sector}]" if name else sym
+                lines.append(f"- #{r.get('rank','?')} **{label}** 评分{score}/100 收盘{close}{cov_note}")
                 lines.append(f"  > 理由: {reasons}")
                 if risks_text:
                     lines.append(f"  > 风险: {risks_text}")
