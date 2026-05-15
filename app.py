@@ -470,8 +470,8 @@ if st.session_state.selection_data is not None:
         cov_cols[1].metric("最少K线", cov["min_rows"])
         cov_cols[2].metric("最多K线", cov["max_rows"])
         cov_cols[3].metric("平均K线", cov["avg_rows"])
-        cov_cols[4].metric("覆盖不全", f"{cov['coverage_warn_count']}/{cov['total_success']}只",
-                           delta="⚠️" if cov["coverage_warn_count"] > cov["total_success"]//2 else None)
+        cov_cols[4].metric("覆盖不全", f"{cov['coverage_warn_count']}/{cov['total_success']}只"
+                           + (" ⚠️" if cov["coverage_warn_count"] > cov["total_success"]//2 else ""))
 
     # 纯文本数据覆盖摘要（便于验收检测，放在 Tab 外确保渲染）
     st.info(
@@ -494,7 +494,8 @@ if st.session_state.selection_data is not None:
         st.markdown("---")
         st.markdown(f"### {quality_icon} 验证摘要：{quality_label}")
         col_v1, col_v2, col_v3, col_v4, col_v5 = st.columns(5)
-        col_v1.metric("整体质量", quality)
+        quality_short = {"good": "🟢 良好", "usable_with_caution": "🟡 需谨慎", "poor": "🔴 差"}.get(quality, quality)
+        col_v1.metric("整体质量", quality_short)
         col_v2.metric("平均评分", v.get("avg_score", "?"))
         col_v3.metric("覆盖不足率", f"{v.get('coverage_warning_ratio',0)*100:.0f}%")
         col_v4.metric("低置信度", f"{v.get('low_confidence_count','?')}/{v.get('total_count','?')}")

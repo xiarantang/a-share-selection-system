@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-15
+> 最后更新：2026-05-16
 
 ## 1. 项目总目标
 
@@ -49,8 +49,10 @@
 | P7.4文档 | `6a8539b` | 同步P7.4交付状态 |
 | P7.5 | `e6e01d0` | 小白首次体验：三步最快启动/就绪状态/友好提示 |
 | P7.5文档 | `1662739` | 同步P7.5交付状态 |
+| P7.6 | `b60b1a1` | 真实浏览器验收：截图留证/首页结果页双截图 |
+| P7.6 final | _待commit_ | 最终验收截图/UI文案修正/CLI全链路/状态同步 |
 
-- 最新已记录交付 commit: `1662739`
+- 最新已记录交付 commit: `b60b1a1` (P7.6)，当前待 commit P7.6 final
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
@@ -61,25 +63,22 @@
 - ✅ 选股：6因子评分 + decision/risk_level/confidence
 - ✅ 验证：validate + backtest-validate + report
 - ✅ 可视化：Streamlit 本地 UI，四步引导/三步最快启动/就绪状态/错误提示友好化/数据覆盖可视化/验证摘要外置/首次使用检查
-- ✅ Pipeline：PASS/FAIL退-出码可信
+- ✅ Pipeline：PASS/FAIL退出码可信
 - 🧪 AI/qlib：experimental（未来 P8 阶段，不参与当前小白启动）
 
-## 4. 当前阶段 P7.5
+## 4. 当前阶段 P7.6（已完成）
 
-P7.5 小白首次体验：
-1. 数据源说明：akshare 不稳定时说明系统仍会使用 skill_fallback
-2. 等待体验：默认 static + 10 只，提示 30-60 秒
-3. 覆盖解释：coverage_warning 用白话解释为数据较短、已自动降置信度
-4. 首次安装：提供 `scripts/install_fallback.command`
-5. 首页流程：四步引导，未安装备用数据通道时显示首次安装说明
-6. 验证外置：选股完成后，关键质量指标直接显示在 Tab 外
-7. 首次检查区：显示 Python、备用数据通道、本地缓存、最近选股结果
-8. 最快启动：README 顶部提供安装备用数据通道 -> 双击启动 -> 点击开始选股三步路径
-9. 就绪状态：首页明确显示“可以开始选股”或“需要先安装备用数据通道”
-10. 启动友好提示：`start_ui.command` 分步显示检测、安装、启动、端口占用和下一步操作
+P7.6 真实浏览器验收和截图留证：
+1. 启动 Streamlit UI，Playwright + Chrome headless 真实浏览器打开页面
+2. 首页截图留证：三步引导、四步流程、首次使用检查、就绪状态、免责声明
+3. 点击「开始选股」后截图结果页：选股完成提示、候选表格、数据覆盖摘要、验证摘要（Tab外）、逐只详情
+4. 结果页确认：候选表格、数据覆盖提示、验证摘要均直接可见（无需切换 Tab）
+5. UI 文案修正：「整体质量」metric 从英文改为中文（🟢良好/🟡需谨慎/🔴差），覆盖不全 metric 去掉误导性 delta
+6. CLI 全链路：语法检查 8/8 → select EXIT:0 → backtest-validate EXIT:0 → report EXIT:0
+7. 验收报告更新：docs/UI_ACCEPTANCE_RESULT.md 记录截图路径、通过项、修正项、仍待优化项
 
-见 NEXT_PROMPT.md、docs/UI_ACCEPTANCE.md、docs/MANUAL_UI_CHECKLIST.md。
+见 NEXT_PROMPT.md、docs/UI_ACCEPTANCE_RESULT.md。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / requirements-ui.txt / docs/UI_ACCEPTANCE.md / docs/UI_ACCEPTANCE_RESULT.md / docs/MANUAL_UI_CHECKLIST.md
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / requirements-ui.txt / docs/UI_ACCEPTANCE_RESULT.md / docs/MANUAL_UI_CHECKLIST.md
