@@ -52,9 +52,9 @@
 | P7.6 | `b60b1a1` | 真实浏览器验收：截图留证/首页结果页双截图 |
 | P7.6 final | `7359a4a` | 最终验收截图/UI文案修正/CLI全链路/状态同步 |
 | P7.6文档 | `d23f56d` | 修正P7.6验收状态记录 |
-| P7.7 | _待commit_ | 验收证据持久化/小白交付包/截图脚本/USER_GUIDE/状态同步 |
+| P7.7 | `ab10af7` | 验收证据持久化/小白交付包/截图脚本/USER_GUIDE/状态同步 |
 
-- 最新已记录交付 commit: `d23f56d`，当前待 commit P7.7
+- 最新已记录交付 commit: `ab10af7`
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
