@@ -43,26 +43,29 @@
 | P7.1.1 | `28e7061` | 真实浏览器验收/端口友好处理/验收结果修正 |
 | P7.1.2 | `bd86585` | 最终结果页截图/状态同步/覆盖提示强化 |
 | P7.1.3 | `609f7f3` | 收口P7.1.2状态与UI验收说明 |
+| P7.2 | `7efd25c` | MVP点击流检查/使用阻塞记录/状态同步 |
 
-- 最新 commit: `609f7f3`
+- 最新已记录交付 commit: `7efd25c`
+- 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 
 ## 3. 真实能力
 
-- ✅ 数据：akshare+fallback+缓存 | 股票池：static 55只
+- ✅ 数据：akshare+skill_fallback+缓存；当前小白体验以 skill_fallback 为主要可用通道 | 股票池：static 55只
 - ✅ 选股：6因子评分 + decision/risk_level/confidence
 - ✅ 验证：validate + backtest-validate + report
 - ✅ 可视化：Streamlit 本地 UI，三步引导/错误提示友好化/数据覆盖可视化
 - ✅ Pipeline：PASS/FAIL退-出码可信
 - 🧪 AI/qlib：experimental（未来 P8 阶段，不参与当前小白启动）
 
-## 4. 下一阶段 P7（继续）
+## 4. 当前阶段 P7.3
 
-P7 产品化打磨后续：
-1. 界面体验优化
-2. 错误提示友好化
-3. 数据覆盖可视化
+P7.3 小白阻塞修复：
+1. 数据源说明：akshare 不稳定时说明系统仍会使用 skill_fallback
+2. 等待体验：默认 static + 10 只，提示 30-60 秒
+3. 覆盖解释：coverage_warning 用白话解释为数据较短、已自动降置信度
+4. 首次安装：提供 `scripts/install_fallback.command`
 
 见 NEXT_PROMPT.md、docs/UI_ACCEPTANCE.md、docs/MANUAL_UI_CHECKLIST.md。
 

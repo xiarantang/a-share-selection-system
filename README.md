@@ -30,9 +30,10 @@
 1. 检测 Python3 → 创建虚拟环境 → 安装轻量依赖 → 启动 Streamlit
 2. 浏览器打开 **http://localhost:8501**
 
-首次使用前需要安装数据 fallback（下方 Skill 安装），否则数据可能拉取失败。
+首次使用前建议先双击 **`scripts/install_fallback.command`** 安装 A 股备用数据通道。  
+说明：`akshare` 在部分网络环境下可能临时失败，系统会自动使用备用数据通道继续出结果；这不代表系统坏了。
 
-左侧栏选择股票池和参数，点击「🚀 开始选股」即可。选股完成后可切换 Tab 查看候选表格、验证摘要、历史复盘和完整报告。
+左侧栏选择股票池和参数，点击「🚀 开始选股」即可。首次体验建议保持默认 **static + 10 只**，通常需要 **30-60 秒**。选股完成后可切换 Tab 查看候选表格、验证摘要、历史复盘和完整报告。
 
 ### 🔧 开发者启动（命令行）
 
@@ -44,7 +45,17 @@ pip install -r requirements.txt        # 完整依赖（含回测/AI）
 .venv/bin/streamlit run app.py
 ```
 
-### Skill 安装（数据 fallback）
+### 小白首次安装数据通道（推荐）
+
+双击：
+
+```bash
+scripts/install_fallback.command
+```
+
+它会自动安装 A 股备用数据通道。安装完成后，再双击 `start_ui.command` 启动系统。
+
+### Skill 手动安装（数据 fallback）
 
 ```bash
 cd /tmp && git clone https://github.com/shouldnotappearcalm/a-share-skill.git
@@ -114,10 +125,16 @@ python3 main.py paper-trading          # 模拟交易
 ## ❓ 常见问题
 
 **Q: 启动后选股没有数据怎么办？**
-A: 首次使用需要安装数据 fallback。详见上方「Skill 安装」章节。安装后重新点击「开始选股」即可。
+A: 首次使用需要安装 A 股备用数据通道。优先双击 `scripts/install_fallback.command`，安装后重新点击「开始选股」即可。
+
+**Q: akshare 失败是不是系统坏了？**
+A: 不是。`akshare` 受网络和接口状态影响，失败很常见。当前系统会自动使用 A 股备用数据通道 `skill_fallback`，只要能看到候选表格，就是正常运行。
+
+**Q: 开始选股后要等多久？**
+A: 默认扫描 10 只股票通常需要 30-60 秒。数量越多等待越久。首次体验建议保持默认 static + 10 只。
 
 **Q: 选股结果都带"⚠️ 覆盖不全"标志？**
-A: 正常现象。当前 fallback 数据约 120 条 K 线（~6 个月），请求 2024-01-01 会触发 coverage_warning。模型已自动下调 data_quality 评分和 confidence 置信度，不影响使用。
+A: 正常现象。当前备用数据通道约 120 条 K 线（约 6 个月），请求 2024-01-01 会触发 coverage_warning。模型已自动下调 data_quality 评分和 confidence 置信度；这不是报错，只表示结果更适合做研究观察。
 
 **Q: 如何更新数据？**
 A: 在界面左侧设置数据起始日期，重新点击「开始选股」即可。数据会自动缓存到 `data/cache/`。

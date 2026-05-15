@@ -26,6 +26,9 @@ from reports.generator import ReportGenerator
 from data.fetcher import AShareDataFetcher
 
 
+FALLBACK_SCRIPT = Path.home() / ".agents/skills/a-share-data/scripts/fetch_history_fallback.py"
+
+
 # ========== 页面配置 ==========
 st.set_page_config(
     page_title="A股智能选股系统",
@@ -294,6 +297,11 @@ def render_step_guide():
 st.title("🏦 A股智能选股系统")
 st.caption("三步完成选股 · 小白也能用 · 仅供研究学习，不构成投资建议")
 
+if FALLBACK_SCRIPT.exists():
+    st.info("📡 数据通道：当前主要使用 A 股备用数据通道（skill_fallback）。如果 akshare 临时不可用，系统仍可正常出结果。")
+else:
+    st.warning("⚠️ 缺少 A 股备用数据通道。首次使用请先运行 `scripts/install_fallback.command`，否则新数据可能拉取失败。")
+
 # ---- 左侧栏 ----
 with st.sidebar:
     st.header("⚙️ 选股参数")
@@ -306,9 +314,9 @@ with st.sidebar:
         help="static: 55只精选A股 | hs300: 沪深300成分股 | top_amount: 全市场成交额排序",
         label_visibility="collapsed",
     )
-    limit = st.slider("扫描数量", min_value=10, max_value=55, value=20, step=5,
-                      help="从股票池中取多少只来评分")
-    top = st.slider("展示数量", min_value=3, max_value=20, value=10, step=1,
+    limit = st.slider("扫描数量", min_value=10, max_value=55, value=10, step=5,
+                      help="首次体验建议保持 10 只，通常需要 30-60 秒。数量越多等待越久。")
+    top = st.slider("展示数量", min_value=3, max_value=20, value=5, step=1,
                     help="Top N 候选")
     start_date = st.date_input(
         "数据起始日期",
@@ -320,6 +328,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("**② 一键运行**")
+    st.caption("首次体验建议保持默认 static + 10 只，预计 30-60 秒。看到备用数据源提示不代表系统坏了。")
 
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
@@ -338,7 +347,7 @@ with st.sidebar:
 
 # ---- 主区域 ----
 if btn_select:
-    with st.spinner("⏳ 正在选股中，请稍候（拉取数据、计算评分…）..."):
+    with st.spinner("⏳ 正在选股中，通常需要 30-60 秒。正在拉取数据、计算评分，请不要关闭页面..."):
         try:
             data = run_selection(universe, limit, top, start_str)
             st.session_state.selection_data = data
@@ -358,12 +367,15 @@ if btn_select:
                 msg = f"✅ 选股完成！成功 {success_count}/{total_count} 只"
                 # 提示数据源情况
                 if source_dist.get("skill_fallback", 0) > 0 and "akshare" not in source_dist:
-                    msg += "。数据来自备用源（akshare 暂不可用），覆盖可能不全。"
+                    msg += "。当前使用 A 股备用数据通道，属于正常运行；数据覆盖可能不全，系统已自动下调置信度。"
                 elif source_dist.get("skill_fallback", 0) > 0:
-                    msg += "。部分数据来自备用源。"
+                    msg += "。部分数据来自 A 股备用数据通道。"
                 st.success(msg)
             else:
-                st.error(f"❌ 选股异常：{total_count} 只股票全部获取失败。请检查网络或稍后重试。")
+                st.error(
+                    f"❌ 选股异常：{total_count} 只股票全部获取失败。"
+                    "请先确认已安装 A 股备用数据通道：运行 `scripts/install_fallback.command`，然后重试。"
+                )
 
         except Exception as e:
             st.error(f"❌ 选股过程出错。可能原因：网络不通、数据接口临时故障。\n\n技术详情: {e}")
@@ -419,6 +431,11 @@ if st.session_state.selection_data is not None:
         f"| K线: {cov['min_rows']}-{cov['max_rows']} 条（平均 {cov['avg_rows']} 条）"
         f"| 覆盖不全: {cov['coverage_warn_count']}/{cov['total_success']} 只"
     )
+    if cov["coverage_warn_count"] > 0:
+        st.warning(
+            "覆盖不全不是报错：当前备用数据通道通常提供约 120 条 K 线。"
+            "系统会自动降低数据质量评分和置信度，结果仍可用于研究观察，但不应当直接作为买卖建议。"
+        )
 
     # Tab 切换
     tab1, tab2, tab3, tab4 = st.tabs(["🎯 候选表格", "📋 验证摘要", "📈 历史复盘", "📄 报告"])

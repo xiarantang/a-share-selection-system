@@ -46,9 +46,10 @@ echo "✅ 依赖就绪"
 FALLBACK_SCRIPT="$HOME/.agents/skills/a-share-data/scripts/fetch_history_fallback.py"
 if [ ! -f "$FALLBACK_SCRIPT" ]; then
     echo ""
-    echo "⚠️  数据 fallback 未安装（首次需要）。"
-    echo "   选股功能仍可使用本地缓存，但新数据可能无法拉取。"
-    echo "   安装方式请见 README.md 中的「Skill 安装」章节。"
+    echo "⚠️  缺少 A 股备用数据通道（首次使用需要安装）。"
+    echo "   如果 akshare 临时不可用，新数据可能拉取失败。"
+    echo "   推荐先运行：scripts/install_fallback.command"
+    echo "   安装后重新启动本系统即可。"
     echo ""
 fi
 
