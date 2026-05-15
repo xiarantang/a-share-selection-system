@@ -47,8 +47,9 @@
 | P7.3 | `307ac57` | 小白阻塞修复：数据通道和首次安装提示 |
 | P7.4 | `6ea0414` | 小白流程打磨：四步引导/验证外置/首次检查区 |
 | P7.4文档 | `6a8539b` | 同步P7.4交付状态 |
+| P7.5 | `e6e01d0` | 小白首次体验：三步最快启动/就绪状态/友好提示 |
 
-- 最新已记录交付 commit: `6a8539b`
+- 最新已记录交付 commit: `e6e01d0`
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
@@ -58,13 +59,13 @@
 - ✅ 数据：akshare+skill_fallback+缓存；当前小白体验以 skill_fallback 为主要可用通道 | 股票池：static 55只
 - ✅ 选股：6因子评分 + decision/risk_level/confidence
 - ✅ 验证：validate + backtest-validate + report
-- ✅ 可视化：Streamlit 本地 UI，四步引导/错误提示友好化/数据覆盖可视化/验证摘要外置/首次使用检查
+- ✅ 可视化：Streamlit 本地 UI，四步引导/三步最快启动/就绪状态/错误提示友好化/数据覆盖可视化/验证摘要外置/首次使用检查
 - ✅ Pipeline：PASS/FAIL退-出码可信
 - 🧪 AI/qlib：experimental（未来 P8 阶段，不参与当前小白启动）
 
-## 4. 当前阶段 P7.4
+## 4. 当前阶段 P7.5
 
-P7.4 小白流程打磨：
+P7.5 小白首次体验：
 1. 数据源说明：akshare 不稳定时说明系统仍会使用 skill_fallback
 2. 等待体验：默认 static + 10 只，提示 30-60 秒
 3. 覆盖解释：coverage_warning 用白话解释为数据较短、已自动降置信度
@@ -72,6 +73,9 @@ P7.4 小白流程打磨：
 5. 首页流程：四步引导，未安装备用数据通道时显示首次安装说明
 6. 验证外置：选股完成后，关键质量指标直接显示在 Tab 外
 7. 首次检查区：显示 Python、备用数据通道、本地缓存、最近选股结果
+8. 最快启动：README 顶部提供安装备用数据通道 -> 双击启动 -> 点击开始选股三步路径
+9. 就绪状态：首页明确显示“可以开始选股”或“需要先安装备用数据通道”
+10. 启动友好提示：`start_ui.command` 分步显示检测、安装、启动、端口占用和下一步操作
 
 见 NEXT_PROMPT.md、docs/UI_ACCEPTANCE.md、docs/MANUAL_UI_CHECKLIST.md。
 
