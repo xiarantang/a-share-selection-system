@@ -55,13 +55,15 @@
 | P7.7 | `ab10af7` | 验收证据持久化/小白交付包/截图脚本/USER_GUIDE/状态同步 |
 | P7.7文档 | `fbf2615` | 同步P7.7交付状态 |
 | P7.8 | `2d6f662` | 小白安装失败兜底/环境自检页/TROUBLESHOOTING/启动脚本强化 |
+| P7.8文档 | `7920621` | 同步P7.8交付状态 |
+| P7.9 | _待commit_ | 产品收口首页/v0.5发布准备/CHANGELOG/RELEASE_CHECKLIST |
 
-- 最新已记录交付 commit: `2d6f662`
+- 最新已记录交付 commit: `7920621`，当前待 commit P7.9 (v0.5发布准备)
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 
-## 3. 真实能力
+## 3. 真实能力 (v0.5)
 
 - ✅ 数据：akshare+skill_fallback+缓存；当前小白体验以 skill_fallback 为主要可用通道 | 股票池：static 55只
 - ✅ 选股：6因子评分 + decision/risk_level/confidence
@@ -69,21 +71,21 @@
 - ✅ 可视化：Streamlit 本地 UI，四步引导/三步最快启动/就绪状态/错误提示友好化/数据覆盖可视化/验证摘要外置/首次使用检查/环境自检/就绪判定
 - ✅ Pipeline：PASS/FAIL退出码可信
 - ✅ 排障：docs/TROUBLESHOOTING.md 覆盖常见 10 个小白问题
+- ✅ 发布：CHANGELOG.md / RELEASE_CHECKLIST.md / 产品首页含截图预览
 - 🧪 AI/qlib：experimental（未来 P8 阶段，不参与当前小白启动）
 
-## 4. 当前阶段 P7.8（已完成）
+## 4. 当前阶段 P7.9（已完成）
 
-P7.8 小白安装失败兜底 + 环境自检页：
-1. 强化 start_ui.command：Python缺失/虚拟环境创建失败/依赖安装失败/端口占用/Streamlit启动失败 → 每种给出小白能照做的中文下一步
-2. 强化 scripts/install_fallback.command：Git缺失/GitHub下载失败/安装目录权限问题 → 明确中文解决办法 + 多方法备选 + 手动安装指引
-3. app.py 首次使用检查区改为「📋 环境自检」：逐项 ✅/❌ 标记 + 汇总判定（就绪/需安装备用通道/缓存为空）
-4. 新增 docs/TROUBLESHOOTING.md：10 个小白常见问题（打不开页面/没有数据/一直等待/端口占用/Git缺失/Python缺失/覆盖不全说明/术语白话解释/极简三步）
-5. README.md + docs/USER_GUIDE.md 链接 TROUBLESHOOTING.md
-6. 不改核心选股逻辑，仅启动脚本/安装脚本/UI自检文案/文档
-7. CLI 全链路：语法 8/8 → select EXIT:0 → backtest-validate EXIT:0 → report EXIT:0
+P7.9 产品收口首页 + v0.5 发布准备：
+1. README 重写为正式项目首页：版本号 v0.5 / 一句话说明 / 截图预览 / 三步启动 / 能力一览 / 已知限制 / 免责声明 / 文档索引
+2. README 嵌入 `docs/screenshots/home.png` + `result.png` 截图展示
+3. 新增 CHANGELOG.md：记录 v0.5 已完成能力（产品形态/小白体验/数据/选股/验证/验收/文档/CLI/限制）
+4. 新增 RELEASE_CHECKLIST.md：发布前检查清单（环境/启动/选股/CLI/文档/Git/截图脚本）
+5. 不改核心选股逻辑，仅 README/发布文档/少量必要文案
+6. CLI 全链路：语法 8/8 → select EXIT:0 → backtest-validate EXIT:0 → report EXIT:0
 
-见 docs/TROUBLESHOOTING.md、docs/USER_GUIDE.md。
+见 README.md、CHANGELOG.md、RELEASE_CHECKLIST.md。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / scripts/install_fallback.command / scripts/screenshot_home.py / requirements-ui.txt / docs/USER_GUIDE.md / docs/TROUBLESHOOTING.md / docs/UI_ACCEPTANCE_RESULT.md / docs/MANUAL_UI_CHECKLIST.md
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / scripts/install_fallback.command / scripts/screenshot_home.py / requirements-ui.txt / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md / docs/USER_GUIDE.md / docs/TROUBLESHOOTING.md / docs/UI_ACCEPTANCE_RESULT.md / docs/MANUAL_UI_CHECKLIST.md
