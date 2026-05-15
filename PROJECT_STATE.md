@@ -38,8 +38,9 @@
 | P6.1.1 | `72e0185` | 轻量依赖/状态同步/README入口优化 |
 | P6.1.2 | `c1baabc` | 状态交接修正/P7准备 |
 | P7.0 | `c8135d9` | 产品化打磨第一版：界面体验/错误提示/数据覆盖可视化 |
+| P7.0.1 | `06cd143` | 同步P7.0状态并补充UI验收路径 |
 
-- 最新 commit: `c8135d9`
+- 最新 commit: `06cd143`
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 
