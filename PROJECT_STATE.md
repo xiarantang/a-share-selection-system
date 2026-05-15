@@ -42,8 +42,9 @@
 | P7.1 | `e89b855` | 真实UI验收记录/点击流检查/状态同步 |
 | P7.1.1 | `28e7061` | 真实浏览器验收/端口友好处理/验收结果修正 |
 | P7.1.2 | `bd86585` | 最终结果页截图/状态同步/覆盖提示强化 |
+| P7.1.3 | `609f7f3` | 收口P7.1.2状态与UI验收说明 |
 
-- 最新 commit: `bd86585`
+- 最新 commit: `609f7f3`
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 
