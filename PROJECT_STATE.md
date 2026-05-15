@@ -44,8 +44,9 @@
 | P7.1.2 | `bd86585` | 最终结果页截图/状态同步/覆盖提示强化 |
 | P7.1.3 | `609f7f3` | 收口P7.1.2状态与UI验收说明 |
 | P7.2 | `7efd25c` | MVP点击流检查/使用阻塞记录/状态同步 |
+| P7.3 | `307ac57` | 小白阻塞修复：数据通道和首次安装提示 |
 
-- 最新已记录交付 commit: `7efd25c`
+- 最新已记录交付 commit: `307ac57`
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`

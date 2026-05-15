@@ -273,34 +273,76 @@ def render_backtest_summary(summary: dict, per_stock: list):
     st.dataframe(df, use_container_width=True, hide_index=True)
 
 
-# ========== 辅助：三步引导卡片 ==========
+# ========== 辅助：流程引导卡片 ==========
 def render_step_guide():
-    """未选股前的引导卡片。"""
+    """未选股前的引导卡片：4 步流程，含首次安装提示。"""
     st.markdown("### 👋 欢迎使用 A 股智能选股系统")
-    st.caption("三步完成选股，小白也能轻松上手。")
-    col1, col2, col3 = st.columns(3)
+    st.caption("按顺序操作，小白也能轻松上手。")
+
+    # ⓪ 第一步：安装备用数据通道（首次）
+    if not FALLBACK_SCRIPT.exists():
+        with st.container(border=True):
+            st.markdown("#### ⓪ 首次安装备用数据通道")
+            st.markdown(
+                "双击 `scripts/install_fallback.command`，安装 A 股备用数据通道。"
+                "只需安装一次。\n> 说明：akshare 在网络不稳定时可能临时不可用，备用数据通道确保系统仍可正常出结果。"
+            )
+
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
         with st.container(border=True):
             st.markdown("#### ① 选参数")
-            st.markdown("在左侧栏选择：\n- 股票池（精选55只/沪深300/成交额TOP）\n- 扫描数量和展示数量\n- 数据起始日期")
+            st.markdown("在左侧栏选择：\n- 股票池（默认 static 55只精选）\n- 扫描数量（默认 10 只）\n- 数据起始日期")
     with col2:
         with st.container(border=True):
             st.markdown("#### ② 开始选股")
-            st.markdown("点击左侧 **🚀 开始选股** 按钮\n系统会自动拉取数据、评分、排序\n稍等片刻即可看到结果")
+            st.markdown("点击左侧 **🚀 开始选股** 按钮\n系统拉取数据 → 计算评分 → 排序\n预计 30-60 秒完成")
     with col3:
         with st.container(border=True):
-            st.markdown("#### ③ 看结果")
-            st.markdown("选股完成后切换 Tab：\n- 🎯 候选表格\n- 📋 验证摘要\n- 📈 历史复盘\n- 📄 完整报告")
+            st.markdown("#### ③ 看候选表格")
+            st.markdown("选股完成后查看：\n- 股票排名和评分\n- 数据区间和覆盖状态\n- 逐只因子拆分详情")
+    with col4:
+        with st.container(border=True):
+            st.markdown("#### ④ 看验证和报告")
+            st.markdown("切换 Tab 查看：\n- 📋 验证摘要（质量评估）\n- 📈 历史复盘（in-sample）\n- 📄 完整报告（Markdown）")
 
 
 # ========== 主界面 ==========
 st.title("🏦 A股智能选股系统")
-st.caption("三步完成选股 · 小白也能用 · 仅供研究学习，不构成投资建议")
+st.caption("四步完成选股 · 小白也能用 · 仅供研究学习，不构成投资建议")
 
 if FALLBACK_SCRIPT.exists():
     st.info("📡 数据通道：当前主要使用 A 股备用数据通道（skill_fallback）。如果 akshare 临时不可用，系统仍可正常出结果。")
 else:
     st.warning("⚠️ 缺少 A 股备用数据通道。首次使用请先运行 `scripts/install_fallback.command`，否则新数据可能拉取失败。")
+
+# 首次使用检查区（可折叠）
+with st.expander("🔧 首次使用检查（点击展开）", expanded=(st.session_state.selection_data is None)):
+    import sys as _sys
+    import glob as _glob
+    check_col1, check_col2 = st.columns(2)
+    with check_col1:
+        st.markdown(f"**Python 版本**: {_sys.version.split()[0]}")
+        fallback_ok = FALLBACK_SCRIPT.exists()
+        st.markdown(f"**备用数据通道**: {'✅ 已安装' if fallback_ok else '❌ 未安装（首次需运行 scripts/install_fallback.command）'}")
+    with check_col2:
+        cache_dir = Path("data/cache")
+        cache_count = len(list(cache_dir.glob("*.parquet"))) if cache_dir.exists() else 0
+        st.markdown(f"**本地缓存**: {cache_count} 个文件 (`data/cache/`)")
+        latest_json = Path("reports/output/selection_latest.json")
+        latest_exists = latest_json.exists()
+        if latest_exists:
+            import json as _json
+            try:
+                with open(latest_json) as _f:
+                    _latest = _json.load(_f)
+                _ts = _latest.get("generated_at", "")[:19]
+                _cnt = len(_latest.get("top", []))
+                st.markdown(f"**最近选股**: {_ts} (Top {_cnt} 只)")
+            except Exception:
+                st.markdown("**最近选股**: 文件存在，读取失败")
+        else:
+            st.markdown("**最近选股**: 暂无（点击开始选股后生成）")
 
 # ---- 左侧栏 ----
 with st.sidebar:
@@ -436,6 +478,26 @@ if st.session_state.selection_data is not None:
             "覆盖不全不是报错：当前备用数据通道通常提供约 120 条 K 线。"
             "系统会自动降低数据质量评分和置信度，结果仍可用于研究观察，但不应当直接作为买卖建议。"
         )
+
+    # 验证摘要关键指标（放在 Tab 外，直接可见）
+    v = data.get("validation", {})
+    if v:
+        quality = v.get("overall_quality", "?")
+        quality_icon = {"good": "🟢", "usable_with_caution": "🟡", "poor": "🔴"}.get(quality, "")
+        quality_label = {"good": "数据充足，风险可控", "usable_with_caution": "覆盖不足或置信度偏低，结果仅供参考", "poor": "数据质量差，不建议参考"}.get(quality, "")
+        st.markdown("---")
+        st.markdown(f"### {quality_icon} 验证摘要：{quality_label}")
+        col_v1, col_v2, col_v3, col_v4, col_v5 = st.columns(5)
+        col_v1.metric("整体质量", quality)
+        col_v2.metric("平均评分", v.get("avg_score", "?"))
+        col_v3.metric("覆盖不足率", f"{v.get('coverage_warning_ratio',0)*100:.0f}%")
+        col_v4.metric("低置信度", f"{v.get('low_confidence_count','?')}/{v.get('total_count','?')}")
+        col_v5.metric("高风险", f"{v.get('high_risk_count','?')}/{v.get('total_count','?')}")
+        # 简洁的决策分布
+        dec_dist = v.get("decision_dist", {})
+        if dec_dist:
+            dec_str = " ".join(f"{k}:{v}" for k, v in dec_dist.items())
+            st.caption(f"决策分布: {dec_str}")
 
     # Tab 切换
     tab1, tab2, tab3, tab4 = st.tabs(["🎯 候选表格", "📋 验证摘要", "📈 历史复盘", "📄 报告"])
