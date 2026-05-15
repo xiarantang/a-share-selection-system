@@ -41,8 +41,9 @@
 | P7.0.1 | `06cd143` | 同步P7.0状态并补充UI验收路径 |
 | P7.1 | `e89b855` | 真实UI验收记录/点击流检查/状态同步 |
 | P7.1.1 | `28e7061` | 真实浏览器验收/端口友好处理/验收结果修正 |
+| P7.1.2 | `bd86585` | 最终结果页截图/状态同步/覆盖提示强化 |
 
-- 最新 commit: `28e7061`
+- 最新 commit: `bd86585`
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 
@@ -62,8 +63,8 @@ P7 产品化打磨后续：
 2. 错误提示友好化
 3. 数据覆盖可视化
 
-见 NEXT_PROMPT.md 和 docs/UI_ACCEPTANCE.md。
+见 NEXT_PROMPT.md、docs/UI_ACCEPTANCE.md、docs/MANUAL_UI_CHECKLIST.md。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / requirements-ui.txt / docs/UI_ACCEPTANCE.md
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / requirements-ui.txt / docs/UI_ACCEPTANCE.md / docs/UI_ACCEPTANCE_RESULT.md / docs/MANUAL_UI_CHECKLIST.md
