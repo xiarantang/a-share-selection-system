@@ -312,9 +312,15 @@ st.title("🏦 A股智能选股系统")
 st.caption("四步完成选股 · 小白也能用 · 仅供研究学习，不构成投资建议")
 
 if FALLBACK_SCRIPT.exists():
-    st.info("📡 数据通道：当前主要使用 A 股备用数据通道（skill_fallback）。如果 akshare 临时不可用，系统仍可正常出结果。")
+    st.success("✅ **可以开始选股** — 数据通道就绪，点击左侧「🚀 开始选股」即可")
+    st.info("📡 当前主要使用 A 股备用数据通道（skill_fallback）。如果 akshare 临时不可用，系统仍可正常出结果。")
 else:
-    st.warning("⚠️ 缺少 A 股备用数据通道。首次使用请先运行 `scripts/install_fallback.command`，否则新数据可能拉取失败。")
+    st.error("⚠️ **需要先安装备用数据通道才能开始选股**")
+    st.warning(
+        "请先双击 `scripts/install_fallback.command`，安装 A 股备用数据通道（只需一次，约 1 分钟）。"
+        "\n\n安装完成后刷新本页面或重新启动 `start_ui.command`。"
+        "\n\n如果跳过安装，选股可能全部失败。"
+    )
 
 # 首次使用检查区（可折叠）
 with st.expander("🔧 首次使用检查（点击展开）", expanded=(st.session_state.selection_data is None)):

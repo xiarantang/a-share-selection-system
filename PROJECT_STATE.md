@@ -46,8 +46,9 @@
 | P7.2 | `7efd25c` | MVP点击流检查/使用阻塞记录/状态同步 |
 | P7.3 | `307ac57` | 小白阻塞修复：数据通道和首次安装提示 |
 | P7.4 | `6ea0414` | 小白流程打磨：四步引导/验证外置/首次检查区 |
+| P7.4文档 | `6a8539b` | 同步P7.4交付状态 |
 
-- 最新已记录交付 commit: `6ea0414`
+- 最新已记录交付 commit: `6a8539b`
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
