@@ -326,29 +326,51 @@ else:
 with st.expander("🔧 首次使用检查（点击展开）", expanded=(st.session_state.selection_data is None)):
     import sys as _sys
     import glob as _glob
-    check_col1, check_col2 = st.columns(2)
-    with check_col1:
-        st.markdown(f"**Python 版本**: {_sys.version.split()[0]}")
-        fallback_ok = FALLBACK_SCRIPT.exists()
-        st.markdown(f"**备用数据通道**: {'✅ 已安装' if fallback_ok else '❌ 未安装（首次需运行 scripts/install_fallback.command）'}")
-    with check_col2:
-        cache_dir = Path("data/cache")
-        cache_count = len(list(cache_dir.glob("*.parquet"))) if cache_dir.exists() else 0
-        st.markdown(f"**本地缓存**: {cache_count} 个文件 (`data/cache/`)")
-        latest_json = Path("reports/output/selection_latest.json")
-        latest_exists = latest_json.exists()
-        if latest_exists:
-            import json as _json
-            try:
-                with open(latest_json) as _f:
-                    _latest = _json.load(_f)
-                _ts = _latest.get("generated_at", "")[:19]
-                _cnt = len(_latest.get("top", []))
-                st.markdown(f"**最近选股**: {_ts} (Top {_cnt} 只)")
-            except Exception:
-                st.markdown("**最近选股**: 文件存在，读取失败")
+
+    # 逐项检查
+    py_ok = True  # Python 已经在运行，必然 OK
+    fallback_ok = FALLBACK_SCRIPT.exists()
+    cache_dir = Path("data/cache")
+    cache_count = len(list(cache_dir.glob("*.parquet"))) if cache_dir.exists() else 0
+    cache_ok = cache_count > 0
+
+    latest_json = Path("reports/output/selection_latest.json")
+    latest_ok = latest_json.exists()
+    _latest_ts = ""
+    _latest_cnt = 0
+    if latest_ok:
+        import json as _json
+        try:
+            with open(latest_json) as _f:
+                _latest = _json.load(_f)
+            _latest_ts = _latest.get("generated_at", "")[:19]
+            _latest_cnt = len(_latest.get("top", []))
+        except Exception:
+            latest_ok = False
+
+    st.markdown("#### 📋 环境自检")
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown(f"{'✅' if py_ok else '❌'} **Python**: {_sys.version.split()[0]}")
+        st.markdown(f"{'✅' if fallback_ok else '❌'} **备用数据通道**: {'已安装' if fallback_ok else '未安装'}")
+    with col_b:
+        st.markdown(f"{'✅' if cache_ok else '⚠️'} **本地缓存**: {cache_count} 个文件")
+        if latest_ok:
+            st.markdown(f"✅ **最近选股**: {_latest_ts} (Top {_latest_cnt} 只)")
         else:
-            st.markdown("**最近选股**: 暂无（点击开始选股后生成）")
+            st.markdown("⏳ **最近选股**: 暂无")
+
+    # 汇总判定
+    if fallback_ok and cache_ok:
+        st.success("✅ 环境就绪，可以开始选股。点击左侧「🚀 开始选股」按钮即可。")
+    elif not fallback_ok:
+        st.warning(
+            "⚠️ 备用数据通道未安装。首次使用请先双击 `scripts/install_fallback.command`，"
+            "安装后再点击「开始选股」。不安装也可以选股，但网络不稳定时可能失败。"
+        )
+    else:
+        st.info("💡 环境基本就绪，但本地缓存为空。首次选股会慢一些（需要拉取数据），之后会变快。")
 
 # ---- 左侧栏 ----
 with st.sidebar:
