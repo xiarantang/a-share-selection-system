@@ -52,10 +52,37 @@ if [ ! -f "$FALLBACK_SCRIPT" ]; then
     echo ""
 fi
 
-# ---- 5. 启动 Streamlit ----
+# ---- 5. 端口检测 ----
+PORT=8501
+# macOS 用 lsof 检测端口占用
+if lsof -Pi :$PORT -sTCP:LISTEN -t &>/dev/null; then
+    # 检查是不是我们自己的 Streamlit 进程
+    STREAMLIT_PID=$(lsof -Pi :$PORT -sTCP:LISTEN -t | head -1)
+    STREAMLIT_CMD=$(ps -p "$STREAMLIT_PID" -o command= 2>/dev/null || echo "")
+    if echo "$STREAMLIT_CMD" | grep -q "streamlit"; then
+        echo ""
+        echo "✅ 检测到 Streamlit 已在运行 (PID $STREAMLIT_PID)"
+        echo "   👉 浏览器打开 http://localhost:$PORT"
+        echo "   👉 如需重启，请先关闭已有进程: kill $STREAMLIT_PID"
+        echo ""
+        read -p "按回车键退出..."
+        exit 0
+    else
+        # 被其他程序占用，尝试下一个端口
+        PORT=8502
+        if lsof -Pi :$PORT -sTCP:LISTEN -t &>/dev/null; then
+            PORT=8503
+        fi
+        echo ""
+        echo "⚠️  端口 8501 已被占用，自动切换到端口 $PORT"
+        echo ""
+    fi
+fi
+
+# ---- 6. 启动 Streamlit ----
 echo "🚀 正在启动可视化界面..."
-echo "   👉 浏览器打开 http://localhost:8501"
+echo "   👉 浏览器打开 http://localhost:$PORT"
 echo "   👉 按 Ctrl+C 停止"
 echo ""
 
-.venv/bin/streamlit run app.py --server.headless true --server.port 8501
+.venv/bin/streamlit run app.py --server.headless true --server.port $PORT
