@@ -50,9 +50,9 @@
 | P7.5 | `e6e01d0` | 小白首次体验：三步最快启动/就绪状态/友好提示 |
 | P7.5文档 | `1662739` | 同步P7.5交付状态 |
 | P7.6 | `b60b1a1` | 真实浏览器验收：截图留证/首页结果页双截图 |
-| P7.6 final | _待commit_ | 最终验收截图/UI文案修正/CLI全链路/状态同步 |
+| P7.6 final | `7359a4a` | 最终验收截图/UI文案修正/CLI全链路/状态同步 |
 
-- 最新已记录交付 commit: `b60b1a1` (P7.6)，当前待 commit P7.6 final
+- 最新已记录交付 commit: `7359a4a`
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
@@ -71,8 +71,8 @@
 P7.6 真实浏览器验收和截图留证：
 1. 启动 Streamlit UI，Playwright + Chrome headless 真实浏览器打开页面
 2. 首页截图留证：三步引导、四步流程、首次使用检查、就绪状态、免责声明
-3. 点击「开始选股」后截图结果页：选股完成提示、候选表格、数据覆盖摘要、验证摘要（Tab外）、逐只详情
-4. 结果页确认：候选表格、数据覆盖提示、验证摘要均直接可见（无需切换 Tab）
+3. 点击「开始选股」后截图结果页首屏：选股完成提示、数据覆盖摘要、覆盖不全提示
+4. 结果页确认：候选表格、数据覆盖提示、验证摘要已通过浏览器检测确认，关键摘要已外置
 5. UI 文案修正：「整体质量」metric 从英文改为中文（🟢良好/🟡需谨慎/🔴差），覆盖不全 metric 去掉误导性 delta
 6. CLI 全链路：语法检查 8/8 → select EXIT:0 → backtest-validate EXIT:0 → report EXIT:0
 7. 验收报告更新：docs/UI_ACCEPTANCE_RESULT.md 记录截图路径、通过项、修正项、仍待优化项
