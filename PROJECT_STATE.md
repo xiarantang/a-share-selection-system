@@ -37,8 +37,9 @@
 | P6.1 | `87a30f6` | 一键启动脚本/状态交接/README完善 |
 | P6.1.1 | `72e0185` | 轻量依赖/状态同步/README入口优化 |
 | P6.1.2 | `c1baabc` | 状态交接修正/P7准备 |
+| P7.0 | `c8135d9` | 产品化打磨第一版：界面体验/错误提示/数据覆盖可视化 |
 
-- 最新 commit: `c1baabc`
+- 最新 commit: `c8135d9`
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 
@@ -47,19 +48,19 @@
 - ✅ 数据：akshare+fallback+缓存 | 股票池：static 55只
 - ✅ 选股：6因子评分 + decision/risk_level/confidence
 - ✅ 验证：validate + backtest-validate + report
-- ✅ 可视化：Streamlit 本地 UI，小白一键选股/验证/复盘/报告
+- ✅ 可视化：Streamlit 本地 UI，三步引导/错误提示友好化/数据覆盖可视化
 - ✅ Pipeline：PASS/FAIL退-出码可信
 - 🧪 AI/qlib：experimental（未来 P8 阶段，不参与当前小白启动）
 
-## 4. 下一阶段 P7
+## 4. 下一阶段 P7（继续）
 
-P7 产品化打磨：
+P7 产品化打磨后续：
 1. 界面体验优化
 2. 错误提示友好化
 3. 数据覆盖可视化
 
-见 NEXT_PROMPT.md。
+见 NEXT_PROMPT.md 和 docs/UI_ACCEPTANCE.md。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / requirements-ui.txt
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / requirements-ui.txt / docs/UI_ACCEPTANCE.md
