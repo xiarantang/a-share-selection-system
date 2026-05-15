@@ -413,6 +413,13 @@ if st.session_state.selection_data is not None:
         cov_cols[4].metric("覆盖不全", f"{cov['coverage_warn_count']}/{cov['total_success']}只",
                            delta="⚠️" if cov["coverage_warn_count"] > cov["total_success"]//2 else None)
 
+    # 纯文本数据覆盖摘要（便于验收检测，放在 Tab 外确保渲染）
+    st.info(
+        f"📊 数据区间: {cov['earliest_actual']} ~ {cov['latest_actual']} "
+        f"| K线: {cov['min_rows']}-{cov['max_rows']} 条（平均 {cov['avg_rows']} 条）"
+        f"| 覆盖不全: {cov['coverage_warn_count']}/{cov['total_success']} 只"
+    )
+
     # Tab 切换
     tab1, tab2, tab3, tab4 = st.tabs(["🎯 候选表格", "📋 验证摘要", "📈 历史复盘", "📄 报告"])
 

@@ -40,8 +40,9 @@
 | P7.0 | `c8135d9` | 产品化打磨第一版：界面体验/错误提示/数据覆盖可视化 |
 | P7.0.1 | `06cd143` | 同步P7.0状态并补充UI验收路径 |
 | P7.1 | `e89b855` | 真实UI验收记录/点击流检查/状态同步 |
+| P7.1.1 | `28e7061` | 真实浏览器验收/端口友好处理/验收结果修正 |
 
-- 最新 commit: `e89b855`
+- 最新 commit: `28e7061`
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
 
