@@ -51,8 +51,10 @@
 | P7.5文档 | `1662739` | 同步P7.5交付状态 |
 | P7.6 | `b60b1a1` | 真实浏览器验收：截图留证/首页结果页双截图 |
 | P7.6 final | `7359a4a` | 最终验收截图/UI文案修正/CLI全链路/状态同步 |
+| P7.6文档 | `d23f56d` | 修正P7.6验收状态记录 |
+| P7.7 | _待commit_ | 验收证据持久化/小白交付包/截图脚本/USER_GUIDE/状态同步 |
 
-- 最新已记录交付 commit: `7359a4a`
+- 最新已记录交付 commit: `d23f56d`，当前待 commit P7.7
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
@@ -66,19 +68,19 @@
 - ✅ Pipeline：PASS/FAIL退出码可信
 - 🧪 AI/qlib：experimental（未来 P8 阶段，不参与当前小白启动）
 
-## 4. 当前阶段 P7.6（已完成）
+## 4. 当前阶段 P7.7（已完成）
 
-P7.6 真实浏览器验收和截图留证：
-1. 启动 Streamlit UI，Playwright + Chrome headless 真实浏览器打开页面
-2. 首页截图留证：三步引导、四步流程、首次使用检查、就绪状态、免责声明
-3. 点击「开始选股」后截图结果页首屏：选股完成提示、数据覆盖摘要、覆盖不全提示
-4. 结果页确认：候选表格、数据覆盖提示、验证摘要已通过浏览器检测确认，关键摘要已外置
-5. UI 文案修正：「整体质量」metric 从英文改为中文（🟢良好/🟡需谨慎/🔴差），覆盖不全 metric 去掉误导性 delta
-6. CLI 全链路：语法检查 8/8 → select EXIT:0 → backtest-validate EXIT:0 → report EXIT:0
-7. 验收报告更新：docs/UI_ACCEPTANCE_RESULT.md 记录截图路径、通过项、修正项、仍待优化项
+P7.7 验收证据持久化 + 小白交付包：
+1. 新建 docs/screenshots/，将首页截图和结果页截图保存到仓库内（home.png / result.png）
+2. 完善截图脚本 scripts/screenshot_home.py：生成首页+结果页双截图到 docs/screenshots/，输出关键词检出报告
+3. 更新 docs/UI_ACCEPTANCE_RESULT.md 截图路径为仓库内路径
+4. 新增 docs/USER_GUIDE.md：小白语言使用指南（首次安装/启动/选股/看结果/常见问题/免责声明）
+5. README 顶部增加「不会写命令的人怎么用」→ 链接 USER_GUIDE.md
+6. 不改核心选股逻辑，仅文档/截图脚本/UI文案修正
+7. CLI 全链路：语法 9/9 → select EXIT:0 → backtest-validate EXIT:0 → report EXIT:0
 
-见 NEXT_PROMPT.md、docs/UI_ACCEPTANCE_RESULT.md。
+见 docs/USER_GUIDE.md、docs/UI_ACCEPTANCE_RESULT.md。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / requirements-ui.txt / docs/UI_ACCEPTANCE_RESULT.md / docs/MANUAL_UI_CHECKLIST.md
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / requirements-ui.txt / scripts/screenshot_home.py / docs/USER_GUIDE.md / docs/UI_ACCEPTANCE_RESULT.md / docs/MANUAL_UI_CHECKLIST.md
