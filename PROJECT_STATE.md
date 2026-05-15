@@ -48,8 +48,9 @@
 | P7.4 | `6ea0414` | 小白流程打磨：四步引导/验证外置/首次检查区 |
 | P7.4文档 | `6a8539b` | 同步P7.4交付状态 |
 | P7.5 | `e6e01d0` | 小白首次体验：三步最快启动/就绪状态/友好提示 |
+| P7.5文档 | `1662739` | 同步P7.5交付状态 |
 
-- 最新已记录交付 commit: `e6e01d0`
+- 最新已记录交付 commit: `1662739`
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
