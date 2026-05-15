@@ -54,9 +54,9 @@
 | P7.6文档 | `d23f56d` | 修正P7.6验收状态记录 |
 | P7.7 | `ab10af7` | 验收证据持久化/小白交付包/截图脚本/USER_GUIDE/状态同步 |
 | P7.7文档 | `fbf2615` | 同步P7.7交付状态 |
-| P7.8 | _待commit_ | 小白安装失败兜底/环境自检页/TROUBLESHOOTING/启动脚本强化 |
+| P7.8 | `2d6f662` | 小白安装失败兜底/环境自检页/TROUBLESHOOTING/启动脚本强化 |
 
-- 最新已记录交付 commit: `fbf2615`，当前待 commit P7.8
+- 最新已记录交付 commit: `2d6f662`
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
