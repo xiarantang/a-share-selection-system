@@ -110,7 +110,19 @@ class SelectionEngine:
                 results.append({"symbol":sym,"error":"获取失败","score":0,"rank":0,"confidence":"low","coverage_warning":False,"decision":"avoid","risk_level":"high"}); continue
             src=self.fetcher._last_source; rows=len(df)
             ast=str(df.index[0])[:10] if rows>0 else "N/A"; aen=str(df.index[-1])[:10] if rows>0 else "N/A"
-            has_cov=ast>start_date[:10] if ast!="N/A" else False
+            # coverage_warning（修正版）：容忍 1-3 天偏差，数据源可靠时放宽
+            if ast == "N/A":
+                has_cov = True
+            elif rows >= 250 and src in ("akshare", "baostock"):
+                from datetime import datetime as _dt2
+                try:
+                    ast_dt = _dt2.strptime(ast, "%Y-%m-%d")
+                    req_dt = _dt2.strptime(start_date[:10], "%Y-%m-%d")
+                    has_cov = (req_dt - ast_dt).days > 10
+                except Exception:
+                    has_cov = False
+            else:
+                has_cov = ast > start_date[:10]
             df=compute_factors(df)
             score,reasons,risks,fs,fv,dec,rl,conf=score_stock(df, has_coverage_warning=has_cov)
             lc=_safe_float(df.iloc[-1].get("close"))

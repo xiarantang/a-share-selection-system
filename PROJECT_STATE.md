@@ -20,9 +20,8 @@
 | P8.1-1 | `eff452a` | baostock实验通过(10/10达570条) |
 | P8.1-1文档 | `093576d` | 同步P8.1-1状态 |
 | P8.1-2 | `5254f62` | baostock小步接入数据层，链路为 akshare → baostock → skill_fallback |
-| P8.1-2顾问验收 | _待commit_ | 确认 baostock 10/10 生效；发现覆盖提示逻辑仍需修正 |
-
-- 🏷️ v0.5 已发布 tag `v0.5` → `81759aa`
+| P8.1-2文档 | `cd37496` | 记录P8.1-2顾问验收 |
+| P8.1-3 | _待commit_ | 修正coverage_warning：baostock 570条不再误判 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-2)
