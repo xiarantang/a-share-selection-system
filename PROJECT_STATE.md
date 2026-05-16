@@ -59,8 +59,9 @@
 | P7.9 | `ec9f374` | 产品收口首页/v0.5发布准备/CHANGELOG/RELEASE_CHECKLIST |
 | P7.9文档 | `7cdf0b2` | 同步P7.9交付状态 |
 | P7.10 | `81d9f4c` | v0.5发布前最终审查/小修/文档矛盾修正 |
+| P7.10文档 | `83393f4` | 同步P7.10交付状态 |
 
-- 最新已记录交付 commit: `81d9f4c`
+- 最新已记录交付 commit: `83393f4`
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
