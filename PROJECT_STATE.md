@@ -61,9 +61,11 @@
 | P7.10 | `81d9f4c` | v0.5发布前最终审查/小修/文档矛盾修正 |
 | P7.10文档 | `83393f4` | 同步P7.10交付状态 |
 | P8.0 | `46230b9` | 下一阶段规划初稿：P8_ROADMAP/5阶段路线图 |
+| P8.0顾问审查 | `8706fa7` | 收紧P8路线图：先数据、再解释、再UI，AI默认关闭 |
+| P8.1-0 | `9648b1b` | 数据源评估报告：推荐先实验baostock，再评估efinance |
 
 - 🏷️ **v0.5 已发布**：tag `v0.5` → commit `81759aa`，annotated tag 已推送到 GitHub
-- 最新已记录交付 commit: `46230b9`，当前进入 P8.0 规划审查与 P8.1 准备
+- 最新已记录交付 commit: `9648b1b`，当前进入 P8.1-1 数据源最小实验
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
@@ -79,9 +81,9 @@
 - ✅ 发布：CHANGELOG.md / RELEASE_CHECKLIST.md / 产品首页含截图预览
 - 🧪 AI/qlib：experimental（未来 P8 阶段，不参与当前小白启动）
 
-## 4. 当前阶段 P8.0（规划审查完成）
+## 4. 当前阶段 P8.1（数据质量增强）
 
-v0.5 已发布（tag `v0.5` → commit `81759aa`）。下一阶段为 P8 渐进增强。
+v0.5 已发布（tag `v0.5` → commit `81759aa`）。P8.0 规划审查已完成，P8.1 数据质量增强已启动。
 
 P8.0 下一阶段规划已经建立，并已做顾问口径收紧：
 - 新增 `docs/P8_ROADMAP.md` 规划 P8.1~P8.5 五个阶段
@@ -95,6 +97,14 @@ P8 执行顺序：先 P8.1 数据质量，再 P8.2 解释，再 P8.3 UI，最后
 
 详见 `docs/P8_ROADMAP.md`。
 
+P8.1-0 已完成数据源评估：
+- 文档：`docs/P8_1_DATA_SOURCE_EVALUATION.md`
+- 首选实验：`baostock`，目标验证 static 前 10 只股票中至少 8 只返回 250+ 条日 K
+- 次选实验：`efinance`
+- 明确禁止：不改评分逻辑、不删除 `skill_fallback`、不修改 UI、不引入付费/API Key 作为唯一通道、不改 CLI 参数
+
+下一步 P8.1-1：只做 `baostock` 最小实验脚本，不接入主链路。实验通过后再决定是否进入正式接入。
+
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / scripts/install_fallback.command / scripts/screenshot_home.py / requirements-ui.txt / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md / docs/P8_ROADMAP.md / docs/USER_GUIDE.md / docs/TROUBLESHOOTING.md / docs/UI_ACCEPTANCE_RESULT.md / docs/MANUAL_UI_CHECKLIST.md
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / scripts/install_fallback.command / scripts/screenshot_home.py / requirements-ui.txt / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md / docs/P8_ROADMAP.md / docs/P8_1_DATA_SOURCE_EVALUATION.md / docs/USER_GUIDE.md / docs/TROUBLESHOOTING.md / docs/UI_ACCEPTANCE_RESULT.md / docs/MANUAL_UI_CHECKLIST.md
