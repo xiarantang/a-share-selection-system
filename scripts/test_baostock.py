@@ -47,7 +47,7 @@ def fetch_one(sym, start, end):
 
 def main():
     start = "2024-01-01"
-    end = "2026-05-16"
+    end = time.strftime("%Y-%m-%d")
     results = []
 
     print("=" * 60)
@@ -95,7 +95,7 @@ def main():
 | 测试数 | 10 |
 | 成功 | {ok_total} |
 | >=250条 | {ok250} |
-| 达标率 | {ok250}0% |
+| 达标率 | {ok250 * 10}% |
 
 ## 逐只
 

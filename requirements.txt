@@ -4,6 +4,7 @@
 
 # --- 数据源层 ---
 akshare>=1.15.0
+baostock>=0.8.8
 
 # --- 回测层 ---
 backtrader>=1.9.78

@@ -62,7 +62,7 @@ class AShareDataFetcher:
         adjust: str = "qfq",
     ) -> pd.DataFrame:
         """获取个股日K线（前复权）。
-        多源 fallback: akshare → a-share-data skill (腾讯/新浪/雪球/东财) → 本地缓存。
+        多源 fallback: akshare → baostock → a-share-data skill (腾讯/新浪/雪球/东财) → 本地缓存。
         成功拉到后保存到 data/cache/。
         """
         end_date = end_date or datetime.now().strftime("%Y%m%d")
@@ -78,7 +78,15 @@ class AShareDataFetcher:
             self._save_cache(cache_path, df)
             return df
 
-        # 2. akshare 失败 → 尝试 a-share-data skill fallback 脚本
+        # 2. akshare 失败 → 尝试 baostock（免费稳定，历史数据长）
+        logger.info(f"akshare 失败, 尝试 baostock: {symbol}")
+        df = self._fetch_baostock(symbol, start_date, end_date)
+        if df is not None and not df.empty:
+            self._last_source = "baostock"
+            self._save_cache(cache_path, df)
+            return df
+
+        # 3. baostock 失败 → 尝试 a-share-data skill fallback 脚本
         logger.info(f"akshare 失败, 尝试 skill fallback: {symbol}")
         df = self._fetch_skill_fallback(symbol, start_date, end_date, adjust)
         if df is not None and not df.empty:
@@ -86,7 +94,7 @@ class AShareDataFetcher:
             self._save_cache(cache_path, df)
             return df
 
-        # 3. 网络都失败 → 尝试本地缓存
+        # 4. 网络都失败 → 尝试本地缓存
         if os.path.exists(cache_path):
             try:
                 df = pd.read_parquet(cache_path)
@@ -97,7 +105,7 @@ class AShareDataFetcher:
             except Exception as e:
                 logger.warning(f"缓存读取失败 {symbol}: {e}")
 
-        # 4. 全部失败
+        # 5. 全部失败
         self._last_source = "failed"
         logger.error(f"获取 {symbol} 日K线失败: 所有数据源不可用")
         return pd.DataFrame()
@@ -127,6 +135,108 @@ class AShareDataFetcher:
         except Exception as e:
             logger.warning(f"akshare 获取 {symbol} 失败: {e}")
             return None
+
+    def _fetch_baostock(
+        self, symbol: str, start_date: str, end_date: str
+    ) -> Optional[pd.DataFrame]:
+        """使用 baostock 获取日K线（免费、匿名、历史数据长）。"""
+        import baostock as bs
+        import pandas as pd
+        import numpy as np
+        from datetime import datetime as _dt
+
+        # 转换 symbol 格式: "000001" → "sz.000001", "600519" → "sh.600519"
+        if symbol.startswith(("0", "3")):
+            bs_code = f"sz.{symbol}"
+        else:
+            bs_code = f"sh.{symbol}"
+
+        # baostock 日期格式: YYYY-MM-DD
+        bs_start = start_date.replace("-", "")[:8]  # "20240101"
+        bs_end = end_date.replace("-", "")[:8]
+        if len(bs_start) == 8:
+            bs_start = f"{bs_start[:4]}-{bs_start[4:6]}-{bs_start[6:]}"
+        if len(bs_end) == 8:
+            bs_end = f"{bs_end[:4]}-{bs_end[4:6]}-{bs_end[6:]}"
+
+        lg = None
+        try:
+            lg = bs.login()
+            if lg.error_code != "0":
+                logger.warning(f"baostock 登录失败: {lg.error_msg}")
+                return None
+
+            fields = "date,open,high,low,close,volume,amount,pctChg,turn"
+            rs = bs.query_history_k_data_plus(
+                bs_code, fields,
+                start_date=bs_start, end_date=bs_end,
+                frequency="d", adjustflag="2",
+            )
+            if rs.error_code != "0":
+                logger.warning(f"baostock 查询失败 {symbol}: {rs.error_msg}")
+                return None
+
+            rows = []
+            while rs.next():
+                rows.append(rs.get_row_data())
+
+            if not rows:
+                logger.warning(f"baostock {symbol}: 返回 0 条数据")
+                return None
+
+            # 构建 DataFrame
+            df = pd.DataFrame(rows, columns=rs.fields if hasattr(rs, 'fields') else fields.split(","))
+            # 字段映射
+            col_map = {
+                "date": "date", "open": "open", "high": "high",
+                "low": "low", "close": "close", "volume": "volume",
+                "amount": "amount",
+            }
+            df = df.rename(columns={k: v for k, v in col_map.items() if k in df.columns})
+
+            # 类型转换
+            for col in ["open", "high", "low", "close", "volume", "amount"]:
+                if col in df.columns:
+                    df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0.0)
+
+            # pct_change: baostock 的 pctChg 字段
+            if "pctChg" in df.columns:
+                df["pct_change"] = pd.to_numeric(df["pctChg"], errors="coerce").fillna(0.0)
+                df = df.drop(columns=["pctChg"])
+            else:
+                df["pct_change"] = 0.0
+
+            # turnover: baostock 的 turn 字段（换手率）
+            if "turn" in df.columns:
+                df["turnover"] = pd.to_numeric(df["turn"], errors="coerce").fillna(0.0)
+                df = df.drop(columns=["turn"])
+            else:
+                df["turnover"] = 0.0
+
+            # pre_close: baostock 默认不给，从 close 计算
+            df["pre_close"] = df["close"].shift(1)
+            df["pre_close"] = df["pre_close"].fillna(df["close"])
+
+            # 日期转索引
+            if "date" in df.columns:
+                df["date"] = pd.to_datetime(df["date"])
+                df = df.set_index("date").sort_index()
+
+            logger.info(f"baostock 成功: {symbol} {len(df)} 条")
+            return df
+
+        except ImportError:
+            logger.warning("baostock 未安装，请运行: pip install baostock")
+            return None
+        except Exception as e:
+            logger.warning(f"baostock 异常 {symbol}: {e}")
+            return None
+        finally:
+            try:
+                if lg is not None:
+                    bs.logout()
+            except Exception:
+                pass
 
     def _fetch_skill_fallback(
         self, symbol: str, start_date: str, end_date: str, adjust: str
