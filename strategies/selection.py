@@ -119,6 +119,52 @@ def score_stock(df, has_coverage_warning=False):
     else: rl="low"
     return (round(total,1), reasons, risks, fs, fv, dec, rl, conf)
 
+def _build_explain(score, reasons, risks, decision, risk_level, confidence,
+                   rows, coverage_warning, actual_start):
+    """生成小白可读的解释，不参与评分和排序。"""
+    dec_label = {
+        "strong_watch": "强观察", "watch": "观察",
+        "neutral": "中性", "avoid": "回避",
+    }.get(decision, decision)
+
+    # summary
+    lead = reasons[0] if reasons else "无显著特征"
+    extra = reasons[1] if len(reasons) > 1 else f"基于{rows}条K线"
+    summary = f"{score}分 / {dec_label}。{lead}，{extra}。"
+
+    # strengths / weaknesses
+    strengths = reasons[:3] if reasons else []
+    weaknesses = risks[:3] if risks else ["暂无显著风险信号"]
+
+    # risk_note
+    if risk_level == "low":
+        risk_note = "当前风险信号较少，数据相对稳定。"
+    elif risk_level == "high":
+        risk_seq = "、".join(risks[:2]) if risks else "多个风险信号"
+        risk_note = f"风险信号较多：{risk_seq}。数据质量较低或波动较大，需谨慎对待。"
+    else:
+        risk_seq = "、".join(risks[:2]) if risks else "一定信号"
+        risk_note = f"存在一定风险信号：{risk_seq}。建议关注后续走势。"
+
+    # confidence_note
+    if confidence == "low" or rows < 120:
+        confidence_note = f"数据不足（仅{rows}条K线），评分置信度低，不应当直接作为决策依据。"
+    elif confidence == "high":
+        confidence_note = f"基于{rows}条K线评分，数据充足，评分较为可靠。"
+    else:
+        confidence_note = f"基于{rows}条K线评分，数据一般，评分仅供参考。"
+    if coverage_warning and confidence != "low":
+        confidence_note += f" 注：数据起始日({actual_start})晚于请求日，部分覆盖不足。"
+
+    return {
+        "summary": summary,
+        "strengths": strengths,
+        "weaknesses": weaknesses,
+        "risk_note": risk_note,
+        "confidence_note": confidence_note,
+    }
+
+
 class SelectionEngine:
     def __init__(self): self.fetcher=AShareDataFetcher()
     def select(self, symbols, start_date="2024-01-01"):
@@ -133,7 +179,8 @@ class SelectionEngine:
             df=compute_factors(df)
             score,reasons,risks,fs,fv,dec,rl,conf=score_stock(df, has_coverage_warning=has_cov)
             lc=_safe_float(df.iloc[-1].get("close"))
-            results.append({"symbol":sym,"score":score,"reasons":reasons,"risks":risks,"latest_close":round(lc,2),"data_source":src,"rows":rows,"actual_start":ast,"actual_end":aen,"factor_scores":fs,"factor_values":fv,"decision":dec,"risk_level":rl,"confidence":conf,"coverage_warning":has_cov})
+            explain = _build_explain(score, reasons, risks, dec, rl, conf, rows, has_cov, ast)
+            results.append({"symbol":sym,"score":score,"reasons":reasons,"risks":risks,"latest_close":round(lc,2),"data_source":src,"rows":rows,"actual_start":ast,"actual_end":aen,"factor_scores":fs,"factor_values":fv,"decision":dec,"risk_level":rl,"confidence":conf,"coverage_warning":has_cov,"explain":explain})
         results.sort(key=lambda x: x["score"], reverse=True)
         for i,r in enumerate(results): r["rank"]=i+1
         return results
