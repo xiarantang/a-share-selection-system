@@ -23,9 +23,10 @@
 | P8.1-2文档 | `cd37496` | 记录P8.1-2顾问验收 |
 | P8.1-3 | `12168f3` | 修正coverage_warning：baostock 570条不再误判 |
 | P8.1-3.1 | `ce2b7ec` | 修正日期差方向+抽出_has_coverage_warning()+3反例验证 |
+| P8.1-4 | `225ec0c` | 数据质量收口验收：CLI/报告/UI 三处一致，无矛盾 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
-## 3. 真实能力 (v0.5 + P8.1-3.1)
+## 3. 真实能力 (v0.5 + P8.1-4)
 
 - ✅ 数据：akshare + **baostock** + skill_fallback + 缓存；baostock稳定570条K线
 - ✅ 选股：6因子评分 + decision/risk_level/confidence
@@ -33,7 +34,7 @@
 - ✅ 可视化：Streamlit 本地 UI
 - ✅ Pipeline：PASS/FAIL退出码可信
 
-## 4. 当前阶段 P8.1-3.1（已完成，待 P8.1 收口验收）
+## 4. 当前阶段 P8.1（数据质量增强已收口）
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -57,8 +58,15 @@ P8.1-3/P8.1-3.1 覆盖提示修正：
 - `backtest-validate` 和 `report` 均可运行
 - P8.1-3.1 复核：3 个覆盖提示反例通过，5 只真实 `baostock` 数据均为 570 条且 `coverage_warning=False`
 
-下一步 P8.1-4：P8.1 数据质量增强收口验收。目标是确认 CLI、报告、UI 展示里的数据源、K线条数、覆盖提示、质量摘要全部一致，再决定进入 P8.2 策略可解释增强。
+P8.1-4 收口验收：
+- 文档：`docs/P8_1_ACCEPTANCE.md`
+- CLI JSON：`source_dist={"baostock": 10}`，Top5 均为 570 条，`coverage_warning_count=0`
+- Markdown 报告：数据源、K线条数、覆盖不足率、整体质量与 JSON 一致
+- Streamlit UI：数据源摘要、K线区间、覆盖不足率、整体质量与 JSON/报告一致
+- P8.1 对比 v0.5：主数据源由 `skill_fallback` 120 条提升为 `baostock` 570 条，覆盖不足率从 100% 降为 0%，整体质量从 `usable_with_caution` 提升为 `good`
+
+下一步 P8.2：策略可解释增强。目标是在不改评分公式、不改排序、不引入 AI 的前提下，让每只候选股都有小白能看懂的一句话解释、主要加分项、主要扣分项和风险提醒。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / requirements.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / requirements.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / docs/P8_1_ACCEPTANCE.md
