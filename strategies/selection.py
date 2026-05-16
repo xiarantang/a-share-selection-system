@@ -24,6 +24,25 @@ def compute_factors(df):
     df["volatility_20d"]=close.pct_change().rolling(20).std()*np.sqrt(252)*100
     return df
 
+def _has_coverage_warning(rows: int, source: str, actual_start: str, requested_start: str) -> bool:
+    """判断选股结果是否标记覆盖不足。
+
+    - rows>=250 且 source in (akshare,baostock): 仅 actual_start 落后 >10 天才报警。
+    - 否则按原逻辑：actual_start > requested_start → 覆盖不足。
+    """
+    if actual_start == "N/A":
+        return True
+    if rows >= 250 and source in ("akshare", "baostock"):
+        from datetime import datetime as _dt
+        try:
+            ast_dt = _dt.strptime(actual_start, "%Y-%m-%d")
+            req_dt = _dt.strptime(requested_start[:10], "%Y-%m-%d")
+            return (ast_dt - req_dt).days > 10
+        except Exception:
+            return False
+    return actual_start > requested_start[:10]
+
+
 def score_stock(df, has_coverage_warning=False):
     fs={"data_quality":0,"trend":0,"momentum":0,"volume":0,"risk":0,"pattern":0}
     reasons,risks,rlist=[],[],[]
@@ -110,19 +129,7 @@ class SelectionEngine:
                 results.append({"symbol":sym,"error":"获取失败","score":0,"rank":0,"confidence":"low","coverage_warning":False,"decision":"avoid","risk_level":"high"}); continue
             src=self.fetcher._last_source; rows=len(df)
             ast=str(df.index[0])[:10] if rows>0 else "N/A"; aen=str(df.index[-1])[:10] if rows>0 else "N/A"
-            # coverage_warning（修正版）：容忍 1-3 天偏差，数据源可靠时放宽
-            if ast == "N/A":
-                has_cov = True
-            elif rows >= 250 and src in ("akshare", "baostock"):
-                from datetime import datetime as _dt2
-                try:
-                    ast_dt = _dt2.strptime(ast, "%Y-%m-%d")
-                    req_dt = _dt2.strptime(start_date[:10], "%Y-%m-%d")
-                    has_cov = (req_dt - ast_dt).days > 10
-                except Exception:
-                    has_cov = False
-            else:
-                has_cov = ast > start_date[:10]
+            has_cov = _has_coverage_warning(rows, src, ast, start_date)
             df=compute_factors(df)
             score,reasons,risks,fs,fv,dec,rl,conf=score_stock(df, has_coverage_warning=has_cov)
             lc=_safe_float(df.iloc[-1].get("close"))

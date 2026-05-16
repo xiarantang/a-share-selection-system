@@ -21,7 +21,8 @@
 | P8.1-1文档 | `093576d` | 同步P8.1-1状态 |
 | P8.1-2 | `5254f62` | baostock小步接入数据层，链路为 akshare → baostock → skill_fallback |
 | P8.1-2文档 | `cd37496` | 记录P8.1-2顾问验收 |
-| P8.1-3 | _待commit_ | 修正coverage_warning：baostock 570条不再误判 |
+| P8.1-3 | `12168f3` | 修正coverage_warning：baostock 570条不再误判 |
+| P8.1-3.1 | _待commit_ | 修正日期差方向+抽出_has_coverage_warning()+3反例验证 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-2)

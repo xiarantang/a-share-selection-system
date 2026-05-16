@@ -1,42 +1,49 @@
-"""P8.1-3 coverage_warning 修正验证。用法: .venv/bin/python scripts/confirm_coverage_fix.py"""
+"""P8.1-3.1 coverage 验证 — 单元3反例 + 集成5只。用法: .venv/bin/python scripts/confirm_coverage_fix.py"""
 import sys
-from datetime import datetime
-
 sys.path.insert(0, ".")
+from strategies.selection import _has_coverage_warning
 from data.fetcher import AShareDataFetcher
 
+def test_unit():
+    print("=" * 50)
+    print("  单元: _has_coverage_warning()")
+    print("=" * 50)
+    ok = True
+    # 反例1: 570条/baostock/晚1天 → False
+    r1 = _has_coverage_warning(570, "baostock", "2024-01-02", "2024-01-01")
+    p1 = (r1 is False)
+    print(f"  {'✅' if p1 else '❌'} 570/bao/晚1天 => {r1} (预期False)")
+    # 反例2: 570条/baostock/晚31天 → True
+    r2 = _has_coverage_warning(570, "baostock", "2024-02-01", "2024-01-01")
+    p2 = (r2 is True)
+    print(f"  {'✅' if p2 else '❌'} 570/bao/晚31天 => {r2} (预期True)")
+    # 反例3: 120条/skill_fallback → True
+    r3 = _has_coverage_warning(120, "skill_fallback", "2025-11-13", "2024-01-01")
+    p3 = (r3 is True)
+    print(f"  {'✅' if p3 else '❌'} 120/sf => {r3} (预期True)")
+    ok = p1 and p2 and p3
+    print(f"  单元: {'✅ PASS' if ok else '❌ FAIL'}")
+    return ok
 
-def main():
-    symbols = ["600519", "000001", "000858", "600036", "601398"]
+def test_integration():
+    print(f"\n{'=' * 50}")
+    print("  集成: 5只真实baostock")
+    print("=" * 50)
     f = AShareDataFetcher()
     ok = 0
-    for sym in symbols:
+    for sym in ["600519","000001","000858","600036","601398"]:
         df = f.get_daily_kline(sym, start_date="2024-01-01")
-        src = f._last_source
-        rows = len(df) if df is not None else 0
-        if rows == 0:
-            print(f"{sym} ❌ 获取失败")
-            continue
-        ast = str(df.index[0])[:10]
-        # 新逻辑
-        if ast == "N/A":
-            has_cov = True
-        elif rows >= 250 and src in ("akshare", "baostock"):
-            try:
-                ast_dt = datetime.strptime(ast, "%Y-%m-%d")
-                req_dt = datetime.strptime("2024-01-01", "%Y-%m-%d")
-                has_cov = (req_dt - ast_dt).days > 10
-            except Exception:
-                has_cov = False
-        else:
-            has_cov = ast > "2024-01-01"
-        status = "⚠️ 误判" if (rows >= 250 and has_cov) else ("✅" if not has_cov else "⚠️")
-        print(f"{sym} {src:<14} {rows}条 {ast} {status}")
-        if rows >= 250 and not has_cov:
-            ok += 1
-    print(f"\n{ok}/{len(symbols)} 只达标且无覆盖不足")
-    sys.exit(0 if ok == len(symbols) else 1)
-
+        src, rows = f._last_source, len(df) if df is not None else 0
+        ast = str(df.index[0])[:10] if rows>0 else "N/A"
+        cov = _has_coverage_warning(rows, src, ast, "2024-01-01")
+        s = "⚠️" if cov else "✅"
+        print(f"  {s} {sym} {src} {rows}条 {ast} cov={cov}")
+        if rows>=250 and not cov: ok+=1
+    print(f"  {ok}/5 达标无覆盖")
+    return ok==5
 
 if __name__ == "__main__":
-    main()
+    u = test_unit()
+    i = test_integration()
+    print(f"\n{'✅ 全通过' if (u and i) else '❌ 有失败'}")
+    sys.exit(0 if (u and i) else 1)
