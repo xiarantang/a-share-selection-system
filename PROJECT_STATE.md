@@ -7,7 +7,7 @@
 打造长期可用、结果可信、可复盘的 A 股选股系统。
 
 **最终形态：小白可用的可视化选股系统。** 当前 CLI 命令只是底层引擎和验收入口。
-路线：P5 打磨引擎 → P6 可视化界面(Streamlit) → P7 产品化打磨 → P8 AI 辅助
+路线：P5 打磨引擎 → P6 可视化界面(Streamlit) → P7 产品化打磨 → P8 渐进增强
 暂不碰实盘交易。
 
 **禁止事项**：不碰 AI/qlib/实盘交易/复杂前后端分离/数据库/登录系统。
@@ -60,9 +60,10 @@
 | P7.9文档 | `7cdf0b2` | 同步P7.9交付状态 |
 | P7.10 | `81d9f4c` | v0.5发布前最终审查/小修/文档矛盾修正 |
 | P7.10文档 | `83393f4` | 同步P7.10交付状态 |
+| P8.0 | _待commit_ | 下一阶段规划：P8_ROADMAP/5阶段路线图 |
 
 - 🏷️ **v0.5 已发布**：tag `v0.5` → commit `81759aa`，annotated tag 已推送到 GitHub
-- 最新已记录交付 commit: `81759aa`
+- 最新已记录交付 commit: `7221f54`，当前待 commit P8.0
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
@@ -78,17 +79,20 @@
 - ✅ 发布：CHANGELOG.md / RELEASE_CHECKLIST.md / 产品首页含截图预览
 - 🧪 AI/qlib：experimental（未来 P8 阶段，不参与当前小白启动）
 
-## 4. 当前阶段 P7.10（已完成）
+## 4. 当前阶段 P8.0（规划中）
 
-P7.10 v0.5 发布前最终审查与小修：
-1. 全面审查 README / USER_GUIDE / TROUBLESHOOTING / CHANGELOG / RELEASE_CHECKLIST / PROJECT_STATE 无互相矛盾
-2. 修正：README 删除重复的三步启动说明（顶部和快速开始重复），TROUBLESHOOTING 修正相对链接，PROJECT_STATE 补充缺失的 P7.9 文档 commit
-3. 验证所有文档链接和截图路径均存在（8 个文件全部确认）
-4. 不改核心代码，仅文档小修
-5. CLI 全链路：语法 8/8 → select EXIT:0 → backtest-validate EXIT:0 → report EXIT:0
+v0.5 已发布（tag `v0.5` → commit `81759aa`）。下一阶段为 P8 渐进增强。
 
-见 README.md、docs/TROUBLESHOOTING.md。
+P8.0 下一阶段规划：
+- 新增 `docs/P8_ROADMAP.md` 规划 P8.1~P8.5 五个阶段
+- P8.1 数据质量增强（高优先级）：多数据源 → 250+条K线 → 覆盖率>80%
+- P8.2 策略可解释增强（高优先级）：逐只白话解释/因子贡献说明
+- P8.3 UI 体验增强（中优先级）：进度条/首屏Top3/风险颜色标记
+- P8.4 策略管理（中优先级）：多策略框架/策略切换
+- P8.5 AI 辅助解释（低优先级）：可选 AI 解释/默认关闭/优雅降级
+
+详见 `docs/P8_ROADMAP.md`。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / scripts/install_fallback.command / scripts/screenshot_home.py / requirements-ui.txt / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md / docs/USER_GUIDE.md / docs/TROUBLESHOOTING.md / docs/UI_ACCEPTANCE_RESULT.md / docs/MANUAL_UI_CHECKLIST.md
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / validation/selection_validator.py / validation/backtest_validator.py / backtest/engine.py / reports/generator.py / start_ui.command / scripts/install_fallback.command / scripts/screenshot_home.py / requirements-ui.txt / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md / docs/P8_ROADMAP.md / docs/USER_GUIDE.md / docs/TROUBLESHOOTING.md / docs/UI_ACCEPTANCE_RESULT.md / docs/MANUAL_UI_CHECKLIST.md
