@@ -24,9 +24,10 @@
 | P8.1-3 | `12168f3` | 修正coverage_warning：baostock 570条不再误判 |
 | P8.1-3.1 | `ce2b7ec` | 修正日期差方向+抽出_has_coverage_warning()+3反例验证 |
 | P8.1-4 | `225ec0c` | 数据质量收口验收：CLI/报告/UI 三处一致，无矛盾 |
+| P8.2-0 | `4415aa1` | 策略解释方案设计：explain字段/生成规则/CLI报告UI三处展示 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
-## 3. 真实能力 (v0.5 + P8.1-4)
+## 3. 真实能力 (v0.5 + P8.2-0)
 
 - ✅ 数据：akshare + **baostock** + skill_fallback + 缓存；baostock稳定570条K线
 - ✅ 选股：6因子评分 + decision/risk_level/confidence
@@ -34,7 +35,7 @@
 - ✅ 可视化：Streamlit 本地 UI
 - ✅ Pipeline：PASS/FAIL退出码可信
 
-## 4. 当前阶段 P8.1（数据质量增强已收口）
+## 4. 当前阶段 P8.2（策略可解释增强）
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -65,8 +66,15 @@ P8.1-4 收口验收：
 - Streamlit UI：数据源摘要、K线区间、覆盖不足率、整体质量与 JSON/报告一致
 - P8.1 对比 v0.5：主数据源由 `skill_fallback` 120 条提升为 `baostock` 570 条，覆盖不足率从 100% 降为 0%，整体质量从 `usable_with_caution` 提升为 `good`
 
-下一步 P8.2：策略可解释增强。目标是在不改评分公式、不改排序、不引入 AI 的前提下，让每只候选股都有小白能看懂的一句话解释、主要加分项、主要扣分项和风险提醒。
+P8.2-0 解释方案设计：
+- 文档：`docs/P8_2_EXPLANATION_DESIGN.md`
+- 设计新增 `explain` 字段：`summary` / `strengths` / `weaknesses` / `risk_note` / `confidence_note`
+- 解释只从现有 `reasons` / `risks` / `factor_scores` / `factor_values` / `decision` / `risk_level` / `confidence` / `rows` 生成
+- 明确禁止：不改评分公式、不改排序、不引入 AI、不输出买入/卖出/目标价/收益预测
+- 展示范围：CLI JSON、Markdown 报告、Streamlit UI
+
+下一步 P8.2-1：小步实现 `_build_explain()` 并把 `explain` 字段追加到 `SelectionEngine.select()` 返回结果。只改 `strategies/selection.py` 和必要验证脚本，不碰报告/UI 展示。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / requirements.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / docs/P8_1_ACCEPTANCE.md
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / requirements.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md
