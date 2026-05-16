@@ -61,7 +61,8 @@
 | P7.10 | `81d9f4c` | v0.5发布前最终审查/小修/文档矛盾修正 |
 | P7.10文档 | `83393f4` | 同步P7.10交付状态 |
 
-- 最新已记录交付 commit: `83393f4`
+- 🏷️ **v0.5 已发布**：tag `v0.5` → commit `81759aa`，annotated tag 已推送到 GitHub
+- 最新已记录交付 commit: `81759aa`
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
