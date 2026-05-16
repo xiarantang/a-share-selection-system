@@ -57,8 +57,10 @@
 | P7.8 | `2d6f662` | 小白安装失败兜底/环境自检页/TROUBLESHOOTING/启动脚本强化 |
 | P7.8文档 | `7920621` | 同步P7.8交付状态 |
 | P7.9 | `ec9f374` | 产品收口首页/v0.5发布准备/CHANGELOG/RELEASE_CHECKLIST |
+| P7.9文档 | `7cdf0b2` | 同步P7.9交付状态 |
+| P7.10 | _待commit_ | v0.5发布前最终审查/小修/文档矛盾修正 |
 
-- 最新已记录交付 commit: `ec9f374`
+- 最新已记录交付 commit: `7cdf0b2`，当前待 commit P7.10 (v0.5最终检查)
 - 当前仓库最新提交请以 `git log -1 --oneline` 为准
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 - 本地: `/Users/niuniu/projects/a-share-selection-system`
@@ -74,17 +76,16 @@
 - ✅ 发布：CHANGELOG.md / RELEASE_CHECKLIST.md / 产品首页含截图预览
 - 🧪 AI/qlib：experimental（未来 P8 阶段，不参与当前小白启动）
 
-## 4. 当前阶段 P7.9（已完成）
+## 4. 当前阶段 P7.10（已完成）
 
-P7.9 产品收口首页 + v0.5 发布准备：
-1. README 重写为正式项目首页：版本号 v0.5 / 一句话说明 / 截图预览 / 三步启动 / 能力一览 / 已知限制 / 免责声明 / 文档索引
-2. README 嵌入 `docs/screenshots/home.png` + `result.png` 截图展示
-3. 新增 CHANGELOG.md：记录 v0.5 已完成能力（产品形态/小白体验/数据/选股/验证/验收/文档/CLI/限制）
-4. 新增 RELEASE_CHECKLIST.md：发布前检查清单（环境/启动/选股/CLI/文档/Git/截图脚本）
-5. 不改核心选股逻辑，仅 README/发布文档/少量必要文案
-6. CLI 全链路：语法 8/8 → select EXIT:0 → backtest-validate EXIT:0 → report EXIT:0
+P7.10 v0.5 发布前最终审查与小修：
+1. 全面审查 README / USER_GUIDE / TROUBLESHOOTING / CHANGELOG / RELEASE_CHECKLIST / PROJECT_STATE 无互相矛盾
+2. 修正：README 删除重复的三步启动说明（顶部和快速开始重复），TROUBLESHOOTING 修正相对链接，PROJECT_STATE 补充缺失的 P7.9 文档 commit
+3. 验证所有文档链接和截图路径均存在（8 个文件全部确认）
+4. 不改核心代码，仅文档小修
+5. CLI 全链路：语法 8/8 → select EXIT:0 → backtest-validate EXIT:0 → report EXIT:0
 
-见 README.md、CHANGELOG.md、RELEASE_CHECKLIST.md。
+见 README.md、docs/TROUBLESHOOTING.md。
 
 ## 5. 关键文件
 
