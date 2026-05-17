@@ -27,9 +27,12 @@
 | P8.2-0 | `4415aa1` | 策略解释方案设计：explain字段/生成规则/CLI报告UI三处展示 |
 | P8.2-1 | `4d50ae5` | 实现_build_explain()，JSON结果新增explain字段，Top5验证通过 |
 | P8.2-2 | `63766d6` | Markdown报告接入explain，优雅降级，验证通过 |
+| P8.2-2文档 | `c07eeae` | 同步P8.2-2报告解释状态 |
+| P8.2-3 | `8379657` | UI接入explain：expander顶部展示解释/可靠性折叠 |
+| P8.2-4 | _待commit_ | 小白依赖收口：requirements-ui加入baostock/状态同步 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
-## 3. 真实能力 (v0.5 + P8.2-2)
+## 3. 真实能力 (v0.5 + P8.2-3)
 
 - ✅ 数据：akshare + **baostock** + skill_fallback + 缓存；baostock稳定570条K线
 - ✅ 选股：6因子评分 + decision/risk_level/confidence + explain 小白解释字段
