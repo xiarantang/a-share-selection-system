@@ -113,6 +113,20 @@ class ReportGenerator:
                 if risks_text:
                     lines.append(f"  > 风险: {risks_text}")
                 lines.append(f"  > 数据: {src} / {rows}行 / {start}~{end}")
+                # explain（优雅降级：无字段时不报错）
+                exp = r.get("explain", {})
+                if exp:
+                    lines.append(f"  > 📝 解释: {exp.get('summary', '')}")
+                    strs = exp.get("strengths", [])
+                    if strs:
+                        lines.append(f"  > ✅ 加分: {' | '.join(strs)}")
+                    ws = exp.get("weaknesses", [])
+                    if ws and ws != ["暂无显著风险信号"]:
+                        lines.append(f"  > ⚠️ 风险: {' | '.join(ws)}")
+                    if exp.get("risk_note"):
+                        lines.append(f"  > 📊 可靠性: {exp.get('risk_note', '')}")
+                    if exp.get("confidence_note"):
+                        lines.append(f"  > 💡 数据说明: {exp.get('confidence_note', '')}")
 
         # 历史窗口复盘
         bt = (selection_data or {}).get("backtest_validation")
