@@ -2,7 +2,7 @@
 """
 A股智能选股系统 - Streamlit 本地可视化 UI (P7.0)
 =================================================
-小白也能用的一键选股界面。三步引导、错误提示友好化、数据覆盖可视化。
+小白也能用的一键选股界面。选参数、开始选股、看结果。
 复用全部现有底层模块，不复制评分逻辑。
 仅供研究学习，不构成投资建议。
 """
@@ -275,7 +275,7 @@ def render_backtest_summary(summary: dict, per_stock: list):
 
 # ========== 辅助：流程引导卡片 ==========
 def render_step_guide():
-    """未选股前的引导卡片：简洁两步，含首次安装提示。"""
+    """未选股前的引导卡片：简洁操作引导，含首次安装提示。"""
     st.markdown("### 👋 欢迎使用 A 股智能选股系统")
 
     # 首次安装提示（仅未安装时显示）
@@ -287,7 +287,7 @@ def render_step_guide():
                 "只需安装一次。\n> 说明：akshare 在网络不稳定时可能临时不可用，备用数据通道确保系统仍可正常出结果。"
             )
 
-    # 两步核心操作
+    # 核心操作引导
     col1, col2 = st.columns(2)
     with col1:
         with st.container(border=True):
@@ -301,7 +301,7 @@ def render_step_guide():
 
 # ========== 主界面 ==========
 st.title("🏦 A股智能选股系统")
-st.caption("四步完成选股 · 小白也能用 · 仅供研究学习，不构成投资建议")
+st.caption("选参数 → 开始选股 → 看结果 · 小白也能用 · 仅供研究学习，不构成投资建议")
 
 if FALLBACK_SCRIPT.exists():
     st.success("✅ **系统就绪** — 点击左侧「🚀 开始选股」即可开始，预计 30-60 秒出结果")
@@ -627,7 +627,7 @@ if st.session_state.selection_data is not None:
     st.caption("🎯 产品目标：打造小白也能用的可视化 A 股选股系统。当前为本地 Streamlit 版。CLI 命令仍是底层引擎和验收入口。")
 
 else:
-    # 未选股时的三步引导
+    # 未选股时的引导
     render_step_guide()
 
 
