@@ -41,7 +41,7 @@
 - ✅ 小白启动：start_ui.command 安装 requirements-ui.txt；轻量依赖已包含 baostock
 - ✅ Pipeline：PASS/FAIL退出码可信
 
-## 4. 当前阶段 P8.2（策略可解释增强）
+## 4. 当前阶段 P8.3（UI 体验增强）
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -105,8 +105,20 @@ P8.2-4 小白依赖收口：
 - `select --universe static --limit 10 --top 5` 验证 10/10 数据源为 baostock
 - `backtest-validate`、`report`、`confirm_explain.py`、`confirm_report_explain.py` 均通过
 
-下一步建议 P8.3-0：先做 UI 体验增强设计，不直接写大改。目标是让小白更容易理解首页、结果页和逐只详情，但禁止改评分、排序、数据链路和投资建议边界。
+P8.3-0 UI体验增强设计：
+- 文档：`docs/P8_3_UI_EXPERIENCE_DESIGN.md`
+- 问题诊断：15 个具体问题（首页 H-1~H-4、结果页 R-1~R-4、逐只详情 D-1~D-4、工程风格 E-1~E-5）
+- 总目标：小白打开后 完成 启动→选股→Top3→原因→风险→数据质量→报告 全流程
+- 拆分计划：
+  - P8.3-1：首页/启动区体验优化（合并就绪横幅、首次检查默认折叠、简化四步引导）
+  - P8.3-2：结果首屏 Top3 + 总览卡片（Top3速览、合并信息层、决策中文化）
+  - P8.3-3：风险视觉统一和小白解释优化（风险颜色、因子中文标签、技术术语折叠）
+  - P8.3-4：UI 验收脚本和截图更新
+- 设计原则：不做营销落地页、不换前端框架、不改评分/排序/数据链路、保持 CLI 验收和双击启动
+- 本阶段仅写设计文档，未修改 app.py 和任何代码文件
+
+下一步建议 P8.3-1：先做首页/启动区体验优化，改动最小、风险最低。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_ROADMAP.md
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_ROADMAP.md
