@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-16
+> 最后更新：2026-05-17
 
 ## 1. 项目总目标
 
@@ -29,15 +29,16 @@
 | P8.2-2 | `63766d6` | Markdown报告接入explain，优雅降级，验证通过 |
 | P8.2-2文档 | `c07eeae` | 同步P8.2-2报告解释状态 |
 | P8.2-3 | `8379657` | UI接入explain：expander顶部展示解释/可靠性折叠 |
-| P8.2-4 | _待commit_ | 小白依赖收口：requirements-ui加入baostock/状态同步 |
+| P8.2-4 | `caac7b2` | 小白依赖收口：requirements-ui加入baostock/状态同步/全链路通过 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
-## 3. 真实能力 (v0.5 + P8.2-3)
+## 3. 真实能力 (v0.5 + P8.2-4)
 
 - ✅ 数据：akshare + **baostock** + skill_fallback + 缓存；baostock稳定570条K线
 - ✅ 选股：6因子评分 + decision/risk_level/confidence + explain 小白解释字段
 - ✅ 验证：validate + backtest-validate + report，Markdown报告已展示explain解释
-- ✅ 可视化：Streamlit 本地 UI
+- ✅ 可视化：Streamlit 本地 UI，逐只详情已展示 explain 小白解释
+- ✅ 小白启动：start_ui.command 安装 requirements-ui.txt；轻量依赖已包含 baostock
 - ✅ Pipeline：PASS/FAIL退出码可信
 
 ## 4. 当前阶段 P8.2（策略可解释增强）
@@ -92,8 +93,20 @@ P8.2-2 Markdown报告接入解释：
 - `scripts/confirm_report_explain.py` 验证报告解释段落和禁词
 - 本阶段未修改 UI
 
-下一步 P8.2-3：把 `explain` 接入 Streamlit UI。只改 `app.py` 和必要验证脚本，不改评分、不改排序、不改报告生成逻辑。
+P8.2-3 Streamlit UI 接入解释：
+- `app.py` 在逐只详情 expander 顶部展示 `explain.summary`
+- UI 展示主要加分、主要风险、可靠性说明
+- 老 JSON 没有 `explain` 时优雅降级，不报错
+- 本阶段未修改评分、排序和报告生成逻辑
+
+P8.2-4 小白依赖收口：
+- `requirements-ui.txt` 已加入 `baostock>=0.8.8`
+- `scripts/confirm_ui_dependencies.py` 验证轻量依赖包含 baostock，且当前环境可 import baostock/streamlit
+- `select --universe static --limit 10 --top 5` 验证 10/10 数据源为 baostock
+- `backtest-validate`、`report`、`confirm_explain.py`、`confirm_report_explain.py` 均通过
+
+下一步建议 P8.3-0：先做 UI 体验增强设计，不直接写大改。目标是让小白更容易理解首页、结果页和逐只详情，但禁止改评分、排序、数据链路和投资建议边界。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / reports/generator.py / requirements.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_ROADMAP.md
