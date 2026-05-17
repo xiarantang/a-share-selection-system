@@ -275,11 +275,10 @@ def render_backtest_summary(summary: dict, per_stock: list):
 
 # ========== 辅助：流程引导卡片 ==========
 def render_step_guide():
-    """未选股前的引导卡片：4 步流程，含首次安装提示。"""
+    """未选股前的引导卡片：简洁两步，含首次安装提示。"""
     st.markdown("### 👋 欢迎使用 A 股智能选股系统")
-    st.caption("按顺序操作，小白也能轻松上手。")
 
-    # ⓪ 第一步：安装备用数据通道（首次）
+    # 首次安装提示（仅未安装时显示）
     if not FALLBACK_SCRIPT.exists():
         with st.container(border=True):
             st.markdown("#### ⓪ 首次安装备用数据通道")
@@ -288,23 +287,16 @@ def render_step_guide():
                 "只需安装一次。\n> 说明：akshare 在网络不稳定时可能临时不可用，备用数据通道确保系统仍可正常出结果。"
             )
 
-    col1, col2, col3, col4 = st.columns(4)
+    # 两步核心操作
+    col1, col2 = st.columns(2)
     with col1:
         with st.container(border=True):
-            st.markdown("#### ① 选参数")
-            st.markdown("在左侧栏选择：\n- 股票池（默认 static 55只精选）\n- 扫描数量（默认 10 只）\n- 数据起始日期")
+            st.markdown("#### ① 在左侧选参数")
+            st.markdown("保持默认即可（static 55只精选 / 扫描 10 只），然后点击左侧 **🚀 开始选股** 按钮")
     with col2:
         with st.container(border=True):
-            st.markdown("#### ② 开始选股")
-            st.markdown("点击左侧 **🚀 开始选股** 按钮\n系统拉取数据 → 计算评分 → 排序\n预计 30-60 秒完成")
-    with col3:
-        with st.container(border=True):
-            st.markdown("#### ③ 看候选表格")
-            st.markdown("选股完成后查看：\n- 股票排名和评分\n- 数据区间和覆盖状态\n- 逐只因子拆分详情")
-    with col4:
-        with st.container(border=True):
-            st.markdown("#### ④ 看验证和报告")
-            st.markdown("切换 Tab 查看：\n- 📋 验证摘要（质量评估）\n- 📈 历史复盘（in-sample）\n- 📄 完整报告（Markdown）")
+            st.markdown("#### ② 等待结果")
+            st.markdown("预计 30-60 秒，完成后可直接查看排名、评分和风险提示")
 
 
 # ========== 主界面 ==========
@@ -312,8 +304,7 @@ st.title("🏦 A股智能选股系统")
 st.caption("四步完成选股 · 小白也能用 · 仅供研究学习，不构成投资建议")
 
 if FALLBACK_SCRIPT.exists():
-    st.success("✅ **可以开始选股** — 数据通道就绪，点击左侧「🚀 开始选股」即可")
-    st.info("📡 当前主要使用 A 股备用数据通道（skill_fallback）。如果 akshare 临时不可用，系统仍可正常出结果。")
+    st.success("✅ **系统就绪** — 点击左侧「🚀 开始选股」即可开始，预计 30-60 秒出结果")
 else:
     st.error("⚠️ **需要先安装备用数据通道才能开始选股**")
     st.warning(
@@ -323,7 +314,7 @@ else:
     )
 
 # 首次使用检查区（可折叠）
-with st.expander("🔧 首次使用检查（点击展开）", expanded=(st.session_state.selection_data is None)):
+with st.expander("🔧 环境检查（点击展开）", expanded=False):
     import sys as _sys
     import glob as _glob
 
@@ -376,7 +367,6 @@ with st.expander("🔧 首次使用检查（点击展开）", expanded=(st.sessi
 with st.sidebar:
     st.header("⚙️ 选股参数")
 
-    st.markdown("**① 选择股票池**")
     universe = st.selectbox(
         "股票池",
         options=["static", "hs300", "top_amount"],
@@ -397,8 +387,7 @@ with st.sidebar:
     start_str = start_date.strftime("%Y-%m-%d") if hasattr(start_date, "strftime") else str(start_date)
 
     st.markdown("---")
-    st.markdown("**② 一键运行**")
-    st.caption("首次体验建议保持默认 static + 10 只，预计 30-60 秒。看到备用数据源提示不代表系统坏了。")
+    st.caption("首次体验建议保持默认参数，预计 30-60 秒出结果")
 
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
@@ -407,10 +396,6 @@ with st.sidebar:
         btn_backtest = st.button("📈 历史复盘", use_container_width=True,
                                  disabled=(st.session_state.selection_data is None),
                                  help="对 Top 候选做 In-Sample 窗口验证（较慢）")
-
-    st.markdown("---")
-    st.markdown("**③ 查看结果**")
-    st.caption("选股完成后，在右侧切换 Tab 查看候选表格、验证摘要、历史复盘和完整报告。")
 
     st.markdown("---")
     st.caption("""⚠️ **免责声明**：本系统根据数据和规则自动生成选股结果，仅供研究学习，不构成投资建议。A股市场风险较高，投资需谨慎。""")
