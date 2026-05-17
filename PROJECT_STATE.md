@@ -26,13 +26,14 @@
 | P8.1-4 | `225ec0c` | 数据质量收口验收：CLI/报告/UI 三处一致，无矛盾 |
 | P8.2-0 | `4415aa1` | 策略解释方案设计：explain字段/生成规则/CLI报告UI三处展示 |
 | P8.2-1 | `4d50ae5` | 实现_build_explain()，JSON结果新增explain字段，Top5验证通过 |
+| P8.2-2 | `63766d6` | Markdown报告接入explain，优雅降级，验证通过 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
-## 3. 真实能力 (v0.5 + P8.2-1)
+## 3. 真实能力 (v0.5 + P8.2-2)
 
 - ✅ 数据：akshare + **baostock** + skill_fallback + 缓存；baostock稳定570条K线
 - ✅ 选股：6因子评分 + decision/risk_level/confidence + explain 小白解释字段
-- ✅ 验证：validate + backtest-validate + report
+- ✅ 验证：validate + backtest-validate + report，Markdown报告已展示explain解释
 - ✅ 可视化：Streamlit 本地 UI
 - ✅ Pipeline：PASS/FAIL退出码可信
 
@@ -81,8 +82,15 @@ P8.2-1 JSON解释字段实现：
 - `scripts/confirm_explain.py` 验证 Top5 每条解释字段完整，且不包含买入/卖出/目标价/收益预测等禁词
 - 本阶段未修改报告和 UI 展示
 
-下一步 P8.2-2：把 `explain` 接入 Markdown 报告。只改 `reports/generator.py` 和必要验证脚本，不改评分、不改排序、不改 UI。
+P8.2-2 Markdown报告接入解释：
+- `reports/generator.py` 在 Top 候选下展示 `explain`
+- 报告包含：解释、加分、风险、可靠性、数据说明
+- 老 JSON 没有 `explain` 时优雅降级，不报错
+- `scripts/confirm_report_explain.py` 验证报告解释段落和禁词
+- 本阶段未修改 UI
+
+下一步 P8.2-3：把 `explain` 接入 Streamlit UI。只改 `app.py` 和必要验证脚本，不改评分、不改排序、不改报告生成逻辑。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / requirements.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / reports/generator.py / requirements.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md
