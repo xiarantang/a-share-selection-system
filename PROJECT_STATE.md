@@ -25,12 +25,13 @@
 | P8.1-3.1 | `ce2b7ec` | 修正日期差方向+抽出_has_coverage_warning()+3反例验证 |
 | P8.1-4 | `225ec0c` | 数据质量收口验收：CLI/报告/UI 三处一致，无矛盾 |
 | P8.2-0 | `4415aa1` | 策略解释方案设计：explain字段/生成规则/CLI报告UI三处展示 |
+| P8.2-1 | `4d50ae5` | 实现_build_explain()，JSON结果新增explain字段，Top5验证通过 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
-## 3. 真实能力 (v0.5 + P8.2-0)
+## 3. 真实能力 (v0.5 + P8.2-1)
 
 - ✅ 数据：akshare + **baostock** + skill_fallback + 缓存；baostock稳定570条K线
-- ✅ 选股：6因子评分 + decision/risk_level/confidence
+- ✅ 选股：6因子评分 + decision/risk_level/confidence + explain 小白解释字段
 - ✅ 验证：validate + backtest-validate + report
 - ✅ 可视化：Streamlit 本地 UI
 - ✅ Pipeline：PASS/FAIL退出码可信
@@ -73,8 +74,15 @@ P8.2-0 解释方案设计：
 - 明确禁止：不改评分公式、不改排序、不引入 AI、不输出买入/卖出/目标价/收益预测
 - 展示范围：CLI JSON、Markdown 报告、Streamlit UI
 
-下一步 P8.2-1：小步实现 `_build_explain()` 并把 `explain` 字段追加到 `SelectionEngine.select()` 返回结果。只改 `strategies/selection.py` 和必要验证脚本，不碰报告/UI 展示。
+P8.2-1 JSON解释字段实现：
+- `strategies/selection.py` 新增 `_build_explain()`
+- `SelectionEngine.select()` 成功结果新增 `explain`
+- `explain` 包含 `summary` / `strengths` / `weaknesses` / `risk_note` / `confidence_note`
+- `scripts/confirm_explain.py` 验证 Top5 每条解释字段完整，且不包含买入/卖出/目标价/收益预测等禁词
+- 本阶段未修改报告和 UI 展示
+
+下一步 P8.2-2：把 `explain` 接入 Markdown 报告。只改 `reports/generator.py` 和必要验证脚本，不改评分、不改排序、不改 UI。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / requirements.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / requirements.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md
