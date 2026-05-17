@@ -585,6 +585,24 @@ if st.session_state.selection_data is not None:
                     title += " ⚠️覆盖不全"
 
                 with st.expander(title):
+                    # explain（优雅降级：无字段时不显示）
+                    exp = r.get("explain", {})
+                    if exp:
+                        st.markdown(f"**📝 {exp.get('summary', '')}**")
+                        strs = exp.get("strengths", [])
+                        ws = exp.get("weaknesses", [])
+                        if strs or (ws and ws != ["暂无显著风险信号"]):
+                            ec1, ec2 = st.columns(2)
+                            with ec1:
+                                if strs:
+                                    st.caption(f"✅ 主要加分: {' | '.join(strs)}")
+                            with ec2:
+                                if ws and ws != ["暂无显著风险信号"]:
+                                    st.caption(f"⚠️ 主要风险: {' | '.join(ws)}")
+                        if exp.get("confidence_note"):
+                            with st.expander("📊 可靠性说明"):
+                                st.caption(exp.get("risk_note", ""))
+                                st.caption(exp.get("confidence_note", ""))
                     col_a, col_b = st.columns(2)
                     with col_a:
                         st.markdown(f"**评分**: {score}/100 | **决策**: {dec} | **风险**: {rl} | **置信度**: {conf}")
