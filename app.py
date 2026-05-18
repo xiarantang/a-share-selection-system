@@ -507,7 +507,7 @@ with st.sidebar:
 
 # ---- 主区域 ----
 if btn_select:
-    with st.spinner("⏳ 正在选股中，通常需要 30-60 秒。正在拉取数据、计算评分，请不要关闭页面..."):
+    with st.spinner("⏳ 正在选股中，通常需要 30-60 秒。系统会依次拉取数据并计算评分，个别数据源慢时可能接近 2 分钟，请保持页面打开..."):
         try:
             data = run_selection(universe, limit, top, start_str, strategy_id=selected_strategy)
             st.session_state.selection_data = data
@@ -534,12 +534,21 @@ if btn_select:
                 st.success(msg)
             else:
                 st.error(
-                    f"❌ 选股异常：{total_count} 只股票全部获取失败。"
-                    "请先检查网络连接，然后重试。如持续失败，可安装第三级兜底数据通道：双击 `scripts/install_fallback.command`。"
+                    f"❌ 所有数据源暂时都没有取到数据（{total_count} 只全部失败）。"
+                    "这不是系统坏了，通常是网络波动导致的。\n\n"
+                    "**下一步**：\n"
+                    "1. 检查网络连接（打开浏览器看看能不能正常上网）\n"
+                    "2. 刷新页面（按 F5 或 Cmd+R），重新点击「开始选股」\n"
+                    "3. 如持续失败，可**可选**安装第三级兜底数据通道：双击 `scripts/install_fallback.command`"
                 )
 
         except Exception as e:
-            st.error(f"❌ 选股过程出错。可能原因：网络不通、数据接口临时故障。\n\n技术详情: {e}")
+            st.error(
+                "❌ 选股过程遇到问题。通常是网络波动或数据接口临时故障。\n\n"
+                "**下一步**：刷新页面（按 F5 或 Cmd+R），重新点击「开始选股」。"
+            )
+            with st.expander("技术详情（发 Issue 时可截图）", expanded=False):
+                st.code(str(e))
 
 if btn_backtest and st.session_state.selection_data is not None:
     with st.spinner("⏳ 正在复盘验证中，请稍候（需重新拉取数据，较慢）..."):
@@ -555,7 +564,12 @@ if btn_backtest and st.session_state.selection_data is not None:
             else:
                 st.success(f"复盘完成：验证 {checked} 只")
         except Exception as e:
-            st.error(f"❌ 复盘过程出错。可能原因：网络不通、数据接口临时故障。\n\n技术详情: {e}")
+            st.error(
+                "❌ 复盘过程遇到问题。通常是网络波动导致。\n\n"
+                "**下一步**：刷新页面后重新点击「历史复盘」按钮。"
+            )
+            with st.expander("技术详情（发 Issue 时可截图）", expanded=False):
+                st.code(str(e))
 
 # ---- 结果展示 ----
 if st.session_state.selection_data is not None:
@@ -589,7 +603,11 @@ if st.session_state.selection_data is not None:
                     if summary:
                         st.caption(f"_{summary}_")
     else:
-        st.warning("无候选结果。可能原因：数据全部获取失败，请检查网络或稍后重试。")
+        st.warning(
+            "无候选结果。可能是数据源暂时都没连上。\n\n"
+            "**下一步**：检查网络连接，刷新页面（F5）重新选股。"
+            "如持续失败，请查看排障指南 `docs/TROUBLESHOOTING.md` 第 7 条。"
+        )
 
     # ====== 紧凑数据概览（合并原信息条 + 覆盖摘要 + 验证摘要） ======
     st.markdown("---")
@@ -638,6 +656,7 @@ if st.session_state.selection_data is not None:
         st.info(
             "覆盖不全不是报错：系统会自动降低评分和置信度。"
             "结果仍可用于研究观察，但不应当直接作为投资决策依据。"
+            "详见 `docs/TROUBLESHOOTING.md` 第 8 条。"
         )
 
     # ====== run_metadata 复盘信息（默认收起） ======
@@ -703,7 +722,11 @@ if st.session_state.selection_data is not None:
     with tab1:
         top_results = data.get("top", [])
         if not top_results:
-            st.warning("无候选结果。可能原因：数据全部获取失败，请检查网络或稍后重试。")
+            st.warning(
+            "无候选结果。可能是数据源暂时都没连上。\n\n"
+            "**下一步**：检查网络连接，刷新页面（F5）重新选股。"
+            "如持续失败，请查看排障指南 `docs/TROUBLESHOOTING.md` 第 7 条。"
+        )
         else:
             st.caption(f"Top {len(top_results)} 候选 | 评分从高到低 | 数据区间供参考")
 

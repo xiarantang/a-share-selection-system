@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.4-1.1 完成）
+> 最后更新：2026-05-19（P9.4-2 完成）
 
 ## 1. 项目总目标
 
@@ -76,6 +76,7 @@
 | P9.4-0.1 | — | P9.4 设计文档禁词措辞返工 |
 | P9.4-1 | — | 公开排障文档口径收口 |
 | P9.4-1.1 | — | 排障文档手动安装依赖说明微修 |
+| P9.4-2 | — | UI 错误/等待/空结果提示增强 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -659,6 +660,18 @@ P9.4-1 公开排障文档口径收口：
 - docs/P9_4_TROUBLESHOOTING_DESIGN.md：P9.4-1 标记已完成
 - 未修改 app.py / main.py / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
 - 下一步建议：P9.4-2 UI 错误/等待/空结果提示增强
+
+P9.4-2 UI 错误/等待/空结果提示增强：
+- app.py 6 处提示文案增强（只改展示，不改逻辑）：
+  - 选股 spinner：补充"个别数据源慢时可能接近 2 分钟"说明
+  - 全部失败 error：白话说明"所有数据源暂时都没有取到数据"+ 分步下一步
+  - 选股 except：主提示白话 + 技术详情放入默认收起 expander
+  - 复盘 except：同上模式，主提示白话 + 技术详情收起
+  - 无候选结果 warning（2 处）：补充排障指南引用
+  - 覆盖不全 info：补充排障指南引用
+- docs/P9_4_TROUBLESHOOTING_DESIGN.md：P9.4-2 标记已完成
+- 未修改 run_selection / run_backtest / 数据结构 / session_state / 报告逻辑 / 评分 / 排序 / 数据链路
+- 下一步建议：P9.4-3 启动脚本提示增强
 
 ## 5. 关键文件
 
