@@ -625,7 +625,7 @@ P9.3-4.1.1 设计文档表格格式返工收口：
 - 未修改任何产品代码、脚本、评分、排序、数据链路、报告逻辑
 
 P9.3-4.2 run_metadata 验收接入发布前一键验收：
-- scripts/confirm_release_ready.py：CHECKS 新增第 10 项「run_metadata 复盘记录验收」，调用 confirm_run_metadata.py
+- scripts/confirm_release_ready.py：CHECKS 新增「run_metadata 复盘记录验收」（位置在 CLI 报告生成之后、废弃 API 残留检查之前），调用 confirm_run_metadata.py
 - 公开文档检查项数量从 10 项更新为 11 项：README.md / docs/P8_7_RELEASE_REVIEW.md / docs/P9_ROADMAP.md
 - 未修改 confirm_run_metadata.py / app.py / main.py / strategies/selection.py / reports/generator.py / 评分 / 排序 / 数据链路
 - 验收：confirm_release_ready 11/11 | confirm_docs_consistency 19/19
