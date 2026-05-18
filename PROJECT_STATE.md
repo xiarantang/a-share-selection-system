@@ -55,7 +55,7 @@
 - ✅ 小白启动：start_ui.command 安装 requirements-ui.txt；轻量依赖已包含 baostock
 - ✅ Pipeline：PASS/FAIL退出码可信
 
-## 4. 阶段记录（P8.1-P8.4 已完成）
+## 4. 阶段记录（P8.1-P8.6 已完成）
 
 当前推进：P8.6-4 公开文档状态一致性收口已完成。以下保留 P8.1-P8.6-4 的关键验收记录。
 
