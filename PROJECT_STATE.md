@@ -42,7 +42,7 @@
 | P8.6-2.1 | `e2b8e4b` | 回填UI冒烟验收commit |
 | P8.6-3 | `ed4d27b` | 小白启动脚本冒烟验收 |
 | P8.6-3.1 | `16d54c8` | 回填启动脚本验收commit |
-| P8.6-4 | — | 公开文档状态一致性收口 |
+| P8.6-4 | `401fad9` | 公开文档状态一致性收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.4 已完成)
