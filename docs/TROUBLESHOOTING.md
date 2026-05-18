@@ -35,12 +35,15 @@
 **如果启动脚本报「pip 安装失败」或「虚拟环境创建失败」**：
 
 - 先确认 Python 版本：打开终端，输入 `python3 --version`，确认显示 3.9 或更高版本
-- 如果版本正确但仍失败，打开终端，输入以下命令手动安装依赖：
-  ```
-  python3 -m pip install --upgrade pip
-  cd （把项目文件夹拖入终端）按回车
-  python3 -m pip install -r requirements-ui.txt
-  ```
+- 如果版本正确但仍失败，按以下步骤手动安装依赖：
+  1. 在终端中输入 `cd `（注意 cd 后面有一个空格）
+  2. 把项目文件夹（`a-share-selection-system`）直接**拖入终端窗口**
+  3. 按回车，进入项目目录
+  4. 然后依次输入以下两条命令（每条输完后按回车）：
+     ```
+     python3 -m pip install --upgrade pip
+     python3 -m pip install -r requirements-ui.txt
+     ```
 - 安装完成后重新双击 `start_ui.command`
 - 如果手动安装也失败（比如提示「编译错误」或「架构不匹配」），请截图终端报错发到项目 Issues
 
