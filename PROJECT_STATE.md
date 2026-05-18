@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P8.7-3）
+> 最后更新：2026-05-18（P8.7-4）
 
 ## 1. 项目总目标
 
@@ -49,6 +49,7 @@
 | P8.7-1 | `33081e5` | 发布前一键验收脚本最小整合 |
 | P8.7-2 | `8ae0544` | 小白手动验收清单一致性收口 |
 | P8.7-3 | `58301ba` | README公开入口与当前状态一致性收口 |
+| P8.7-4 | — | 公开文档数据层描述一致性收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-P8.6 已完成)
@@ -66,7 +67,7 @@
 
 ## 4. 阶段记录（P8.1-P8.7 已完成）
 
-当前推进：P8.7-3 README公开入口与当前状态一致性收口已完成。以下保留 P8.1-P8.7-3 的关键验收记录。
+当前推进：P8.7-4 公开文档数据层描述一致性收口已完成。以下保留 P8.1-P8.7-4 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -429,6 +430,15 @@ P8.7-3 README公开入口与当前状态一致性收口：
 - PROJECT_STATE.md 记录 P8.7-3 完成
 - 未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / scripts/ / start_ui.command / requirements*.txt / docs/USER_GUIDE.md / docs/MANUAL_UI_CHECKLIST.md / docs/UI_ACCEPTANCE.md / docs/P8_7_RELEASE_REVIEW.md
 - 未修改评分、排序、数据链路、报告逻辑
+
+P8.7-4 公开文档数据层描述一致性收口：
+- docs/USER_GUIDE.md + docs/TROUBLESHOOTING.md 两份小白文档：
+  - 移除所有"约 120 条""~120 条"硬编码数字，skill_fallback 统一描述为"第三级兜底（数据量可能较少）"
+  - 保留数据链路：akshare → baostock（~570 条日 K）→ skill_fallback
+  - 保留用户友好理念：「覆盖不全」不是系统故障，而是降级到第三级兜底时的正常提示
+- 未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / scripts/ / start_ui.command / requirements*.txt / README.md / docs/P8_7_RELEASE_REVIEW.md
+- 未修改评分、排序、数据链路、报告逻辑
+- 验收：rg 禁词零命中 ✅ | confirm_release_ready ✅
 
 ## 5. 关键文件
 

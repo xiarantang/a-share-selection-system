@@ -1,6 +1,8 @@
 # 🛠️ 常见问题排障指南
 
 > 遇到问题不要慌，这里列出了小白最常见的 10 个问题。按顺序排查即可。
+>
+> 数据层说明：系统按 **akshare → baostock（~570 条日 K）→ skill_fallback（数据量可能较少）** 三级降级拉取数据。baostock 已内置在安装依赖中，skill_fallback 为可选的第三级兜底。
 
 ---
 
@@ -32,7 +34,7 @@
 
 ---
 
-## 3. 双击 `install_fallback.command` 提示「未找到 Git」
+## 3. 双击 `install_fallback.command` 提示「未找到 Git」（可选的第三级兜底）
 
 **可能原因**：Git 没有安装。
 
@@ -43,7 +45,7 @@
 
 ---
 
-## 4. `install_fallback.command` 下载失败（GitHub 连不上）
+## 4. `install_fallback.command` 下载失败（GitHub 连不上）（可选的第三级兜底）
 
 **可能原因**：网络问题，GitHub 被屏蔽或连接超时。
 
@@ -77,28 +79,31 @@
 **解决办法**：
 1. 首次选股扫 10 只需要 30-60 秒，这是正常的
 2. 如果超过 2 分钟 → 刷新页面（按 F5 或 Cmd+R），重新点击「开始选股」
-3. 可能是 akshare 接口挂了，试试关掉页面重新打开
-4. 如果备用数据通道没安装 → 先安装它（双击 `scripts/install_fallback.command`）
+3. 系统会自动按 **akshare → baostock → skill_fallback** 三级降级拉数据，某一个源慢不影响最终结果
+4. 如果 baostock 和 akshare 都连不上，系统会降级到第三级兜底（skill_fallback，数据量可能较少），结果仍可参考
+5. 如需安装 skill_fallback 兜底通道 → 双击 `scripts/install_fallback.command`
 
 ---
 
 ## 7. 选股完后结果是空的，或者全部失败
 
-**可能原因**：数据源全部不可用，且备用数据通道未安装。
+**可能原因**：数据源全部不可用（akshare、baostock 和 skill_fallback 都连不上）。
 
 **解决办法**：
-1. 先双击 `scripts/install_fallback.command` 安装备用数据通道
-2. 安装完成后重新启动系统（双击 `start_ui.command`）
-3. 确认电脑能上网（打开浏览器看看能不能打开网页）
+1. 确认电脑能上网（打开浏览器看看能不能打开网页）
+2. 重新启动系统（双击 `start_ui.command`），再试一次
+3. 如未安装 skill_fallback 兜底通道 → 双击 `scripts/install_fallback.command`（安装后可提供第三级兜底）
 4. 如果安装 fallback 也失败了，参考本文第 4 条
 
 ---
 
 ## 8. 所有股票都标了「覆盖不全」，是不是有问题？
 
-**不是系统坏了。** 「覆盖不全」只是说历史数据比较短（约 120 条 K 线），不是程序出错。
+**不是系统坏了。** 正常情况下，系统通过 baostock 拉取约 **570 条**日 K 线，不会出现覆盖不全。
 
-这不影响你正常使用——系统已经自动降低了评分和置信度，结果仍然可以参考。后续有更多数据时会自动改善。
+如果看到「覆盖不全」，说明 baostock 和 akshare 都没能连上，系统降级到了第三级兜底（skill_fallback，数据量可能较少）。这不影响你正常使用——系统已经自动降低了评分和置信度，结果仍然可以参考。
+
+**建议**：检查网络连接后重新选股，通常 baostock 会恢复 570 条数据。
 
 ---
 
@@ -112,17 +117,18 @@
 | **回避 (avoid)** | 风险较高，建议谨慎 |
 | **风险 low / medium / high** | 低 / 中 / 高风险 |
 | **置信度** | 评分可不可靠——越高越可靠 |
-| **覆盖不全 ⚠️** | 数据较短，评分可能偏高或偏低 |
+| **覆盖不全 ⚠️** | 数据量可能较少（降级到了第三级兜底 skill_fallback），评分可能偏高或偏低 |
 
 ---
 
 ## 10. 不知道怎么开始操作
 
-**极简三步**：
+**两步开始**：
 
-1. **首次**：双击 `scripts/install_fallback.command`（只需一次）
-2. **启动**：双击 `start_ui.command` → 浏览器自动打开页面
-3. **选股**：点击页面左侧「🚀 开始选股」→ 等 30-60 秒 → 看结果
+1. **启动**：双击 `start_ui.command` → 浏览器自动打开页面
+2. **选股**：点击页面左侧「🚀 开始选股」→ 等 30-60 秒 → 看结果
+
+> **可选**：双击 `scripts/install_fallback.command` 可安装第三级兜底数据通道（skill_fallback），在网络不稳定时多一层保障。系统已内置 baostock（约 570 条日 K），不装 fallback 也能正常使用。
 
 详细图文教程 → [📖 小白使用指南](./USER_GUIDE.md)
 
