@@ -51,6 +51,7 @@
 | P8.7-3 | `58301ba` | README公开入口与当前状态一致性收口 |
 | P8.7-4 | `67e2c72` | 公开文档数据层描述一致性收口 |
 | P8.7-5 | `3966bf5` | 启动入口fallback可选状态收口 |
+| P8.7-5.1 | `e96645e` | 回填commit并同步验收清单口径 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-P8.6 已完成)
@@ -375,7 +376,7 @@ P8.6-3 小白启动脚本冒烟验收：
   - Python3 检测 ✅（Python 3.9.6）
   - 虚拟环境已存在 ✅
   - 依赖就绪 ✅（streamlit=1.50.0, pandas=2.3.3）
-  - 备用数据通道已安装 ✅
+  - skill_fallback 兜底通道当时已安装 ✅
 - Streamlit 后台启动：HTTP 200 返回确认（1s 内响应） ✅
 - 启动日志检查：无 use_container_width / applymap / DeprecationWarning / FutureWarning / 错误 ✅
 - 端口清理：启动进程已停止，8501 端口无残留 ✅
@@ -445,8 +446,8 @@ P8.7-5 启动入口fallback可选状态收口：
 - app.py：FALLBACK_SCRIPT 不存在时从 st.error（阻止选股）改为 st.info（可选提示）；环境检查将 skill_fallback 标为可选（💡 而非 ❌）；选股失败提示改为先检查网络，必要时安装第三级兜底
 - start_ui.command：缺少 fallback 只提示"可选"，移除"重要/缺少/必须/安装后再启动"等阻塞性文案
 - scripts/install_fallback.command：标题改为"可选：安装第三级兜底数据通道"，不说首次必装
-- README.md：三步启动改为两步启动；安装 fallback 章节改为可选
-- docs/USER_GUIDE.md：移除"如果页面显示「需要先安装备用数据通道」"旧入口，改为"如果选股全部失败"
+- README.md：启动入口收口为两步启动；安装 fallback 章节改为可选
+- docs/USER_GUIDE.md：移除旧的阻塞式安装提示入口，改为"如果选股全部失败"
 - docs/TROUBLESHOOTING.md：已在 P8.7-4 完成同步，无需额外修改
 - 未修改 data/ / strategies/ / reports/ / validation/ / main.py / requirements*.txt / scripts/confirm*.py / docs/screenshots/
 - 未修改评分、排序、数据链路、报告逻辑
@@ -454,7 +455,7 @@ P8.7-5 启动入口fallback可选状态收口：
 
 P8.7-5.1 回填commit并同步验收清单口径：
 - PROJECT_STATE.md：P8.7-4 回填 `67e2c72`，P8.7-5 回填 `3966bf5`
-- docs/MANUAL_UI_CHECKLIST.md + docs/UI_ACCEPTANCE.md：前置条件从"已安装数据 fallback"改为"requirements-ui 已包含 baostock，skill_fallback 为可选第三级兜底"
+- docs/MANUAL_UI_CHECKLIST.md + docs/UI_ACCEPTANCE.md：前置条件同步为"requirements-ui 已包含 baostock，skill_fallback 为可选第三级兜底"
 - docs/P8_7_RELEASE_REVIEW.md：补充 P8.7-4/P8.7-5 收口结果，小白启动路径为双击 start_ui.command → 选参数 → 开始选股 → 看结果，install_fallback 只是可选兜底
 - 未修改产品代码、README.md、app.py、start_ui.command、scripts/install_fallback.command、data/、strategies/、reports/、validation/、main.py、requirements*.txt、docs/screenshots/
 - 保留免责声明：仅供研究学习，不构成投资建议

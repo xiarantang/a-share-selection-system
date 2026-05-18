@@ -211,7 +211,7 @@ python3 scripts/confirm_release_ready.py
 - app.py：FALLBACK_SCRIPT 不存在时从 st.error（阻止选股）改为 st.info（可选提示）
 - start_ui.command：缺少 fallback 只提示"可选"，移除阻塞性文案
 - scripts/install_fallback.command：标题改为"可选：安装第三级兜底数据通道"
-- README.md：三步启动改为两步启动，安装 fallback 章节改为可选
+- README.md：启动入口收口为两步启动，安装 fallback 章节改为可选
 - 未修改评分、排序、数据链路、报告逻辑
 
 ### 8.3 小白启动路径确认
