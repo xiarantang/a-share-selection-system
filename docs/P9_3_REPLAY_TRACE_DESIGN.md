@@ -140,13 +140,15 @@ JSON 顶层新增 `run_metadata` 字段，结构设计如下：
 
 ---
 
-## 5. Streamlit UI 展示（后续阶段，不在本阶段实现）
+## 5. Streamlit UI 展示（P9.3-3 已实现）
 
-建议在数据概览区域下方用 `st.caption` 或折叠区轻量展示 run_metadata 关键信息：
+在数据概览区域（ov_cols）下方、Tab 区域上方新增默认收起的 `st.expander`：
 
-- 运行方式 + 生成时间
-- 数据源分布 + 覆盖率
-- 整体质量 + 平均评分
+- 标题：「🧾 本次运行复盘信息」，默认收起
+- 第一行 4 列：入口（中文映射 cli→命令行/ui→可视化界面） / 生成时间 / 策略名称 / 整体质量（带颜色标签）
+- 第二行 4 列：最高分/平均分 / 覆盖不足率 / 数据源分布 / K线条数(min/avg/max)
+- 底部 caption：运行参数 + 完整命令
+- 优雅降级：run_metadata 不存在时不显示 expander
 
 不新增 Tab、不新增页面、不改变 Top3 速览和候选表格。
 
@@ -158,7 +160,7 @@ JSON 顶层新增 `run_metadata` 字段，结构设计如下：
 |------|------|----------|
 | P9.3-1 | JSON 复盘记录字段实现 | strategies/selection.py（新增 `_build_run_metadata()`） | ✅ 已完成 |
 | P9.3-2 | Markdown 报告接入复盘记录 | reports/generator.py | ✅ 已完成 |
-| P9.3-3 | UI 轻量展示与小白说明 | app.py（数据概览区下方折叠） |
+| P9.3-3 | UI 轻量展示与小白说明 | app.py（数据概览区下方折叠） | ✅ 已完成 |
 | P9.3-4 | 验收脚本与文档收口 | scripts/ + docs/ |
 
 ---

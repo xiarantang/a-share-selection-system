@@ -640,6 +640,63 @@ if st.session_state.selection_data is not None:
             "结果仍可用于研究观察，但不应当直接作为买卖建议。"
         )
 
+    # ====== run_metadata 复盘信息（默认收起） ======
+    _rm = data.get("run_metadata")
+    if _rm:
+        ENTRYPOINT_ZH = {"cli": "命令行", "ui": "可视化界面", "script": "脚本"}
+        with st.expander("🧾 本次运行复盘信息", expanded=False):
+            rm_cols = st.columns(4)
+            with rm_cols[0]:
+                st.caption("入口")
+                st.markdown(f"**{ENTRYPOINT_ZH.get(_rm.get('entrypoint', ''), _rm.get('entrypoint', '?'))}**")
+            with rm_cols[1]:
+                st.caption("生成时间")
+                st.markdown(f"**{_rm.get('generated_at', '?')[:19]}**")
+            with rm_cols[2]:
+                st.caption("策略")
+                _rm_strat = _rm.get("strategy", {})
+                st.markdown(f"**{_rm_strat.get('name', '?')}**")
+            with rm_cols[3]:
+                st.caption("整体质量")
+                _rm_rs = _rm.get("result_summary", {})
+                _rm_quality = _rm_rs.get("overall_quality", "?")
+                _rm_quality_label = {
+                    "good": "🟢 良好", "usable_with_caution": "🟡 需谨慎", "poor": "🔴 差",
+                }.get(_rm_quality, _rm_quality)
+                st.markdown(f"**{_rm_quality_label}**")
+
+            rm_cols2 = st.columns(4)
+            with rm_cols2[0]:
+                st.caption("最高分 / 平均分")
+                st.markdown(f"**{_rm_rs.get('top_score', '?')} / {_rm_rs.get('avg_score', '?')}**")
+            with rm_cols2[1]:
+                st.caption("覆盖不足率")
+                _rm_ds = _rm.get("data_summary", {})
+                st.markdown(f"**{(_rm_ds.get('coverage_warning_ratio', 0) or 0) * 100:.0f}%**")
+            with rm_cols2[2]:
+                st.caption("数据源分布")
+                _src_dist = _rm_ds.get("data_source_dist", {})
+                st.markdown(" | ".join(f"{k}:{v}" for k, v in _src_dist.items()) or "N/A")
+            with rm_cols2[3]:
+                st.caption("K线条数")
+                _rows_s = _rm_ds.get("rows_summary", {})
+                st.markdown(
+                    f"min **{_rows_s.get('min', '?')}** / avg **{_rows_s.get('avg', '?')}** / max **{_rows_s.get('max', '?')}**"
+                )
+
+            _rm_params = _rm.get("params", {})
+            if _rm_params:
+                st.caption(
+                    f"参数: universe={_rm_params.get('universe', '?')}, "
+                    f"limit={_rm_params.get('limit', '?')}, "
+                    f"top={_rm_params.get('top', '?')}, "
+                    f"start={_rm_params.get('start', '?')}, "
+                    f"strategy_id={_rm_params.get('strategy_id', '?')}"
+                )
+            _rm_cmd = _rm.get("command", "")
+            if _rm_cmd:
+                st.caption(f"命令: `{_rm_cmd}`")
+
     # Tab 切换
     tab1, tab2, tab3, tab4 = st.tabs(["🎯 候选表格", "📋 验证摘要", "📈 历史复盘", "📄 报告"])
 

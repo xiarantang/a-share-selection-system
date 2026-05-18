@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.3-2.1 完成）
+> 最后更新：2026-05-19（P9.3-3 完成）
 
 ## 1. 项目总目标
 
@@ -66,6 +66,7 @@
 | P9.3-1.1 | `82c836e` | run_metadata 字段结构收口 |
 | P9.3-2 | `cb20618` | Markdown 报告接入 run_metadata |
 | P9.3-2.1 | — | PROJECT_STATE.md 禁词口径残留修正 |
+| P9.3-3 | — | Streamlit UI 轻量展示 run_metadata |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -589,6 +590,17 @@ P9.3-2 Markdown 报告接入 run_metadata：
 - 未修改 JSON 生成（strategies/selection.py / main.py / app.py）
 - 未修改评分公式、排序逻辑、数据源优先级、UI 展示区域
 - 验收：py_compile OK | CLI report EXIT:0 | 复盘小节完整显示 | 报告禁词检查零命中 | confirm_docs_consistency 19/19 | confirm_release_ready 10/10
+
+P9.3-3 Streamlit UI 轻量展示 run_metadata：
+- app.py：在数据概览区域（ov_cols）下方、Tab 区域上方新增默认收起的 expander「本次运行复盘信息」
+  - 第一行 4 列：入口（中文映射） / 生成时间 / 策略 / 整体质量（带颜色标签）
+  - 第二行 4 列：最高分/平均分 / 覆盖不足率 / 数据源分布 / K线条数(min/avg/max)
+  - 底部 caption：运行参数 + 完整命令
+  - 优雅降级：run_metadata 不存在时不显示 expander
+- 未修改 JSON 生成（strategies/selection.py / main.py）
+- 未修改 Markdown 报告（reports/generator.py）
+- 未修改评分公式、排序逻辑、数据源优先级
+- 验收：py_compile OK | confirm_docs_consistency 19/19 | confirm_release_ready 10/10
 
 ## 5. 关键文件
 
