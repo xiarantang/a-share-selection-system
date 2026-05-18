@@ -18,7 +18,7 @@ from loguru import logger
 
 from config.settings import get_config, SystemConfig
 from data.fetcher import AShareDataFetcher
-from strategies.registry import StrategyRegistry
+from strategies.registry import StrategyRegistry, DEFAULT_STRATEGY_ID, get_strategy, list_strategies
 from backtest.engine import AShareBacktestEngine, MACrossStrategy
 from agent.bridge import AgentBridge
 from paper_trading.engine import PaperTradingEngine
@@ -196,6 +196,14 @@ def cmd_select(args):
     limit = int(getattr(args, 'limit', 50) or 50)
     top = int(getattr(args, 'top', 10) or 10)
     manual_symbols = args.symbols.split(",") if getattr(args, 'symbols', None) else None
+    strategy_id = getattr(args, 'strategy', None) or DEFAULT_STRATEGY_ID
+
+    # 验证策略ID
+    strategy_meta = get_strategy(strategy_id)
+    if strategy_meta is None or not strategy_meta.get("enabled", True):
+        enabled_ids = [s["id"] for s in list_strategies(enabled_only=True)]
+        logger.error(f"策略 '{strategy_id}' 不可用或已禁用。可用策略: {enabled_ids}")
+        return 1
 
     if manual_symbols:
         symbols, meta = get_universe("manual", limit=limit, symbols=manual_symbols)
@@ -265,8 +273,17 @@ def cmd_select(args):
     logger.info(f"CSV: {csv_path}")
 
     json_path = os.path.join("reports", "output", f"selection_{date_str}.json")
+    strategy_info = {
+        "id": strategy_meta["id"],
+        "name": strategy_meta["name"],
+        "description": strategy_meta["description"],
+        "suitable_scenario": strategy_meta["suitable_scenario"],
+        "risk_reminder": strategy_meta["risk_reminder"],
+    }
     payload = {
         "generated_at": datetime.now().isoformat(),
+        "strategy_id": strategy_id,
+        "strategy": strategy_info,
         "universe": meta,
         "stats": dict(stats, **{k: meta[k] for k in ["universe_requested","universe_source","is_fallback","fallback_reason"]}),
         "top": top_results,
@@ -598,6 +615,7 @@ def main():
     p_select.add_argument("--limit", type=int, default=50, help="股票池上限")
     p_select.add_argument("--top", type=int, default=10, help="输出 Top N")
     p_select.add_argument("--start", default="2024-01-01", help="起始日期")
+    p_select.add_argument("--strategy", default=DEFAULT_STRATEGY_ID, help="策略ID（默认default）")
     p_select.set_defaults(func=cmd_select)
 
     p_validate = sub.add_parser("validate", help="验证选股结果质量")

@@ -243,7 +243,18 @@ P8.4-1.1 策略注册兼容签名收口：
 - 未修改 app.py / main.py / strategies/selection.py / data/ / reports/ / validation/
 - 未修改评分、排序、数据链路、报告逻辑、Streamlit UI
 
-下一步建议：P8.4-2 CLI 策略参数。
+P8.4-2 CLI策略参数接入：
+- `main.py` select 子命令新增 `--strategy` 可选参数，默认 `DEFAULT_STRATEGY_ID`（即 "default"）
+- `cmd_select(args)` 在运行 SelectionEngine 前验证 strategy_id：无效或已禁用时 log error 并返回 exit 1
+- 无效策略不触发数据拉取、不覆盖 selection_latest.json
+- JSON payload 新增顶层字段：`strategy_id`（字符串）和 `strategy`（含 id/name/description/suitable_scenario/risk_reminder 的小字典）
+- `--strategy default` 等同于省略 `--strategy`
+- 省略 `--strategy` 时行为与之前完全一致（仅多了顶层策略元数据）
+- 不调用 entry_function，不动态导入，不改变评分/排序/数据/报告/UI
+- 验收脚本：`scripts/confirm_p84_cli.py`
+- 未修改 app.py / strategies/selection.py / strategies/registry.py / data/ / reports/ / validation/
+
+下一步建议：P8.4-3 UI 策略选择器。
 
 ## 5. 关键文件
 
