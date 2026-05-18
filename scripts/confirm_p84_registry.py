@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-P8.4-1 策略注册骨架验收脚本
-============================
+P8.4-1 / P8.4-1.1 策略注册骨架验收脚本
+======================================
 检查:
 - 默认策略存在且包含所有必填字段
 - get_default_strategy() 返回默认策略
@@ -9,6 +9,7 @@ P8.4-1 策略注册骨架验收脚本
 - get_strategy("missing") 返回 None
 - register_strategy() 可注册禁用策略，enabled_only 过滤生效
 - StrategyRegistry 兼容类: list_strategies / execute_strategy / run_all_strategies
+- execute_strategy 旧签名兼容: script/args 参数安全忽略 (P8.4-1.1)
 - 源码不再包含遗留标记: PRIORITY_SCRIPTS / skills_dir / subprocess.run / SKILL.md
 """
 
@@ -111,6 +112,18 @@ check("execute_strategy('default') success=True", exec_r.get("success") is True)
 exec_miss = reg.execute_strategy("nonexistent")
 check("execute_strategy('nonexistent') success=False", exec_miss.get("success") is False)
 
+# ── 3b. execute_strategy 旧签名兼容 (P8.4-1.1) ────────────────────
+print("\n[3b] execute_strategy 旧签名兼容 (P8.4-1.1)")
+
+exec_script = reg.execute_strategy("default", "dummy.py")
+check("execute_strategy('default', 'dummy.py') success=True", exec_script.get("success") is True)
+
+exec_script_args = reg.execute_strategy("default", "dummy.py", ["--x"])
+check("execute_strategy('default', 'dummy.py', ['--x']) success=True", exec_script_args.get("success") is True)
+
+exec_miss_script = reg.execute_strategy("missing", "dummy.py")
+check("execute_strategy('missing', 'dummy.py') success=False", exec_miss_script.get("success") is False)
+
 results, stats = reg.run_all_strategies()
 check("run_all_strategies 返回 (results, stats)", isinstance(results, dict) and isinstance(stats, dict))
 check("stats['failed'] == 0", stats.get("failed", -1) == 0)
@@ -130,8 +143,8 @@ for marker in legacy_markers:
 print(f"\n{'='*50}")
 print(f"验收结果: {PASS} PASS / {FAIL} FAIL")
 if FAIL:
-    print("P8.4-1 验收未通过")
+    print("P8.4-1 / P8.4-1.1 验收未通过")
     sys.exit(1)
 else:
-    print("P8.4-1 验收通过")
+    print("P8.4-1 / P8.4-1.1 验收通过")
     sys.exit(0)

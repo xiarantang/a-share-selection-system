@@ -135,8 +135,17 @@ class StrategyRegistry:
             stats["executed"] += 1
         return results, stats
 
-    def execute_strategy(self, strategy_name: str, **_kwargs) -> Dict[str, Any]:
-        """兼容旧接口 — 不执行外部脚本。"""
+    def execute_strategy(
+        self,
+        strategy_name: str,
+        script: Optional[str] = None,
+        args: Optional[List[Any]] = None,
+        **_kwargs,
+    ) -> Dict[str, Any]:
+        """兼容旧接口 — 不执行外部脚本。
+
+        script / args 为旧调用方遗留参数，会被安全忽略。
+        """
         meta = get_strategy(strategy_name)
         if meta is None:
             return {

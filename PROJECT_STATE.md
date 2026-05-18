@@ -235,6 +235,14 @@ P8.4-1 策略注册骨架：
 - 未修改 app.py / main.py / strategies/selection.py / data/ / reports/ / validation/
 - 未修改评分、排序、数据链路、报告逻辑、Streamlit UI
 
+P8.4-1.1 策略注册兼容签名收口：
+- `StrategyRegistry.execute_strategy` 签名恢复为接受旧式 script/args 参数：(strategy_name, script=None, args=None, **_kwargs)
+- script/args 参数被安全忽略，不执行外部脚本，行为不变
+- 现有调用方（main.py strategy / scripts/pipeline.py）无需改动
+- 验收脚本新增 3 项旧签名检查：execute_strategy("default", "dummy.py") / execute_strategy("default", "dummy.py", ["--x"]) / execute_strategy("missing", "dummy.py")
+- 未修改 app.py / main.py / strategies/selection.py / data/ / reports/ / validation/
+- 未修改评分、排序、数据链路、报告逻辑、Streamlit UI
+
 下一步建议：P8.4-2 CLI 策略参数。
 
 ## 5. 关键文件
