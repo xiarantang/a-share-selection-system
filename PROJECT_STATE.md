@@ -34,7 +34,7 @@
 | P8.5-0 | `75209c7` | AI辅助解释边界评审决策文档 |
 | P8.5-0.1 | `fdbab4f` | 修正 P8.5 决策文档中的旧候选字段名表述，统一为 selection_latest.json 顶层 top/all |
 | P8.5-0.2 | `d8191a4` | 项目状态字段名零残留收口 |
-| P8.6-0 | — | UI兼容性预检与修复方案（未修改产品代码） |
+| P8.6-0 | `468c240` | UI兼容性预检与修复方案（未修改产品代码） |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.4 已完成)
@@ -306,7 +306,7 @@ P8.5-0 AI 辅助解释边界评审：
 - 本阶段仅写决策文档，未修改任何代码文件
 - 未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/
 
-下一步建议：**暂不进入 AI 实现**。可选择：① 如确需推进，先做 P8.5-1 设计文档（含可自动验收的边界守卫方案）；② P8.6-1 执行 UI 兼容性最小修复（9 处机械替换，无逻辑变化）；③ 转向其他验收稳定性小优化。
+下一步建议：**暂不进入 AI 实现**。可选择：① 如确需推进，先做 P8.5-1 设计文档（含可自动验收的边界守卫方案）；② P8.6-1 执行 UI 兼容性最小修复（app.py 5 处 + requirements*.txt 4 处，共 9 处机械替换，不新增验收脚本，无逻辑变化）；③ 转向其他验收稳定性小优化。
 
 P8.5-0.1 文档字段名一致性收口：
 - `docs/P8_5_AI_EXPLANATION_DECISION.md` 中旧候选字段名表述修正，统一为 `selection_latest.json` 真实顶层字段名 `top`（候选列表）和 `all`（全集列表）
@@ -318,7 +318,7 @@ P8.6-0 UI兼容性预检与修复方案：
 - 发现 2 类兼容性风险：
   1. Streamlit `use_container_width` 已废弃，app.py 共 4 处（行 358/492/494/660），需替换为 `width="stretch"`
   2. Pandas `Styler.applymap` 已废弃，app.py 共 1 处（行 657），需替换为 `Styler.map`
-- 修复方案：P8.6-1 共 9 处机械替换（app.py 5 处 + requirements 文件 4 处），无逻辑变化
+- 修复方案：P8.6-1 共 9 处机械替换（app.py 5 处 + requirements*.txt 4 处），不新增验收脚本，无逻辑变化
 - 版本约束建议：`streamlit>=1.28.0` → `>=1.39.0`，`pandas>=2.0.0` → `>=2.1.0`
 - 本阶段仅写预检文档，未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / 评分/排序/数据链路
 

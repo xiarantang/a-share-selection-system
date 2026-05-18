@@ -100,12 +100,12 @@ Pandas 从 2.1.0 起新增 `Styler.map`，标记 `Styler.applymap` 为废弃（F
 
 **不改动的范围**：评分公式、排序逻辑、数据链路、报告生成、策略管理、CLI 逻辑、验证脚本。
 
-## 5. P8.6-1 执行建议
+## 5. P8.6-1 执行建议（最小实现）
 
 1. 先改 app.py（5 处机械替换），运行 `python3 -m py_compile app.py` 确认语法。
 2. 再改 requirements.txt 和 requirements-ui.txt（4 处版本提升）。
 3. 运行全链路验收：`py_compile` → `select EXIT:0` → `report EXIT:0` → UI 手动确认。
-4. 编写验收脚本 `scripts/confirm_p86_compat.py`，确认 app.py 中不再出现 `use_container_width` 和 `applymap`。
+4. 不新增验收脚本，复用现有 `py_compile` + CLI 全链路即可覆盖。
 
 ## 6. 硬边界确认
 
