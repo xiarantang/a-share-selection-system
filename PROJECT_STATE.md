@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P8.7-5.1）
+> 最后更新：2026-05-18（P8.7-6）
 
 ## 1. 项目总目标
 
@@ -52,6 +52,8 @@
 | P8.7-4 | `67e2c72` | 公开文档数据层描述一致性收口 |
 | P8.7-5 | `3966bf5` | 启动入口fallback可选状态收口 |
 | P8.7-5.1 | `e96645e` | 回填commit并同步验收清单口径 |
+| P8.7-5.2 | `28e2ba6` | 修正发布复盘口径禁词 |
+| P8.7-6 | — | 发布候选最终复核与交付说明收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-P8.6 已完成)
@@ -69,7 +71,7 @@
 
 ## 4. 阶段记录（P8.1-P8.7 已完成）
 
-当前推进：P8.7-5.1 回填commit并同步验收清单口径已完成。以下保留 P8.1-P8.7-5.1 的关键验收记录。
+当前推进：P8.7-6 发布候选最终复核与交付说明收口已完成。以下保留 P8.1-P8.7-6 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -460,6 +462,18 @@ P8.7-5.1 回填commit并同步验收清单口径：
 - 未修改产品代码、README.md、app.py、start_ui.command、scripts/install_fallback.command、data/、strategies/、reports/、validation/、main.py、requirements*.txt、docs/screenshots/
 - 保留免责声明：仅供研究学习，不构成投资建议
 - 验收：rg 禁词零命中 ✅ | confirm_release_ready ✅
+
+P8.7-6 发布候选最终复核与交付说明收口：
+- docs/P8_7_RELEASE_REVIEW.md：新增第 10 节发布候选结论
+  - 10.1 系统能做什么：6 因子规则评分、三级降级数据层、策略管理、验证与报告、可视化 UI
+  - 10.2 怎么启动：双击 start_ui.command → 选参数 → 开始选股 → 看结果；skill_fallback 为可选第三级兜底
+  - 10.3 怎么验收：python3 scripts/confirm_release_ready.py
+  - 10.4 边界：不碰实盘交易、不引入 AI/qlib 到评分排序链路、不输出投资建议措辞
+  - 10.5 结论：v0.5 + P8.1-P8.7 全部阶段已完成，处于发布候选状态
+- PROJECT_STATE.md：记录 P8.7-6 完成，回填 P8.7-5.2 commit \`28e2ba6\`
+- 未修改产品代码（app.py / main.py / start_ui.command / scripts/install_fallback.command / data/ / strategies/ / reports/ / validation/ / requirements*.txt）
+- 未修改评分、排序、数据链路、报告逻辑
+- 验收：confirm_release_ready ✅ | rg 禁词零命中 ✅
 
 ## 5. 关键文件
 
