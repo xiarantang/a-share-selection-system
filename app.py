@@ -28,6 +28,10 @@ from data.fetcher import AShareDataFetcher
 
 FALLBACK_SCRIPT = Path.home() / ".agents/skills/a-share-data/scripts/fetch_history_fallback.py"
 
+# ========== 展示层中文化映射（只改 UI 展示，不改底层 JSON/CSV/策略字段） ==========
+DECISION_ZH = {"strong_watch": "强观察", "watch": "观察", "neutral": "中性", "avoid": "回避"}
+RISK_LABEL = {"low": "🟢 低", "medium": "🟡 中", "high": "🔴 高"}
+
 
 # ========== 页面配置 ==========
 st.set_page_config(
@@ -123,7 +127,7 @@ def build_candidates_df(top_results: list) -> pd.DataFrame:
             "名称": r.get("name", ""),
             "行业": r.get("sector", ""),
             "评分": r.get("score", 0),
-            "决策": r.get("decision", "?"),
+            "决策": DECISION_ZH.get(r.get("decision", "?"), r.get("decision", "?")),
             "风险": r.get("risk_level", "?"),
             "置信度": r.get("confidence", "?"),
             "收盘价": r.get("latest_close", "?"),
@@ -454,64 +458,67 @@ if btn_backtest and st.session_state.selection_data is not None:
 # ---- 结果展示 ----
 if st.session_state.selection_data is not None:
     data = st.session_state.selection_data
-
-    # 顶部信息条
     universe_meta = data.get("universe", {})
     stats = data.get("stats", {})
-    info_cols = st.columns(4)
-    info_cols[0].info(f"**股票池**: {universe_meta.get('universe_source','?')}")
-    info_cols[1].info(f"**数据起始请求**: {data.get('requested_start','?')}")
-    info_cols[2].info(f"**扫描 / 成功 / 失败**: {stats.get('total','?')} / {stats.get('success','?')} / {stats.get('failed','?')}")
+    top_results = data.get("top", [])
+    v = data.get("validation", {})
+
+    # ====== Top3 速览卡片（选股完成第一眼就能看到） ======
+    if top_results:
+        st.markdown("### 🏆 Top 3 候选速览")
+        t3_cols = st.columns(3)
+        medals = ["🥇", "🥈", "🥉"]
+        for i, r in enumerate(top_results[:3]):
+            with t3_cols[i]:
+                with st.container(border=True):
+                    sym = r.get("symbol", "?")
+                    name = r.get("name", "")
+                    score = r.get("score", 0)
+                    dec = r.get("decision", "?")
+                    dec_zh = DECISION_ZH.get(dec, dec)
+                    rl = r.get("risk_level", "?")
+                    risk_label = RISK_LABEL.get(rl, rl)
+                    exp = r.get("explain", {})
+                    summary = exp.get("summary", "")
+                    st.markdown(f"**{medals[i]} #{r.get('rank', i+1)} {sym} {name}**")
+                    st.markdown(f"**{score}分** · {dec_zh}")
+                    st.markdown(f"风险: {risk_label}")
+                    if summary:
+                        st.caption(f"_{summary}_")
+    else:
+        st.warning("无候选结果。可能原因：数据全部获取失败，请检查网络或稍后重试。")
+
+    # ====== 紧凑数据概览（合并原信息条 + 覆盖摘要 + 验证摘要） ======
+    st.markdown("---")
     source_dist = stats.get("source_dist", {})
     source_str = " ".join(f"{k}:{v}" for k, v in source_dist.items())
-    info_cols[3].info(f"**数据源**: {source_str or 'N/A'}")
+    cov = build_coverage_summary(data.get("all", []), data.get("requested_start", ""))
+    quality = v.get("overall_quality", "?") if v else "?"
+    quality_short = {"good": "🟢 良好", "usable_with_caution": "🟡 需谨慎", "poor": "🔴 差"}.get(quality, quality)
+
+    ov_cols = st.columns(4)
+    ov_cols[0].metric("股票池", f"{universe_meta.get('universe_source','?')} | 扫描 {stats.get('total','?')} 只")
+    ov_cols[1].metric("数据区间", f"{cov.get('earliest_actual','?')} ~ {cov.get('latest_actual','?')}")
+    ov_cols[2].metric("K线 / 数据源", f"平均{cov.get('avg_rows','?')}条 | {source_str or 'N/A'}")
+    ov_cols[3].metric("整体质量", quality_short)
+
+    # 紧凑提示行
+    warn_parts = []
+    if cov.get("coverage_warn_count", 0) > 0:
+        warn_parts.append(f"覆盖不全: {cov['coverage_warn_count']}/{cov['total_success']}只")
+    if v and v.get("high_risk_count", 0) > 0:
+        warn_parts.append(f"高风险: {v['high_risk_count']}/{v.get('total_count','?')}")
+    if warn_parts:
+        st.warning(" | ".join(warn_parts))
 
     if universe_meta.get("is_fallback"):
         st.warning(f"⚠️ 股票池回退到 static: {universe_meta.get('fallback_reason','?')}")
 
-    # 数据覆盖摘要卡片
-    cov = build_coverage_summary(data.get("all", []), data.get("requested_start", ""))
-    if cov["total_success"] > 0:
-        cov_cols = st.columns(5)
-        cov_cols[0].metric("数据范围", f"{cov['earliest_actual']} ~ {cov['latest_actual']}")
-        cov_cols[1].metric("最少K线", cov["min_rows"])
-        cov_cols[2].metric("最多K线", cov["max_rows"])
-        cov_cols[3].metric("平均K线", cov["avg_rows"])
-        cov_cols[4].metric("覆盖不全", f"{cov['coverage_warn_count']}/{cov['total_success']}只"
-                           + (" ⚠️" if cov["coverage_warn_count"] > cov["total_success"]//2 else ""))
-
-    # 纯文本数据覆盖摘要（便于验收检测，放在 Tab 外确保渲染）
-    st.info(
-        f"📊 数据区间: {cov['earliest_actual']} ~ {cov['latest_actual']} "
-        f"| K线: {cov['min_rows']}-{cov['max_rows']} 条（平均 {cov['avg_rows']} 条）"
-        f"| 覆盖不全: {cov['coverage_warn_count']}/{cov['total_success']} 只"
-    )
-    if cov["coverage_warn_count"] > 0:
-        st.warning(
-            "覆盖不全不是报错：当前备用数据通道通常提供约 120 条 K 线。"
-            "系统会自动降低数据质量评分和置信度，结果仍可用于研究观察，但不应当直接作为买卖建议。"
+    if cov.get("coverage_warn_count", 0) > cov.get("total_success", 1) // 2:
+        st.info(
+            "覆盖不全不是报错：系统会自动降低评分和置信度。"
+            "结果仍可用于研究观察，但不应当直接作为买卖建议。"
         )
-
-    # 验证摘要关键指标（放在 Tab 外，直接可见）
-    v = data.get("validation", {})
-    if v:
-        quality = v.get("overall_quality", "?")
-        quality_icon = {"good": "🟢", "usable_with_caution": "🟡", "poor": "🔴"}.get(quality, "")
-        quality_label = {"good": "数据充足，风险可控", "usable_with_caution": "覆盖不足或置信度偏低，结果仅供参考", "poor": "数据质量差，不建议参考"}.get(quality, "")
-        st.markdown("---")
-        st.markdown(f"### {quality_icon} 验证摘要：{quality_label}")
-        col_v1, col_v2, col_v3, col_v4, col_v5 = st.columns(5)
-        quality_short = {"good": "🟢 良好", "usable_with_caution": "🟡 需谨慎", "poor": "🔴 差"}.get(quality, quality)
-        col_v1.metric("整体质量", quality_short)
-        col_v2.metric("平均评分", v.get("avg_score", "?"))
-        col_v3.metric("覆盖不足率", f"{v.get('coverage_warning_ratio',0)*100:.0f}%")
-        col_v4.metric("低置信度", f"{v.get('low_confidence_count','?')}/{v.get('total_count','?')}")
-        col_v5.metric("高风险", f"{v.get('high_risk_count','?')}/{v.get('total_count','?')}")
-        # 简洁的决策分布
-        dec_dist = v.get("decision_dist", {})
-        if dec_dist:
-            dec_str = " ".join(f"{k}:{v}" for k, v in dec_dist.items())
-            st.caption(f"决策分布: {dec_str}")
 
     # Tab 切换
     tab1, tab2, tab3, tab4 = st.tabs(["🎯 候选表格", "📋 验证摘要", "📈 历史复盘", "📄 报告"])
@@ -526,11 +533,11 @@ if st.session_state.selection_data is not None:
             df = build_candidates_df(top_results)
             # 决策列着色
             def color_decision(val):
-                if val == "strong_watch":
+                if val == "强观察":
                     return "background-color: #d4edda; color: #155724"
-                elif val == "watch":
+                elif val == "观察":
                     return "background-color: #e8f5e9"
-                elif val == "avoid":
+                elif val == "回避":
                     return "background-color: #f8d7da; color: #721c24"
                 return ""
 
@@ -540,7 +547,7 @@ if st.session_state.selection_data is not None:
                 use_container_width=True,
                 hide_index=True,
                 column_config={
-                    "决策": st.column_config.TextColumn(help="strong_watch(强观察)>watch(观察)>neutral(中性)>avoid(回避)"),
+                    "决策": st.column_config.TextColumn(help="强观察 > 观察 > 中性 > 回避"),
                     "风险": st.column_config.TextColumn(help="low/medium/high"),
                     "覆盖": st.column_config.TextColumn(width="small", help="✓正常 ⚠️不全=数据起始日晚于请求日"),
                 },

@@ -139,7 +139,18 @@ P8.3-1.2 公开文档文案一致性收口：
 - 保留免责声明：仅供研究学习，不构成投资建议
 - 未修改 app.py / strategies / data / reports / validation / main.py
 
-下一步建议 P8.3-2：结果首屏 Top3 + 总览卡片。
+P8.3-2 结果首屏 Top3 + 总览卡片：
+- 新增 Top3 速览卡片：在 Tab 外、数据概览上方，用 `st.columns(3)` 展示前 3 名候选
+- 每张卡片包含：排名奖牌（🥇🥈🥉）、代码名称、评分、中文决策标签、风险等级（带颜色）、一句话解释（explain.summary）
+- 决策标签 UI 展示层中文化：strong_watch → 强观察、watch → 观察、neutral → 中性、avoid → 回避
+- 风险等级 UI 展示层中文化：low → 🟢 低、medium → 🟡 中、high → 🔴 高
+- 合并信息层：原 4 列信息条 + 5 列覆盖摘要 + 纯文本覆盖摘要 + 验证摘要 → 紧凑 4 列数据概览（股票池/数据区间/K线数据源/整体质量）+ 紧凑提示行
+- 候选表格决策列同步中文化，着色函数适配中文标签
+- 底层 JSON/CSV/策略字段不变（`DECISION_ZH` / `RISK_LABEL` 仅在 UI 展示层映射）
+- 未修改评分、排序、数据链路、报告逻辑
+- 验收：py_compile ✅ | select EXIT:0 (10/10 baostock) ✅ | backtest-validate EXIT:0 ✅ | report EXIT:0 ✅
+
+下一步建议 P8.3-3：风险视觉统一和小白解释优化。
 
 ## 5. 关键文件
 
