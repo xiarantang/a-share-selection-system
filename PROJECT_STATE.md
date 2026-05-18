@@ -53,7 +53,7 @@
 | P8.7-5 | `3966bf5` | 启动入口fallback可选状态收口 |
 | P8.7-5.1 | `e96645e` | 回填commit并同步验收清单口径 |
 | P8.7-5.2 | `28e2ba6` | 修正发布复盘口径禁词 |
-| P8.7-6 | — | 发布候选最终复核与交付说明收口 |
+| P8.7-6 | `93e84d3` | 发布候选最终复核与交付说明收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-P8.6 已完成)
