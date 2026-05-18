@@ -30,6 +30,7 @@
 | P8.2-2文档 | `c07eeae` | 同步P8.2-2报告解释状态 |
 | P8.2-3 | `8379657` | UI接入explain：expander顶部展示解释/可靠性折叠 |
 | P8.2-4 | `caac7b2` | 小白依赖收口：requirements-ui加入baostock/状态同步/全链路通过 |
+| P8.4-0 | — | 策略管理设计文档 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.2-4)
@@ -41,7 +42,7 @@
 - ✅ 小白启动：start_ui.command 安装 requirements-ui.txt；轻量依赖已包含 baostock
 - ✅ Pipeline：PASS/FAIL退出码可信
 
-## 4. 当前阶段 P8.3（UI 体验增强）
+## 4. 当前阶段 P8.4（策略管理）
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -211,8 +212,18 @@ P8.3-4.1 结果页数据概览可读性收口：
 - 截图更新：`docs/screenshots/result.png`（~243KB）从真实 Streamlit 页面截取，数据概览文字无截断
 - 验收：py_compile ✅ | confirm_p83_ui 44/44 ✅ | select EXIT:0 (10/10 baostock) ✅ | report EXIT:0 ✅
 
-下一步建议：P8.3 全部完成，可考虑 P8.4 或后续阶段。
+P8.4-0 策略管理设计文档：
+- 文档：`docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md`
+- 结论先行：P8.4 从最小策略管理层起步，不是评分重写
+- 目标：策略注册骨架 → CLI 可选参数 → Streamlit 选择器 → 文档验收
+- 策略元数据设计：id/name/description/suitable_scenario/risk_reminder/enabled/entry_function
+- 安全边界：不改评分/排序/数据链路，不引入 AI/qlib，不做交易执行
+- 分步计划：P8.4-1 注册骨架、P8.4-2 CLI 参数、P8.4-3 UI 选择器、P8.4-4 文档验收
+- 本阶段仅写设计文档，未修改任何代码文件或策略逻辑
+- 未修改 app.py / main.py / strategies/selection.py / data/ / reports/ / validation/
+
+下一步建议：P8.4-1 注册骨架实现。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
