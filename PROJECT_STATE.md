@@ -178,8 +178,32 @@ P8.3-3.2 置信度验收正则小尾巴收口：
 - 无业务逻辑变化，纯格式收口
 - 验收：py_compile ✅ | 正则零命中 ✅ | 禁词检查 ✅
 
-下一步建议 P8.3-4：UI 验收脚本和截图更新。
+P8.3-4 UI 验收脚本和截图更新：
+- 新增 `scripts/confirm_p83_ui.py`：44 项自动检查，覆盖 app.py 静态文本 + JSON 运行时数据 + 截图文件
+  - 首页引导文案（选参数 → 开始选股 → 看结果）
+  - Top 3 候选速览标题
+  - 技术指标详情折叠入口
+  - 免责声明
+  - 决策标签中文：强观察/观察/中性/回避
+  - 风险标签中文：低风险/中风险/高风险
+  - 置信度标签中文：高置信度/中置信度/低置信度
+  - 因子标签中文：趋势/动量/量能/风控/数据质量/形态
+  - 逐只详情标题已用中文（不再显示 raw 英文字段）
+  - 风险分级着色 risk_alert
+  - 友好日期区间 friendly_date_range
+  - 禁词不在 UI 正向文案
+  - JSON 底层字段仍为英文（映射仅在 UI 展示层）
+  - explain 字段完整、因子得分齐全
+  - JSON explain 无禁词
+  - 截图文件存在且非空
+- 截图更新：通过 agent-browser 从真实 Streamlit 页面截取
+  - `docs/screenshots/home.png`（~197KB）：首页引导 + 系统就绪状态
+  - `docs/screenshots/result.png`（~174KB）：Top3 速览卡片 + 中文决策/风险标签
+- 未修改 app.py、评分、排序、数据链路、报告逻辑
+- 验收：confirm_p83_ui 44/44 ✅ | py_compile ✅ | select EXIT:0 ✅ | backtest-validate EXIT:0 ✅ | report EXIT:0 ✅ | 禁词检查 ✅
+
+下一步建议：P8.3 全部完成，可考虑 P8.4 或后续阶段。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_ROADMAP.md
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
