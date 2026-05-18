@@ -198,7 +198,31 @@ python3 scripts/confirm_release_ready.py
 
 ---
 
-## 8. 验收检查示例
+## 8. P8.7-4 / P8.7-5 收口结果
+
+### 8.1 P8.7-4 公开文档数据层描述一致性收口（`67e2c72`）
+
+- docs/USER_GUIDE.md + docs/TROUBLESHOOTING.md 两份小白文档：移除所有"约 120 条""~120 条"硬编码数字，skill_fallback 统一描述为"第三级兜底（数据量可能较少）"
+- 保留数据链路：akshare → baostock（~570 条日 K）→ skill_fallback
+- 未修改产品代码、评分、排序、数据链路、报告逻辑
+
+### 8.2 P8.7-5 启动入口 fallback 可选状态收口（`3966bf5`）
+
+- app.py：FALLBACK_SCRIPT 不存在时从 st.error（阻止选股）改为 st.info（可选提示）
+- start_ui.command：缺少 fallback 只提示"可选"，移除阻塞性文案
+- scripts/install_fallback.command：标题改为"可选：安装第三级兜底数据通道"
+- README.md：三步启动改为两步启动，安装 fallback 章节改为可选
+- 未修改评分、排序、数据链路、报告逻辑
+
+### 8.3 小白启动路径确认
+
+小白启动路径为：**双击 start_ui.command → 选参数 → 开始选股 → 看结果**。
+
+`install_fallback` 只是可选兜底，不是启动前提。requirements-ui 已包含 baostock，skill_fallback 为可选第三级兜底。
+
+---
+
+## 9. 验收检查示例
 
 ```bash
 # 关键词检查

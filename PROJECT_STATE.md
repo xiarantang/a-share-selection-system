@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P8.7-5）
+> 最后更新：2026-05-18（P8.7-5.1）
 
 ## 1. 项目总目标
 
@@ -49,8 +49,8 @@
 | P8.7-1 | `33081e5` | 发布前一键验收脚本最小整合 |
 | P8.7-2 | `8ae0544` | 小白手动验收清单一致性收口 |
 | P8.7-3 | `58301ba` | README公开入口与当前状态一致性收口 |
-| P8.7-4 | — | 公开文档数据层描述一致性收口 |
-| P8.7-5 | — | 启动入口fallback可选状态收口 |
+| P8.7-4 | `67e2c72` | 公开文档数据层描述一致性收口 |
+| P8.7-5 | `3966bf5` | 启动入口fallback可选状态收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-P8.6 已完成)
@@ -68,7 +68,7 @@
 
 ## 4. 阶段记录（P8.1-P8.7 已完成）
 
-当前推进：P8.7-5 启动入口fallback可选状态收口已完成。以下保留 P8.1-P8.7-5 的关键验收记录。
+当前推进：P8.7-5.1 回填commit并同步验收清单口径已完成。以下保留 P8.1-P8.7-5.1 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -451,6 +451,14 @@ P8.7-5 启动入口fallback可选状态收口：
 - 未修改 data/ / strategies/ / reports/ / validation/ / main.py / requirements*.txt / scripts/confirm*.py / docs/screenshots/
 - 未修改评分、排序、数据链路、报告逻辑
 - 验收：rg 禁词零命中 ✅ | py_compile ✅ | bash -n ✅ | test -x ✅ | confirm_release_ready ✅
+
+P8.7-5.1 回填commit并同步验收清单口径：
+- PROJECT_STATE.md：P8.7-4 回填 `67e2c72`，P8.7-5 回填 `3966bf5`
+- docs/MANUAL_UI_CHECKLIST.md + docs/UI_ACCEPTANCE.md：前置条件从"已安装数据 fallback"改为"requirements-ui 已包含 baostock，skill_fallback 为可选第三级兜底"
+- docs/P8_7_RELEASE_REVIEW.md：补充 P8.7-4/P8.7-5 收口结果，小白启动路径为双击 start_ui.command → 选参数 → 开始选股 → 看结果，install_fallback 只是可选兜底
+- 未修改产品代码、README.md、app.py、start_ui.command、scripts/install_fallback.command、data/、strategies/、reports/、validation/、main.py、requirements*.txt、docs/screenshots/
+- 保留免责声明：仅供研究学习，不构成投资建议
+- 验收：rg 禁词零命中 ✅ | confirm_release_ready ✅
 
 ## 5. 关键文件
 

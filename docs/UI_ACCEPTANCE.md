@@ -9,7 +9,7 @@
 ## 前置条件
 
 - macOS 环境
-- 已安装数据 fallback（`~/.agents/skills/a-share-data/` 目录存在）
+- requirements-ui 已包含 baostock，skill_fallback 为可选第三级兜底
 - 首次运行会自动创建 `.venv` 并安装轻量依赖
 
 ## 小白路径

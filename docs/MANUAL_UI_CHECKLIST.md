@@ -10,7 +10,7 @@
 
 - macOS 环境
 - `.venv/bin/streamlit` 可用
-- 已安装数据 fallback（`~/.agents/skills/a-share-data/` 目录存在）
+- requirements-ui 已包含 baostock，skill_fallback 为可选第三级兜底
 
 ## 小白路径
 
