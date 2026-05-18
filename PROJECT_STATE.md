@@ -224,8 +224,19 @@ P8.4-0 策略管理设计文档：
 - 本阶段仅写设计文档，未修改任何代码文件或策略逻辑
 - 未修改 app.py / main.py / strategies/selection.py / data/ / reports/ / validation/
 
-下一步建议：P8.4-1 注册骨架实现。
+P8.4-1 策略注册骨架：
+- `strategies/registry.py` 从旧 Skill/脚本执行注册中心替换为元数据注册中心
+- 移除：PRIORITY_SCRIPTS / skills_dir / subprocess.run / SKILL.md 扫描
+- 模块级 API：DEFAULT_STRATEGY_ID / STRATEGY_REGISTRY / REQUIRED_FIELDS / register_strategy / get_strategy / list_strategies / get_default_strategy
+- 默认策略：id=default / name=默认规则策略 / entry_function=strategies.selection:SelectionEngine
+- StrategyRegistry 兼容类保留：list_strategies() / execute_strategy() / run_all_strategies() 不执行外部脚本
+- 兼容字段：available=True / executable=False / type="builtin"，main.py strategy 和 scripts/pipeline.py 无需改动
+- 验收脚本：scripts/confirm_p84_registry.py
+- 未修改 app.py / main.py / strategies/selection.py / data/ / reports/ / validation/
+- 未修改评分、排序、数据链路、报告逻辑、Streamlit UI
+
+下一步建议：P8.4-2 CLI 策略参数。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png

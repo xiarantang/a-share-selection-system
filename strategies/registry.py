@@ -1,159 +1,152 @@
 """
-策略层：策略注册与调度
-======================
-管理多个选股策略，自动扫描脚本，优先使用 real scripts。
+策略注册中心 - 元数据注册 (P8.4-1)
+===================================
+管理策略元数据（id/name/description/...），不执行外部脚本。
+当前仅包含默认规则策略；未来可注册更多策略。
 """
 
-import json
-import os
-import subprocess
-from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
-from loguru import logger
+# ---------------------------------------------------------------------------
+# 模块级常量
+# ---------------------------------------------------------------------------
 
-from config.settings import StrategyConfig, get_config
+DEFAULT_STRATEGY_ID = "default"
 
-# 各 Skill 的优先执行脚本映射
-PRIORITY_SCRIPTS = {
-    "a-share-strategy-mainboard-multi-swing-defensive": "daily_decisions.py",
-    "macd-trend-resonance-stock-picker": None,     # 文档型
-    "macd-second-golden-cross": None,               # 文档型
+REQUIRED_FIELDS = (
+    "id",
+    "name",
+    "description",
+    "suitable_scenario",
+    "risk_reminder",
+    "enabled",
+    "entry_function",
+)
+
+STRATEGY_REGISTRY: Dict[str, Dict[str, Any]] = {}
+
+# ---------------------------------------------------------------------------
+# 默认策略元数据
+# ---------------------------------------------------------------------------
+
+_DEFAULT_META: Dict[str, Any] = {
+    "id": "default",
+    "name": "默认规则策略",
+    "description": (
+        "基于趋势、动量、量能、风控、数据质量、形态六个因子打分排序，"
+        "适合刚接触选股研究的使用者快速筛选候选标的。"
+    ),
+    "suitable_scenario": "A股主板 / 静态股票池研究筛选",
+    "risk_reminder": (
+        "本策略仅供研究学习，不构成投资建议，不承诺预测收益；"
+        "数据质量会影响结果置信度。"
+    ),
+    "enabled": True,
+    "entry_function": "strategies.selection:SelectionEngine",
 }
+
+# ---------------------------------------------------------------------------
+# 注册 / 查询函数
+# ---------------------------------------------------------------------------
+
+
+def register_strategy(meta: Dict[str, Any]) -> None:
+    """注册一条策略元数据。缺少必填字段时抛出 ValueError。"""
+    missing = [f for f in REQUIRED_FIELDS if f not in meta]
+    if missing:
+        raise ValueError(f"策略元数据缺少必填字段: {missing}")
+    sid = meta["id"]
+    STRATEGY_REGISTRY[sid] = dict(meta)
+
+
+def get_strategy(strategy_id: str) -> Optional[Dict[str, Any]]:
+    """按 id 查询策略元数据，不存在返回 None。"""
+    return STRATEGY_REGISTRY.get(strategy_id)
+
+
+def list_strategies(enabled_only: bool = True) -> List[Dict[str, Any]]:
+    """返回已注册策略列表。enabled_only=True 时仅返回启用项。"""
+    items = list(STRATEGY_REGISTRY.values())
+    if enabled_only:
+        items = [s for s in items if s.get("enabled", True)]
+    return items
+
+
+def get_default_strategy() -> Dict[str, Any]:
+    """返回默认策略元数据。"""
+    return STRATEGY_REGISTRY[DEFAULT_STRATEGY_ID]
+
+
+# ---------------------------------------------------------------------------
+# 启动时注册默认策略
+# ---------------------------------------------------------------------------
+
+register_strategy(_DEFAULT_META)
+
+
+# ---------------------------------------------------------------------------
+# 兼容类 — 供 main.py / scripts/pipeline.py 旧式调用
+# ---------------------------------------------------------------------------
 
 
 class StrategyRegistry:
-    """策略注册中心 - 管理所有启用的选股策略"""
+    """策略注册中心 — 兼容旧调用接口。
 
-    def __init__(self, config: Optional[StrategyConfig] = None):
-        self.config = config or get_config().strategy
-        self.skills_dir = Path(self.config.skills_dir)
-        self._validate()
+    不再扫描 Skill 目录、不再执行外部脚本。
+    list_strategies() 返回的记录中额外附带 available/executable/type
+    等兼容字段，使已有调用方无需改动。
+    """
 
-    def _validate(self):
-        for s in self.config.enabled_strategies:
-            skill_path = self.skills_dir / s / "SKILL.md"
-            if not skill_path.exists():
-                logger.warning(f"策略 Skill 未找到: {s} ({skill_path})")
-            else:
-                logger.info(f"策略已注册: {s}")
+    def __init__(self, config=None):  # noqa: ARG002 – config 保留签名兼容
+        pass
 
-    def list_strategies(self) -> List[Dict]:
-        """列出所有已注册策略，附带类型和可执行信息"""
-        result = []
-        for s in self.config.enabled_strategies:
-            skill_path = self.skills_dir / s
-            scripts = self._scan_scripts(s)
-            priority = PRIORITY_SCRIPTS.get(s)
-            has_scripts = len(scripts) > 0
-            is_doc_only = (priority is None and not has_scripts)
-            info = {
-                "name": s,
-                "path": str(skill_path),
-                "available": skill_path.exists(),
-                "scripts": scripts,
-                "executable": has_scripts,
-                "priority_script": priority,
-                "type": "doc-only" if is_doc_only else "script" if has_scripts else "unknown",
-            }
-            skill_md = skill_path / "SKILL.md"
-            if skill_md.exists():
-                with open(skill_md, "r") as f:
-                    first_line = f.readline().strip().lstrip("#").strip()
-                    info["description"] = first_line
-            result.append(info)
-        return result
+    @staticmethod
+    def _enrich(meta: Dict[str, Any]) -> Dict[str, Any]:
+        """为模块级元数据补上旧调用方期望的兼容字段。"""
+        out: Dict[str, Any] = dict(meta)
+        out.setdefault("available", True)
+        out.setdefault("executable", False)
+        out.setdefault("type", "builtin")
+        return out
 
-    def _scan_scripts(self, strategy_name: str) -> List[str]:
-        """扫描 Skill 目录下的真实 Python 脚本"""
-        script_dir = self.skills_dir / strategy_name / "scripts"
-        if not script_dir.exists():
-            return []
-        py_files = [
-            str(p) for p in script_dir.rglob("*.py")
-            if p.name != "__init__.py"
-            and "strategy_lab" not in str(p)
-        ]
-        return py_files
-
-    def find_scripts(self, strategy_name: Optional[str] = None) -> Dict[str, List]:
-        targets = (
-            [strategy_name] if strategy_name
-            else self.config.enabled_strategies
-        )
-        result = {}
-        for s in targets:
-            result[s] = self._scan_scripts(s)
-        return result
-
-    def _pick_script(self, strategy_name: str) -> Optional[str]:
-        """为策略选择合适的执行脚本"""
-        priority = PRIORITY_SCRIPTS.get(strategy_name)
-        scripts = self._scan_scripts(strategy_name)
-
-        if priority:
-            for s in scripts:
-                if priority in s or s.endswith(priority):
-                    return s
-            if scripts:
-                return scripts[0]
-            return None
-        elif scripts:
-            return scripts[0]
-        else:
-            return None
-
-    def execute_strategy(
-        self, strategy_name: str, script: Optional[str] = None, args: Optional[List] = None
-    ) -> Dict:
-        if script is None:
-            script_path = self._pick_script(strategy_name)
-            if script_path is None:
-                return {
-                    "strategy": strategy_name,
-                    "success": True,
-                    "note": "文档型策略，无可执行脚本，需 Agent 直接读取 SKILL.md 使用",
-                    "type": "doc-only",
-                }
-        else:
-            script_path = self.skills_dir / strategy_name / "scripts" / script
-            if not script_path.exists():
-                return {"strategy": strategy_name, "success": False, "error": f"脚本不存在: {script_path}"}
-            script_path = str(script_path)
-
-        if not os.path.exists(str(script_path)):
-            return {"strategy": strategy_name, "success": False, "error": f"脚本不存在: {script_path}"}
-
-        try:
-            cmd = ["python3", str(script_path)] + (args or [])
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
-            return {
-                "strategy": strategy_name,
-                "script": os.path.basename(str(script_path)),
-                "success": result.returncode == 0,
-                "stdout": result.stdout[-3000:],
-                "stderr": result.stderr[-1000:],
-                "returncode": result.returncode,
-            }
-        except subprocess.TimeoutExpired:
-            return {"strategy": strategy_name, "success": False, "error": "执行超时"}
-        except Exception as e:
-            return {"strategy": strategy_name, "success": False, "error": str(e)}
+    def list_strategies(self, enabled_only: bool = True) -> List[Dict[str, Any]]:
+        """列出策略（兼容旧接口）。"""
+        return [self._enrich(s) for s in list_strategies(enabled_only=enabled_only)]
 
     def run_all_strategies(self):
-        """执行所有策略，返回 (results, stats) 元组。
-        stats: {"executed": int, "skipped_doc_only": int, "failed": int}
+        """兼容旧接口 — 不执行外部脚本，仅返回元数据标记。
+
+        Returns
+        -------
+        (results, stats) : tuple
+            results: dict[str, dict]  每条策略一条记录
+            stats:  dict  executed/skipped_doc_only/failed 计数
         """
-        results = {}
+        results: Dict[str, Dict[str, Any]] = {}
         stats = {"executed": 0, "skipped_doc_only": 0, "failed": 0}
-        for s in self.config.enabled_strategies:
-            logger.info(f"执行策略: {s}")
-            r = self.execute_strategy(s)
-            results[s] = r
-            if r.get("type") == "doc-only":
-                stats["skipped_doc_only"] += 1
-            elif r.get("success"):
-                stats["executed"] += 1
-            else:
-                stats["failed"] += 1
+        for meta in list_strategies(enabled_only=True):
+            name = meta["id"]
+            results[name] = {
+                "strategy": name,
+                "success": True,
+                "note": "P8.4-1 注册骨架阶段，仅返回元数据，不执行外部脚本",
+                "type": "builtin",
+            }
+            stats["executed"] += 1
         return results, stats
+
+    def execute_strategy(self, strategy_name: str, **_kwargs) -> Dict[str, Any]:
+        """兼容旧接口 — 不执行外部脚本。"""
+        meta = get_strategy(strategy_name)
+        if meta is None:
+            return {
+                "strategy": strategy_name,
+                "success": False,
+                "error": f"策略未注册: {strategy_name}",
+            }
+        return {
+            "strategy": strategy_name,
+            "success": True,
+            "note": "P8.4-1 注册骨架阶段，仅返回元数据，不执行外部脚本",
+            "type": "builtin",
+        }
