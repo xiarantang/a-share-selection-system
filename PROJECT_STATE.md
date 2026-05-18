@@ -31,6 +31,7 @@
 | P8.2-3 | `8379657` | UI接入explain：expander顶部展示解释/可靠性折叠 |
 | P8.2-4 | `caac7b2` | 小白依赖收口：requirements-ui加入baostock/状态同步/全链路通过 |
 | P8.4-0 | `9361433` | 策略管理设计文档 |
+| P8.5-0 | — | AI辅助解释边界评审决策文档 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.4 已完成)
@@ -45,7 +46,7 @@
 
 ## 4. 阶段记录（P8.1-P8.4 已完成）
 
-当前推进：P8.4 策略管理已全部完成（P8.4-1 → P8.4-4 + P8.4-4.1 路线图一致性收口）。以下保留 P8.1-P8.4 的关键验收记录。
+当前推进：P8.4 策略管理已全部完成，P8.5-0 AI 辅助解释边界评审已完成（结论：暂缓实现）。以下保留 P8.1-P8.5-0 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -292,8 +293,18 @@ P8.4-4 策略管理文档与验收收口：
 
 **P8.4 策略管理阶段已完成**（P8.4-1 注册骨架 → P8.4-2 CLI 参数 → P8.4-3 UI 选择器 → P8.4-4 文档验收 → P8.4-4.1 路线图一致性收口）。
 
-下一步建议：P8.5-0 可选 AI 辅助解释边界评审/暂缓决策。进入 P8.5 前必须先完成 P8.5-0 决策评审，确认 AI 默认关闭、不进评分/排序/风控/买卖决策链路、不输出买入/卖出/目标价/收益预测、不需要 API Key 才能启动小白 UI、不能保证边界则暂缓。P8.5-0 的产出应该是决策文档，不是代码。
+P8.5-0 AI 辅助解释边界评审：
+- 文档：`docs/P8_5_AI_EXPLANATION_DECISION.md`
+- 结论：**暂缓实现 P8.5 AI 辅助解释**；只有在边界全部可自动验收时，才进入下一步最小设计
+- 硬性禁止：不参与评分、排序、风控等级、买卖决策链路；不生成股票池；不改 data/fetcher.py 数据链路；不输出买入/卖出/目标价/收益预测等投资建议措辞；不要求 API Key 才能启动小白 UI
+- 默认关闭：UI 默认不启用 AI；CLI 默认不启用 AI；没有 API Key 时系统完全可用
+- 可接受最小方案（仅设计）：UI 折叠区"AI 辅助阅读说明"，输入只允许已有 JSON 的 Top 候选和规则 explain，输出只能是通俗解释/术语解释/风险提醒复述，必须带免责声明
+- 进入 P8.5-1 的硬门槛：禁词检查验收脚本、默认关闭验收、无 API Key 可启动验收、默认路径不调用 AI 验收、输出隔离验收
+- 本阶段仅写决策文档，未修改任何代码文件
+- 未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/
+
+下一步建议：**暂不进入 AI 实现**。可选择：① 如确需推进，先做 P8.5-1 设计文档（含可自动验收的边界守卫方案）；② 转向 UI/验收稳定性小优化。
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / scripts/confirm_p84_cli.py / scripts/confirm_p84_ui.py / scripts/confirm_p84_docs.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / scripts/confirm_p84_cli.py / scripts/confirm_p84_ui.py / scripts/confirm_p84_docs.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_5_AI_EXPLANATION_DECISION.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
