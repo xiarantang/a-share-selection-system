@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.3-3 完成）
+> 最后更新：2026-05-19（P9.3-3.1 完成）
 
 ## 1. 项目总目标
 
@@ -67,6 +67,7 @@
 | P9.3-2 | `cb20618` | Markdown 报告接入 run_metadata |
 | P9.3-2.1 | — | PROJECT_STATE.md 禁词口径残留修正 |
 | P9.3-3 | — | Streamlit UI 轻量展示 run_metadata |
+| P9.3-3.1 | — | UI/CLI 输出边界措辞收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -601,6 +602,12 @@ P9.3-3 Streamlit UI 轻量展示 run_metadata：
 - 未修改 Markdown 报告（reports/generator.py）
 - 未修改评分公式、排序逻辑、数据源优先级
 - 验收：py_compile OK | confirm_docs_consistency 19/19 | confirm_release_ready 10/10
+
+P9.3-3.1 UI/CLI 输出边界措辞收口：
+- main.py：CLI 输出标题措辞收口，统一为「不代表未来表现」
+- app.py：覆盖不全提示与底部免责声明措辞收口，统一为稳妥表达
+- 未修改评分公式、排序逻辑、数据源优先级、JSON 生成、报告逻辑
+- 验收：py_compile OK | 禁词检查零命中 | confirm_docs_consistency 19/19 | confirm_release_ready 10/10
 
 ## 5. 关键文件
 

@@ -331,7 +331,7 @@ def cmd_validate(args):
         logger.info("❌ 验证失败：无数据")
         return 1
     logger.info("="*50)
-    logger.info("验证摘要（非收益预测）")
+    logger.info("验证摘要（不代表未来表现）")
     logger.info(f"  overall_quality: {v['overall_quality']}")
     logger.info(f"  total={v['total_count']} success={v['success_count']}")
     logger.info(f"  coverage_warning_ratio: {v['coverage_warning_ratio']}")
@@ -359,7 +359,7 @@ def cmd_backtest_validate(args):
     top = int(getattr(args, 'top', 10) or 10)
     per_stock, summary = run_backtest_validation(data, top=top)
     logger.info("="*50)
-    logger.info("历史窗口复盘（非未来收益预测）")
+    logger.info("历史窗口复盘（不代表未来表现）")
     logger.info(f"  total_checked: {summary['total_checked']} skipped: {summary['skipped']}")
     logger.info(f"  win: {summary['win_count']} flat: {summary['flat_count']} loss: {summary['loss_count']}")
     logger.info(f"  avg_forward_return_pct: {summary['avg_forward_return_pct']}%")
