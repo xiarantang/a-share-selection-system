@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P9.2-1 完成）
+> 最后更新：2026-05-18（P9.2-2 完成）
 
 ## 1. 项目总目标
 
@@ -60,6 +60,7 @@
 | P9.1 | — | 公开文档一致性治理 |
 | P9.1.1 | `ea4c3e9` | PROJECT_STATE.md 旧流程词口径返工收口 |
 | P9.2-1 | — | 新增独立文档一致性检查脚本 |
+| P9.2-2 | — | 将文档一致性检查接入发布前一键验收 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -410,7 +411,7 @@ P8.7-0 发布前总复盘与下一阶段边界设计：
 - 保留免责声明：仅供研究学习，不构成投资建议
 
 P8.7-1 发布前一键验收脚本最小整合：
-- 新增 `scripts/confirm_release_ready.py`：聚合 9 项发布前检查为一个入口
+- 新增 `scripts/confirm_release_ready.py`：当时聚合 9 项发布前检查为一个入口（P9.2-2 起扩展为 10 项）
 - 检查项：app.py 语法、P8.3 UI 验收 (44项)、P8.4 策略注册/CLI/UI/文档验收、CLI 选股 (static 10→Top5)、CLI 报告生成、废弃 API 残留检查
 - 使用 Python 标准库 subprocess/pathlib/sys，不引入新依赖
 - 从项目根目录运行：`python3 scripts/confirm_release_ready.py`
@@ -527,7 +528,18 @@ P9.2-1 新增独立文档一致性检查脚本：
 - 运行方式：python3 scripts/confirm_docs_consistency.py
 - 未修改产品代码（app.py / main.py / start_ui.command / data/ / strategies/ / reports/ / validation/ / requirements*.txt）
 - 未修改评分、排序、数据链路、报告逻辑
-- 验收：confirm_docs_consistency 19/19 通过 | confirm_release_ready 9/9 通过
+- 验收：confirm_docs_consistency 19/19 通过 | confirm_release_ready 当时 9/9 通过
+
+P9.2-2 将文档一致性检查接入发布前一键验收：
+- scripts/confirm_release_ready.py：CHECKS 新增第 10 项「文档口径一致性检查」，调用 confirm_docs_consistency.py
+- README.md：发布前一键验收说明从 9 项更新为 10 项
+- docs/P8_7_RELEASE_REVIEW.md：检查清单新增第 10 项文档口径一致性检查；聚合 9 项 → 10 项
+- docs/P9_ROADMAP.md：基线 commit 和验收结果更新为 10/10 通过
+- docs/PROJECT_HISTORY.md：发布前一键验收数量和结果更新为 10 项
+- PROJECT_STATE.md：P8.7-1 历史记录标注「当时 9 项」
+- 未修改产品代码（app.py / main.py / start_ui.command / data/ / strategies/ / reports/ / validation/ / requirements*.txt / scripts/confirm_docs_consistency.py）
+- 未修改评分、排序、数据链路、报告逻辑
+- 验收：confirm_docs_consistency 19/19 通过 | confirm_release_ready 10/10 通过
 
 ## 5. 关键文件
 

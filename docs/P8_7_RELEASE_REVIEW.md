@@ -186,6 +186,7 @@ python3 scripts/confirm_release_ready.py
 | 7 | CLI 选股 (static 10→Top5) | `.venv/bin/python main.py select --universe static --limit 10 --top 5` |
 | 8 | CLI 报告生成 | `.venv/bin/python main.py report` |
 | 9 | 废弃 API 残留检查 (应为空) | `rg -n "use_container_width\|\.applymap\(" app.py` |
+| 10 | 文档口径一致性检查 | `python3 scripts/confirm_docs_consistency.py` |
 
 ### 退出码
 
@@ -270,7 +271,7 @@ git status --short
 python3 scripts/confirm_release_ready.py
 ```
 
-聚合 9 项检查（语法、UI 验收、策略验收、CLI 选股/报告、废弃 API 残留等），全部通过 exit 0，任一失败 exit 1。
+聚合 10 项检查（语法、UI 验收、策略验收、CLI 选股/报告、废弃 API 残留、文档口径一致性等），全部通过 exit 0，任一失败 exit 1。
 
 ### 10.4 边界：不能做什么
 

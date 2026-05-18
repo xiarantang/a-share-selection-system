@@ -110,7 +110,7 @@ cp -R /tmp/a-share-skill/macd-second-golden-cross ~/.agents/skills/
 python3 scripts/confirm_release_ready.py
 ```
 
-> 维护者/发布前验收用，聚合语法检查、UI 验收、策略验收、CLI 选股/报告等 9 项检查。不是小白日常使用步骤。
+> 维护者/发布前验收用，聚合语法检查、UI 验收、策略验收、CLI 选股/报告、文档口径一致性等 10 项检查。不是小白日常使用步骤。
 
 ### 查看股票池
 

@@ -201,7 +201,7 @@ P8 在不破坏 v0.5 小白路径的前提下，增强数据、解释、UI、验
 ### P8.7 发布前复盘与发布候选收口
 
 - 增加 `scripts/confirm_release_ready.py`。
-- 建立发布前 9 项一键验收。
+- 建立发布前一键验收（P8.7-1 时为 9 项，P9.2 扩展为 10 项，含文档口径一致性检查）。
 - 小白手动验收清单收口。
 - README、USER_GUIDE、TROUBLESHOOTING、PROJECT_STATE 等公开文档一致性收口。
 - 启动入口 fallback 可选状态收口。
@@ -217,7 +217,7 @@ P8 在不破坏 v0.5 小白路径的前提下，增强数据、解释、UI、验
 - 状态：v0.5 + P8 发布候选完成态
 - 主路径：双击 `start_ui.command` → 选参数 → 开始选股 → 看结果
 - 发布前验收入口：`python3 scripts/confirm_release_ready.py`
-- 最近验收结果：9/9 通过
+- 最近验收结果：10/10 通过（含文档口径一致性检查）
 
 当前核心能力：
 
