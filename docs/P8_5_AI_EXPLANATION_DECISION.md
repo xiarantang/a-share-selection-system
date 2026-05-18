@@ -30,7 +30,7 @@
 - **只读**：不写回任何 JSON 字段，不修改任何评分/排序/风控结果。
 
 允许读取的数据源：
-- `selection_latest.json` 的 `top_candidates` 和 `explain` 字段
+- `selection_latest.json` 的顶层 `top`（候选列表）、`all`（全集列表）和 `explain` 字段
 - `strategies/registry.py` 中的策略元数据（`description`、`risk_reminder`、`suitable_scenario`）
 - 已有的规则 explain 生成逻辑的输出
 
@@ -46,7 +46,7 @@ AI 不得修改、覆盖、影响任何 `factor_scores`、`total_score`、综合
 
 ### 3.2 不参与排序
 
-AI 不得改变候选股的排名顺序。`top_candidates` 的排列顺序必须完全由规则评分决定。
+AI 不得改变候选股的排名顺序。`top`（候选列表）的排列顺序必须完全由规则评分决定。
 
 ### 3.3 不参与风控等级
 
