@@ -38,7 +38,7 @@
 | P8.6-0.1 | `9d76805` | UI兼容性方案范围收口 |
 | P8.6-1 | `30e0fb9` | UI兼容性最小修复 |
 | P8.6-1.1 | `4aefa5c` | 项目状态commit回填修正 |
-| P8.6-2 | — | UI冒烟验收与截图确认 |
+| P8.6-2 | `08c26c0` | UI冒烟验收与截图确认 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.4 已完成)
