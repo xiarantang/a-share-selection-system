@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P9.1.1 完成）
+> 最后更新：2026-05-18（P9.2-1 完成）
 
 ## 1. 项目总目标
 
@@ -58,6 +58,8 @@
 | P8完成态 | `96909eb` | 发布候选状态最终收口 |
 | P9.0 | `—` | 从 P1 到 P8 的完整来时路复盘与 P9 路线图设计 |
 | P9.1 | — | 公开文档一致性治理 |
+| P9.1.1 | `ea4c3e9` | PROJECT_STATE.md 旧流程词口径返工收口 |
+| P9.2-1 | — | 新增独立文档一致性检查脚本 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -512,6 +514,20 @@ P9.1.1 PROJECT_STATE.md 旧流程词口径返工收口：
 - P9.1 记录（行 500）：旧首页引导文案改为概括表达
 - 未修改产品代码、评分、排序、数据链路、报告逻辑
 - 验收：confirm_release_ready 9/9 通过 | rg 旧流程词零命中 | rg 禁词零命中
+
+P9.2-1 新增独立文档一致性检查脚本：
+- 新增 scripts/confirm_docs_consistency.py：19 项自动检查公开文档口径一致性
+  - 小白主路径关键表述：start_ui.command / 选参数 / 开始选股 / 看结果
+  - baostock 数据层表述：baostock / 570
+  - skill_fallback 兜底表述：可选第三级兜底，不是启动前提
+  - 旧流程误导词零命中：旧首页引导文案等 6 个词
+  - 投资建议措辞禁词零命中：4 个禁词
+  - 免责声明保留：不构成投资建议
+- 独立验收入口，未接入 confirm_release_ready.py
+- 运行方式：python3 scripts/confirm_docs_consistency.py
+- 未修改产品代码（app.py / main.py / start_ui.command / data/ / strategies/ / reports/ / validation/ / requirements*.txt）
+- 未修改评分、排序、数据链路、报告逻辑
+- 验收：confirm_docs_consistency 19/19 通过 | confirm_release_ready 9/9 通过
 
 ## 5. 关键文件
 
