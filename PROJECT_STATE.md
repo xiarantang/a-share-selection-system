@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P9.3-0 完成）
+> 最后更新：2026-05-18（P9.3-1 完成）
 
 ## 1. 项目总目标
 
@@ -61,7 +61,8 @@
 | P9.1.1 | `ea4c3e9` | PROJECT_STATE.md 旧流程词口径返工收口 |
 | P9.2-1 | — | 新增独立文档一致性检查脚本 |
 | P9.2-2 | `994dcd5` | 将文档一致性检查接入发布前一键验收 |
-| P9.3-0 | — | 复盘记录增强设计文档 |
+| P9.3-0 | `24d38c0` | 复盘记录增强设计文档 |
+| P9.3-1 | — | JSON 复盘记录字段实现 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -553,6 +554,18 @@ P9.3-0 复盘记录增强设计文档：
 - 只新增设计文档，未修改产品代码、评分、排序、数据链路、报告逻辑
 - 下一步建议：P9.3-1 JSON 复盘记录字段实现
 - 验收：confirm_docs_consistency 19/19 通过 | confirm_release_ready 10/10 通过
+
+P9.3-1 JSON 复盘记录字段实现：
+- strategies/selection.py：新增 build_run_metadata() helper
+  - 只读取已有 selection_data / validation / stats / top / strategy 字段
+  - 不重新跑评分、不重新拉数据、不改变 top/all 顺序
+  - 输出 9 个字段：generated_at / entrypoint / command / params / strategy / data_summary / result_summary / selection_path / report_path
+- main.py cmd_select：写 JSON 前调用 build_run_metadata，entrypoint=cli，command 为完整命令行
+- app.py run_selection：返回 data 前调用 build_run_metadata，entrypoint=ui，command 为 streamlit run app.py
+- 未改变现有 generated_at / strategy_id / strategy / universe / stats / top / all / validation 字段
+- 未改变 Top 排序（同参数同数据源，结果与 P9.3-1 之前一致：601939 建设银行 69 分 #1）
+- 未修改评分公式、排序逻辑、数据源优先级、Markdown 报告逻辑、UI 展示区域
+- 验收：py_compile OK | CLI select EXIT:0 | run_metadata 含全部 9 个字段 | report EXIT:0 | confirm_docs_consistency 19/19 | confirm_release_ready 10/10
 
 ## 5. 关键文件
 

@@ -186,3 +186,60 @@ class SelectionEngine:
         return results
     def select_top(self, symbols, top=10, start_date="2024-01-01"):
         return self.select(symbols, start_date)[:top]
+
+
+def build_run_metadata(selection_data, params, entrypoint, command,
+                       selection_path=None, report_path=None):
+    """从已有 selection_data 构建复盘记录。不参与评分排序，不重新跑数据。
+
+    Args:
+        selection_data: 已生成的选股结果 dict（含 top/all/stats/validation/strategy）
+        params: 运行参数 dict（universe/limit/top/start/strategy_id，可选 symbols）
+        entrypoint: 运行入口标识（"cli" / "ui" / "script"）
+        command: 完整命令行字符串
+        selection_path: JSON 文件保存路径（可选）
+        report_path: Markdown 报告保存路径（可选）
+    """
+    top = selection_data.get("top", [])
+    validation = selection_data.get("validation", {})
+    stats = selection_data.get("stats", {})
+    strategy = selection_data.get("strategy", {})
+
+    # data_summary
+    successful = [r for r in top if not r.get("error")]
+    rows_list = [r.get("rows", 0) for r in successful]
+    avg_rows = round(sum(rows_list) / len(rows_list), 1) if rows_list else 0
+
+    data_summary = {
+        "source_dist": stats.get("source_dist", {}),
+        "avg_rows": avg_rows,
+        "coverage_warning_ratio": validation.get("coverage_warning_ratio", 0),
+    }
+
+    # result_summary
+    scores = [r.get("score", 0) for r in successful]
+    result_summary = {
+        "total": stats.get("total", 0),
+        "success": stats.get("success", 0),
+        "top_score": max(scores) if scores else 0,
+        "avg_score": round(sum(scores) / len(scores), 1) if scores else 0,
+        "confidence_dist": validation.get("confidence_dist", {}),
+        "decision_dist": validation.get("decision_dist", {}),
+        "risk_level_dist": validation.get("risk_level_dist", {}),
+        "overall_quality": validation.get("overall_quality", ""),
+    }
+
+    return {
+        "generated_at": selection_data.get("generated_at", ""),
+        "entrypoint": entrypoint,
+        "command": command,
+        "params": params,
+        "strategy": {
+            "id": strategy.get("id", ""),
+            "name": strategy.get("name", ""),
+        },
+        "data_summary": data_summary,
+        "result_summary": result_summary,
+        "selection_path": selection_path or "",
+        "report_path": report_path or "",
+    }

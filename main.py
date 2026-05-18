@@ -23,7 +23,7 @@ from backtest.engine import AShareBacktestEngine, MACrossStrategy
 from agent.bridge import AgentBridge
 from paper_trading.engine import PaperTradingEngine
 from reports.generator import ReportGenerator
-from strategies.selection import SelectionEngine
+from strategies.selection import SelectionEngine, build_run_metadata
 from data.universe import get_universe, lookup_meta
 from validation.selection_validator import validate_selection
 from validation.backtest_validator import run_backtest_validation
@@ -290,6 +290,21 @@ def cmd_select(args):
         "all": all_results,
         "validation": validate_selection({"all": all_results, "top": top_results, "universe": meta, "stats": dict(stats, **{k: meta[k] for k in ["universe_requested","universe_source","is_fallback","fallback_reason"]})}),
     }
+    # 构建 run_metadata（只读取已有数据，不重新跑评分）
+    cli_command = " ".join(sys.argv)
+    rm_params = {
+        "universe": universe,
+        "limit": limit,
+        "top": top,
+        "start": req_start,
+        "strategy_id": strategy_id,
+    }
+    if manual_symbols:
+        rm_params["symbols"] = ",".join(manual_symbols)
+    payload["run_metadata"] = build_run_metadata(
+        payload, params=rm_params, entrypoint="cli", command=cli_command,
+        selection_path=os.path.join("reports", "output", "selection_latest.json"),
+    )
     with open(json_path, "w") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
     logger.info(f"JSON: {json_path}")

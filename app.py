@@ -19,7 +19,7 @@ import streamlit as st
 import pandas as pd
 
 from data.universe import get_universe, lookup_meta
-from strategies.selection import SelectionEngine
+from strategies.selection import SelectionEngine, build_run_metadata
 from strategies.registry import DEFAULT_STRATEGY_ID, get_strategy, list_strategies
 from validation.selection_validator import validate_selection
 from validation.backtest_validator import run_backtest_validation
@@ -169,6 +169,17 @@ def run_selection(universe: str, limit: int, top: int, start_date: str,
         "all": all_results,
     }
     data["validation"] = validate_selection(data)
+    # 构建 run_metadata（只读取已有数据，不重新跑评分）
+    ui_params = {
+        "universe": universe,
+        "limit": limit,
+        "top": top,
+        "start": start_date,
+        "strategy_id": strategy_id,
+    }
+    data["run_metadata"] = build_run_metadata(
+        data, params=ui_params, entrypoint="ui", command="streamlit run app.py",
+    )
     return data
 
 

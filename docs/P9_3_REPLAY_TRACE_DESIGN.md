@@ -1,7 +1,7 @@
 # P9.3 复盘记录增强设计文档
 
 > 创建时间：2026-05-18
-> 阶段：P9.3-0（仅设计，不实现）
+> 阶段：P9.3-0（仅设计，不实现）→ P9.3-1 JSON 字段已实现
 > 基线：v0.5 + P8 发布候选 + P9.1-P9.2 文档治理
 
 ---
@@ -156,7 +156,7 @@ JSON 顶层新增 `run_metadata` 字段，结构设计如下：
 
 | 阶段 | 内容 | 改动范围 |
 |------|------|----------|
-| P9.3-1 | JSON 复盘记录字段实现 | strategies/selection.py（新增 `_build_run_metadata()`） |
+| P9.3-1 | JSON 复盘记录字段实现 | strategies/selection.py（新增 `_build_run_metadata()`） | ✅ 已完成 |
 | P9.3-2 | Markdown 报告接入复盘记录 | reports/generator.py |
 | P9.3-3 | UI 轻量展示与小白说明 | app.py（数据概览区下方折叠） |
 | P9.3-4 | 验收脚本与文档收口 | scripts/ + docs/ |
