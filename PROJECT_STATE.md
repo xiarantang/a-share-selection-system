@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.4-0.1 完成）
+> 最后更新：2026-05-19（P9.4-1 完成）
 
 ## 1. 项目总目标
 
@@ -74,6 +74,7 @@
 | P9.3-4.2.1 | — | PROJECT_STATE.md 中 P9.3-4.2 记录措辞微修 |
 | P9.4-0 | — | 小白排障增强设计文档 |
 | P9.4-0.1 | — | P9.4 设计文档禁词措辞返工 |
+| P9.4-1 | — | 公开排障文档口径收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -646,6 +647,17 @@ P9.4-0.1 P9.4 设计文档禁词措辞返工：
 - docs/P9_4_TROUBLESHOOTING_DESIGN.md：2 处禁词列表改为概括表达（交易指令类、收益承诺类）
 - PROJECT_STATE.md：修复关键文件列表重复行
 - 未修改任何产品代码、脚本、评分、排序、数据链路、报告逻辑
+
+P9.4-1 公开排障文档口径收口：
+- docs/TROUBLESHOOTING.md 4 处修改：
+  - #6 数据源等待描述修正为准确的三级顺序尝试表述
+  - #5 端口占用处补 lsof 命令含义说明 + 低压力替代方案（关终端/重启）
+  - #2 Python 安装后补 venv/pip 安装失败白话排查路径
+  - #10 旧流程引导文案修正为当前主路径（启动→环境自检→选参数→选股→看结果）
+- docs/USER_GUIDE.md FAQ 从 5 条扩充到 8 条，新增：浏览器打不开、安装失败、全部失败
+- docs/P9_4_TROUBLESHOOTING_DESIGN.md：P9.4-1 标记已完成
+- 未修改 app.py / main.py / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
+- 下一步建议：P9.4-2 UI 错误/等待/空结果提示增强
 
 ## 5. 关键文件
 
