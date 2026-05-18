@@ -37,6 +37,8 @@
 | P8.6-0 | `468c240` | UI兼容性预检与修复方案（未修改产品代码） |
 | P8.6-0.1 | `9d76805` | UI兼容性方案范围收口 |
 | P8.6-1 | `30e0fb9` | UI兼容性最小修复 |
+| P8.6-1.1 | `4aefa5c` | 项目状态commit回填修正 |
+| P8.6-2 | — | UI冒烟验收与截图确认 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.4 已完成)
@@ -51,7 +53,7 @@
 
 ## 4. 阶段记录（P8.1-P8.4 已完成）
 
-当前推进：P8.6-1 UI兼容性最小修复已完成。以下保留 P8.1-P8.6-1 的关键验收记录。
+当前推进：P8.6-2 UI冒烟验收与截图确认已完成。以下保留 P8.1-P8.6-2 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -336,6 +338,20 @@ P8.6-1 UI兼容性最小修复：
 - PROJECT_STATE.md 记录 P8.6-1 完成
 - 未修改评分、排序、数据链路、报告逻辑
 - 未新增任何脚本，未改 docs/P8_6_UI_STABILITY_AUDIT.md
+
+P8.6-2 UI冒烟验收与截图确认：
+- 基础验收：py_compile app.py ✅ | select --universe static --limit 10 --top 5 EXIT:0 (10/10 baostock) ✅
+- Streamlit UI 冒烟验收：
+  - 首页可正常打开：标题、参数区（股票池/策略/扫描数量/展示数量/起始日期）、开始选股按钮、免责声明 ✅
+  - 结果页可正常展示：选股完成提示 10/10、Top3 速览卡片（建设银行/工商银行/中信证券）、中文决策标签（观察/中性）、中文风险标签（低风险）、中文置信度标签（高置信度） ✅
+  - 候选表格 5 行完整显示，无文字遮挡或空白 ✅
+  - 逐只详情折叠区 5 条展开正常 ✅
+- 截图更新：
+  - docs/screenshots/home.png：首页截图已更新（~183KB）
+  - docs/screenshots/result.png：结果页截图已更新（~147KB）
+- 警告检查：app.py 无 use_container_width / applymap 残留 ✅
+- 未修改产品代码/评分/排序/数据链路/报告逻辑
+- 仅修改 PROJECT_STATE.md、docs/screenshots/home.png、docs/screenshots/result.png
 
 ## 5. 关键文件
 
