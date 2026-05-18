@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P8.7-6）
+> 最后更新：2026-05-18（P8 完成 / 发布候选）
 
 ## 1. 项目总目标
 
@@ -54,9 +54,10 @@
 | P8.7-5.1 | `e96645e` | 回填commit并同步验收清单口径 |
 | P8.7-5.2 | `28e2ba6` | 修正发布复盘口径禁词 |
 | P8.7-6 | `93e84d3` | 发布候选最终复核与交付说明收口 |
+| P8.7-6.1 | `f46731b` | 修正发布候选禁词口径 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
-## 3. 真实能力 (v0.5 + P8.1-P8.6 已完成)
+## 3. 真实能力 (v0.5 + P8 已完成)
 
 - ✅ 数据：akshare + **baostock** + skill_fallback + 缓存；baostock稳定570条K线
 - ✅ 选股：6因子评分 + decision/risk_level/confidence + explain 小白解释字段
@@ -71,7 +72,7 @@
 
 ## 4. 阶段记录（P8.1-P8.7 已完成）
 
-当前推进：P8.7-6 发布候选最终复核与交付说明收口已完成。以下保留 P8.1-P8.7-6 的关键验收记录。
+当前状态：P8 已走完，v0.5 + P8 处于发布候选完成态。以下保留 P8.1-P8.7 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -106,14 +107,14 @@ P8.2-0 解释方案设计：
 - 文档：`docs/P8_2_EXPLANATION_DESIGN.md`
 - 设计新增 `explain` 字段：`summary` / `strengths` / `weaknesses` / `risk_note` / `confidence_note`
 - 解释只从现有 `reasons` / `risks` / `factor_scores` / `factor_values` / `decision` / `risk_level` / `confidence` / `rows` 生成
-- 明确禁止：不改评分公式、不改排序、不引入 AI、不输出买入/卖出/目标价/收益预测
+- 明确禁止：不改评分公式、不改排序、不引入 AI、不输出投资建议措辞
 - 展示范围：CLI JSON、Markdown 报告、Streamlit UI
 
 P8.2-1 JSON解释字段实现：
 - `strategies/selection.py` 新增 `_build_explain()`
 - `SelectionEngine.select()` 成功结果新增 `explain`
 - `explain` 包含 `summary` / `strengths` / `weaknesses` / `risk_note` / `confidence_note`
-- `scripts/confirm_explain.py` 验证 Top5 每条解释字段完整，且不包含买入/卖出/目标价/收益预测等禁词
+- `scripts/confirm_explain.py` 验证 Top5 每条解释字段完整，且不包含投资建议措辞禁词
 - 本阶段未修改报告和 UI 展示
 
 P8.2-2 Markdown报告接入解释：
@@ -285,7 +286,7 @@ P8.4-2 CLI策略参数接入：
 
 P8.4-4.1 路线图状态一致性收口：
 - docs/P8_ROADMAP.md P8.4 部分修正为真实完成状态：默认策略 ID 是 `default`（非 `multi-factor-v1`），当前只有一套默认策略，Markdown 报告逻辑未改，策略管理只是入口壳
-- docs/P8_ROADMAP.md P8.5 部分增加 P8.5-0 决策评审门：AI 默认关闭、不进评分/排序/风控/买卖决策链路、不输出买入/卖出/目标价/收益预测、不需要 API Key 才能启动、不能保证边界则暂缓
+- docs/P8_ROADMAP.md P8.5 部分增加 P8.5-0 决策评审门：AI 默认关闭、不进评分/排序/风控/交易决策链路、不输出投资建议措辞、不需要 API Key 才能启动、不能保证边界则暂缓
 - docs/P8_ROADMAP.md 阶段总览表和执行顺序更新为已完成状态
 - PROJECT_STATE.md 更新：P8.4 已完成，下一步建议为 P8.5-0 可选 AI 辅助解释边界评审/暂缓决策
 - scripts/confirm_p84_docs.py 新增路线图一致性检查
@@ -321,7 +322,7 @@ P8.4-4 策略管理文档与验收收口：
 P8.5-0 AI 辅助解释边界评审：
 - 文档：`docs/P8_5_AI_EXPLANATION_DECISION.md`
 - 结论：**暂缓实现 P8.5 AI 辅助解释**；只有在边界全部可自动验收时，才进入下一步最小设计
-- 硬性禁止：不参与评分、排序、风控等级、买卖决策链路；不生成股票池；不改 data/fetcher.py 数据链路；不输出买入/卖出/目标价/收益预测等投资建议措辞；不要求 API Key 才能启动小白 UI
+- 硬性禁止：不参与评分、排序、风控等级、交易决策链路；不生成股票池；不改 data/fetcher.py 数据链路；不输出投资建议措辞；不要求 API Key 才能启动小白 UI
 - 默认关闭：UI 默认不启用 AI；CLI 默认不启用 AI；没有 API Key 时系统完全可用
 - 可接受最小方案（仅设计）：UI 折叠区"AI 辅助阅读说明"，输入只允许已有 JSON 的 Top 候选和规则 explain，输出只能是通俗解释/术语解释/风险提醒复述，必须带免责声明
 - 进入 P8.5-1 的硬门槛：禁词检查验收脚本、默认关闭验收、无 API Key 可启动验收、默认路径不调用 AI 验收、输出隔离验收
@@ -474,6 +475,13 @@ P8.7-6 发布候选最终复核与交付说明收口：
 - 未修改产品代码（app.py / main.py / start_ui.command / scripts/install_fallback.command / data/ / strategies/ / reports/ / validation/ / requirements*.txt）
 - 未修改评分、排序、数据链路、报告逻辑
 - 验收：confirm_release_ready ✅ | rg 禁词零命中 ✅
+- P8.7-6.1：`f46731b` 修正发布候选禁词口径，docs/P8_7_RELEASE_REVIEW.md 不再出现具体投资建议措辞禁词，发布前一键验收 9/9 通过
+
+P8 完成态结论：
+- v0.5 + P8.1-P8.7 全部完成，当前为发布候选完成态
+- 小白主路径稳定为：双击 start_ui.command → 选参数 → 开始选股 → 看结果
+- 发布前验收入口稳定为：python3 scripts/confirm_release_ready.py
+- 后续迭代需继续遵守边界：不碰实盘交易、不引入 AI/qlib 到评分排序链路、不改评分排序数据链路、不输出投资建议措辞
 
 ## 5. 关键文件
 
