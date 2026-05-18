@@ -119,7 +119,7 @@ def main():
     check_keywords_present(
         "start_ui.command 主路径关键词",
         "start_ui.command",
-        ["环境自检", "开始选股"],
+        ["环境自检", "开始选股", "查看结果"],
     )
 
     # ── 4. app.py 不含旧直暴露写法 ──
