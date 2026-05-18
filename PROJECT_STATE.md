@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P9.2-2 完成）
+> 最后更新：2026-05-18（P9.3-0 完成）
 
 ## 1. 项目总目标
 
@@ -60,7 +60,8 @@
 | P9.1 | — | 公开文档一致性治理 |
 | P9.1.1 | `ea4c3e9` | PROJECT_STATE.md 旧流程词口径返工收口 |
 | P9.2-1 | — | 新增独立文档一致性检查脚本 |
-| P9.2-2 | — | 将文档一致性检查接入发布前一键验收 |
+| P9.2-2 | `994dcd5` | 将文档一致性检查接入发布前一键验收 |
+| P9.3-0 | — | 复盘记录增强设计文档 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -539,6 +540,18 @@ P9.2-2 将文档一致性检查接入发布前一键验收：
 - PROJECT_STATE.md：P8.7-1 历史记录标注「当时 9 项」
 - 未修改产品代码（app.py / main.py / start_ui.command / data/ / strategies/ / reports/ / validation/ / requirements*.txt / scripts/confirm_docs_consistency.py）
 - 未修改评分、排序、数据链路、报告逻辑
+- 验收：confirm_docs_consistency 19/19 通过 | confirm_release_ready 10/10 通过
+
+P9.3-0 复盘记录增强设计文档：
+- 新增 docs/P9_3_REPLAY_TRACE_DESIGN.md：设计「每次选股结果更容易复盘」的最小方案
+  - 当前问题分析：运行参数、数据源分布、策略信息、报告路径等未形成统一复盘记录口径
+  - 建议新增 run_metadata 字段：generated_at / entrypoint / command / params / strategy / data_summary / result_summary / report_path / selection_path
+  - 字段全部来自已有结果和验证摘要，不重新跑评分、不影响排序
+  - Markdown 报告新增「本次运行复盘信息」小节
+  - Streamlit UI 后续轻量展示（不在本阶段实现）
+  - 后续拆分：P9.3-1 JSON 字段实现 → P9.3-2 报告接入 → P9.3-3 UI 展示 → P9.3-4 验收收口
+- 只新增设计文档，未修改产品代码、评分、排序、数据链路、报告逻辑
+- 下一步建议：P9.3-1 JSON 复盘记录字段实现
 - 验收：confirm_docs_consistency 19/19 通过 | confirm_release_ready 10/10 通过
 
 ## 5. 关键文件

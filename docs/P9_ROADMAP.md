@@ -162,6 +162,8 @@ python3 scripts/confirm_release_ready.py
 
 ## 8. P9.3 复盘记录增强
 
+> **P9.3-0 设计已完成**，详见 `docs/P9_3_REPLAY_TRACE_DESIGN.md`。
+
 ### 目标
 
 让每次选股更容易复盘：这次是用什么参数、什么数据源、什么策略、什么时候生成、验证结果如何。
