@@ -198,15 +198,18 @@ python3 scripts/confirm_release_ready.py
 
 ---
 
-## 8. 验收检查
+## 8. 验收检查示例
 
 ```bash
 # 关键词检查
-rg -n "P8.7-0|P8.6|start_ui.command|双击|不构成投资建议|暂不进入 AI|评分|排序|数据链路" docs/P8_7_RELEASE_REVIEW.md PROJECT_STATE.md
+rg -n "P8.7-0|P8.7-1|P8.6|start_ui.command|双击|不构成投资建议|暂不进入 AI|评分|排序|数据链路|confirm_release_ready" docs/P8_7_RELEASE_REVIEW.md PROJECT_STATE.md scripts/confirm_release_ready.py
 
-# 产品代码语法检查（只读，不修改）
-python3 -m py_compile app.py
+# 产品代码和验收脚本语法检查（只读，不修改）
+python3 -m py_compile app.py scripts/confirm_release_ready.py
 
-# 确认只改文档文件
-git diff --name-only
+# 发布前一键验收
+python3 scripts/confirm_release_ready.py
+
+# 确认工作区干净
+git status --short
 ```
