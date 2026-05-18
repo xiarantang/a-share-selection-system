@@ -254,6 +254,8 @@ python3 scripts/confirm_release_ready.py
 
 ## 10. P9.5 发布版打标准备
 
+> **P9.5-0 设计已完成**，详见 `docs/P9_5_RELEASE_PREP.md`。
+
 ### 目标
 
 在 P9.1-P9.4 完成后，准备一个可长期引用的发布版本。
