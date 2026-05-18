@@ -38,6 +38,7 @@
 - ✅ **数据层**：akshare + skill_fallback（120 条 K 线）+ 本地缓存
 - ✅ **股票池**：static 55 只精选 A 股，含名称/行业元数据
 - ✅ **选股引擎**：6 因子评分 + decision/risk_level/confidence
+- ✅ **策略管理**：策略元数据注册表 + CLI/UI 策略选择入口（当前只有「默认规则策略」，不改变评分公式）
 - ✅ **验证**：选股结果质量评估 + 历史窗口复盘（In-Sample）
 - ✅ **报告**：Markdown 日报，含选股结果/数据来源/覆盖警告
 - ✅ **截图证据**：Playwright 自动截图脚本，验收结果持久化到仓库
@@ -73,7 +74,7 @@
 首次使用前建议先双击 **`scripts/install_fallback.command`** 安装 A 股备用数据通道。  
 说明：`akshare` 在部分网络环境下可能临时失败，系统会自动使用备用数据通道继续出结果；这不代表系统坏了。
 
-左侧栏选择股票池和参数，点击「🚀 开始选股」即可。首次体验建议保持默认 **static + 10 只**，通常需要 **30-60 秒**。选股完成后可切换 Tab 查看候选表格、验证摘要、历史复盘和完整报告。
+左侧栏选择股票池、策略和参数，点击「🚀 开始选股」即可。首次体验建议保持默认 **static + 10 只**，通常需要 **30-60 秒**。当前只有「默认规则策略」，策略选择为将来扩展预留的入口，不改变评分公式。选股完成后可切换 Tab 查看候选表格、验证摘要、历史复盘和完整报告。
 
 ### 🔧 开发者启动（命令行）
 
@@ -119,6 +120,7 @@ python3 main.py select --universe static --limit 50 --top 10 --start 2024-01-01
 python3 main.py select --universe hs300 --limit 50 --top 10 --start 2024-01-01
 python3 main.py select --universe top_amount --limit 50 --top 10 --start 2024-01-01
 python3 main.py select --symbols 600519,000001,300750 --top 3
+python3 main.py select --universe static --limit 10 --top 5 --strategy default  # 指定策略（不传等同默认策略）
 ```
 
 ### 验证结果

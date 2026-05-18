@@ -1,7 +1,7 @@
 # P8.4 策略管理设计
 
-> 日期：2026-05-18 | 阶段：P8.4-0（设计文档）
-> 前置：P8.1 数据质量增强 ✅、P8.2 策略可解释增强 ✅、P8.3 UI 体验增强 ✅
+> 日期：2026-05-18 | 阶段：P8.4-4（文档验收）
+> P8.4-1 ✅、P8.4-2 ✅、P8.4-3 ✅、P8.4-4 ✅ → P8.4 策略管理阶段已完成
 > 约束：不改评分公式，不改排序，不改数据链路，不引入 AI/qlib，不换前端框架
 
 ---
@@ -261,7 +261,7 @@ parser.add_argument(
 
 ## 8. 分步交付计划
 
-### P8.4-1：注册骨架
+### P8.4-1：注册骨架 ✅
 
 **目标**：创建 `strategies/registry.py`，注册默认策略，提供查询接口。
 
@@ -300,7 +300,7 @@ python3 main.py report
 
 ---
 
-### P8.4-2：CLI 可选策略参数
+### P8.4-2：CLI 可选策略参数 ✅
 
 **目标**：`main.py select` 支持 `--strategy` 可选参数。
 
@@ -321,7 +321,7 @@ python3 main.py report
 | 新增 `--strategy` 参数 | 可选，默认值 `"default"`，不传时行为与 P8.3 一致 |
 | 参数校验 | 传入不存在的 strategy_id 时报错并打印可用列表 |
 | 结果新增 `strategy_id` | JSON 输出顶层新增 `"strategy_id": "default"`，不影响其他字段 |
-| 调度逻辑 | 根据 strategy_id 查注册表，获取 entry_function，调用对应引擎 |
+| 调度逻辑 | 根据 strategy_id 查注册表校验有效性，当前只校验并传递策略 ID，仍运行默认 SelectionEngine；不动态调用 entry_function |
 
 **向后兼容保证**：
 - `python3 main.py select --universe static --limit 10 --top 5` 输出与 P8.3 完全一致（仅多一个 `strategy_id` 字段）
@@ -347,7 +347,7 @@ python3 main.py report
 
 ---
 
-### P8.4-3：Streamlit 策略选择器
+### P8.4-3：Streamlit 策略选择器 ✅
 
 **目标**：侧栏增加策略下拉框，结果区标注策略名称。
 
@@ -368,7 +368,7 @@ python3 main.py report
 | 侧栏新增策略选择器 | `st.selectbox`，选项来自注册表，默认选中 `default` |
 | 策略说明展示 | 选中后展示 `description`（1-2 句）和 `risk_reminder` |
 | 结果标注 | 结果区顶部或数据概览区域标注"选股策略：默认规则策略" |
-| 传参给引擎 | 选择策略后，调用对应入口函数（当前只有 default） |
+| 传参给引擎 | 选择策略后，当前只校验并传递策略 ID，仍运行默认 SelectionEngine；不动态调用 entry_function |
 
 **UI 设计原则**（继承 P8.3）：
 - 中文优先
@@ -393,14 +393,14 @@ python3 main.py report
 
 ---
 
-### P8.4-4：文档和验收
+### P8.4-4：文档和验收 ✅
 
 **目标**：更新文档和验收脚本，确认 P8.4 全部完成。
 
 **允许修改的文件**：
 - `docs/USER_GUIDE.md`（增加策略选择说明）
 - `README.md`（更新能力描述）
-- `scripts/` 目录下的确认脚本（新增 `scripts/confirm_p84.py`）
+- `scripts/` 目录下的确认脚本（新增 `scripts/confirm_p84_docs.py`）
 - `PROJECT_STATE.md`
 
 **禁止修改的文件**：
@@ -413,7 +413,7 @@ python3 main.py report
 
 | 改动 | 说明 |
 |------|------|
-| 验收脚本 | `scripts/confirm_p84.py`：验证注册表、CLI 参数、UI 元素 |
+| 验收脚本 | `scripts/confirm_p84_docs.py`：验证注册表、CLI 参数、UI 元素、文档 |
 | 用户指南 | 新增"策略选择"段落 |
 | README | 更新能力列表和 CLI 参数说明 |
 | PROJECT_STATE | 记录 P8.4 完成状态 |
@@ -448,7 +448,7 @@ python3 main.py report
 | AC-15 | 未改数据层 | `git diff data/` 无变化 |
 | AC-16 | 禁词检查通过 | 不在正向文案中出现"买入/卖出/目标价/收益预测/建议买/建议卖" |
 | AC-17 | 文档更新完成 | USER_GUIDE / README / PROJECT_STATE 已更新 |
-| AC-18 | 验收脚本通过 | `scripts/confirm_p84.py` 全部检查通过 |
+| AC-18 | 验收脚本通过 | `scripts/confirm_p84_docs.py` 全部检查通过 |
 
 ---
 

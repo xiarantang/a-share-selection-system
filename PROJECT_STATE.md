@@ -33,12 +33,13 @@
 | P8.4-0 | `9361433` | 策略管理设计文档 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
-## 3. 真实能力 (v0.5 + P8.2-4)
+## 3. 真实能力 (v0.5 + P8.4)
 
 - ✅ 数据：akshare + **baostock** + skill_fallback + 缓存；baostock稳定570条K线
 - ✅ 选股：6因子评分 + decision/risk_level/confidence + explain 小白解释字段
+- ✅ 策略管理：策略元数据注册表 + CLI `--strategy` 参数 + UI 策略选择器（当前只有「默认规则策略」）
 - ✅ 验证：validate + backtest-validate + report，Markdown报告已展示explain解释
-- ✅ 可视化：Streamlit 本地 UI，逐只详情已展示 explain 小白解释
+- ✅ 可视化：Streamlit 本地 UI，逐只详情已展示 explain 小白解释，策略选择器
 - ✅ 小白启动：start_ui.command 安装 requirements-ui.txt；轻量依赖已包含 baostock
 - ✅ Pipeline：PASS/FAIL退出码可信
 
@@ -254,7 +255,7 @@ P8.4-2 CLI策略参数接入：
 - 验收脚本：`scripts/confirm_p84_cli.py`
 - 未修改 app.py / strategies/selection.py / strategies/registry.py / data/ / reports/ / validation/
 
-下一步建议：P8.4-4 文档验收。
+下一步建议：P8.4-4 文档验收。 → **已完成**
 
 P8.4-3 UI 策略选择器接入：
 - `app.py` 从 `strategies.registry` 导入 `DEFAULT_STRATEGY_ID` / `get_strategy` / `list_strategies`
@@ -270,6 +271,18 @@ P8.4-3 UI 策略选择器接入：
 - 未修改评分、排序、数据链路、报告逻辑
 - 验收：py_compile ✅ | confirm_p84_registry 35/35 ✅ | confirm_p84_cli 17/17 ✅ | confirm_p84_ui 36/36 ✅ | select EXIT:0 (10/10 baostock) ✅ | report EXIT:0 ✅
 
+P8.4-4 策略管理文档与验收收口：
+- README.md：当前能力新增「策略管理」条目，快速开始侧栏描述更新为「选择股票池、策略和参数」，CLI 示例增加 `--strategy default`
+- docs/USER_GUIDE.md：参数表新增「选股策略」行（默认值：默认规则策略，说明：当前为规则策略选择，不改变评分公式）；结果区新增策略/适用场景/风险提醒说明
+- docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md：P8.4-1/2/3/4 全部标注 ✅；修正误导表述「调用对应入口函数」→「当前只校验并传递策略 ID，仍运行默认 SelectionEngine」
+- PROJECT_STATE.md：记录 P8.4-4 完成 + P8.4 策略管理阶段完成
+- 新增 scripts/confirm_p84_docs.py：文档验收脚本
+- 未修改 app.py / main.py / strategies/ / data/ / reports/generator.py / validation/
+- 未修改评分、排序、数据链路、报告逻辑
+- 验收：py_compile ✅ | confirm_p84_registry ✅ | confirm_p84_cli ✅ | confirm_p84_ui ✅ | confirm_p84_docs ✅ | select EXIT:0 ✅ | report EXIT:0 ✅
+
+**P8.4 策略管理阶段已完成**（P8.4-1 注册骨架 → P8.4-2 CLI 参数 → P8.4-3 UI 选择器 → P8.4-4 文档验收）。
+
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / scripts/confirm_p84_cli.py / scripts/confirm_p84_ui.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / scripts/confirm_p84_cli.py / scripts/confirm_p84_ui.py / scripts/confirm_p84_docs.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
