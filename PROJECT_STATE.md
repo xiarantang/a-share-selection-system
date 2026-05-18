@@ -165,6 +165,14 @@ P8.3-3 风险视觉统一和小白解释优化：
 - 未修改评分、排序、数据链路、报告逻辑
 - 验收：py_compile ✅ | select EXIT:0 (10/10 baostock) ✅ | backtest-validate EXIT:0 ✅ | report EXIT:0 ✅ | 禁词检查 ✅
 
+P8.3-3.1 置信度展示中文化收口：
+- 新增 `CONFIDENCE_ZH` 映射：high → 高置信度、medium → 中置信度、low → 低置信度（仅 UI 展示层）
+- 候选表格"置信度"列：raw high/medium/low → 高置信度/中置信度/低置信度
+- 逐只详情正文"置信度: high" → "置信度: 高置信度"
+- 底层 JSON/CSV/策略字段不变，CLI 输出仍保持 high/medium/low
+- 未修改评分、排序、数据链路、报告逻辑
+- 验收：py_compile ✅ | select EXIT:0 ✅ | report EXIT:0 ✅ | 置信度英文残留检查 ✅ | 禁词检查 ✅
+
 下一步建议 P8.3-4：UI 验收脚本和截图更新。
 
 ## 5. 关键文件

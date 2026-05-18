@@ -31,6 +31,7 @@ FALLBACK_SCRIPT = Path.home() / ".agents/skills/a-share-data/scripts/fetch_histo
 # ========== 展示层中文化映射（只改 UI 展示，不改底层 JSON/CSV/策略字段） ==========
 DECISION_ZH = {"strong_watch": "强观察", "watch": "观察", "neutral": "中性", "avoid": "回避"}
 RISK_ZH = {"low": "低风险", "medium": "中风险", "high": "高风险"}
+CONFIDENCE_ZH = {"high": "高置信度", "medium": "中置信度", "low": "低置信度"}
 
 # ---------- UI 展示 helper（仅用于页面渲染，不改底层字段） ----------
 RISK_TEXT_COLOR = {"low": "#155724", "medium": "#856404", "high": "#721c24"}
@@ -188,7 +189,7 @@ def build_candidates_df(top_results: list) -> pd.DataFrame:
             "评分": r.get("score", 0),
             "决策": DECISION_ZH.get(r.get("decision", "?"), r.get("decision", "?")),
             "风险": RISK_ZH.get(r.get("risk_level", "?"), r.get("risk_level", "?")),
-            "置信度": r.get("confidence", "?"),
+            "置信度": CONFIDENCE_ZH.get(r.get("confidence", "?"), r.get("confidence", "?")),
             "收盘价": r.get("latest_close", "?"),
             "趋势": fs.get("trend", "?"),
             "动量": fs.get("momentum", "?"),
@@ -665,7 +666,7 @@ if st.session_state.selection_data is not None:
                         st.markdown(
                             f"**评分**: {score}/100 | **决策**: "
                             f'{decision_badge(dec)} | **风险**: '
-                            f'{risk_badge(rl)} | **置信度**: {conf}',
+                            f'{risk_badge(rl)} | **置信度**: {CONFIDENCE_ZH.get(conf, conf)}',
                             unsafe_allow_html=True,
                         )
                         st.markdown(f"**收盘价**: {r.get('latest_close','?')} | **数据源**: {r.get('data_source','?')} | **K线条数**: {r.get('rows','?')}")
