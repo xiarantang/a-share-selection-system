@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.5-1 完成）
+> 最后更新：2026-05-19（P9.5-1.1 完成）
 
 ## 1. 项目总目标
 
@@ -86,6 +86,7 @@
 | P9.5-0 | — | 发布版打标准备设计文档 |
 | P9.5-0.1 | — | 发布准备设计文档版本口径返工 |
 | P9.5-1 | — | 更新 RELEASE_CHECKLIST.md |
+| P9.5-1.1 | — | PROJECT_STATE.md 中 fallback 历史措辞微修 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -410,7 +411,7 @@ P8.6-3 小白启动脚本冒烟验收：
   - Python3 检测 ✅（Python 3.9.6）
   - 虚拟环境已存在 ✅
   - 依赖就绪 ✅（streamlit=1.50.0, pandas=2.3.3）
-  - skill_fallback 兜底通道当时已安装 ✅
+  - skill_fallback 兜底通道当时检测可用 ✅
 - Streamlit 后台启动：HTTP 200 返回确认（1s 内响应） ✅
 - 启动日志检查：无 use_container_width / applymap / DeprecationWarning / FutureWarning / 错误 ✅
 - 端口清理：启动进程已停止，8501 端口无残留 ✅
