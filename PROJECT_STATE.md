@@ -45,7 +45,7 @@
 | P8.6-4 | `401fad9` | 公开文档状态一致性收口 |
 | P8.6-4.1 | `5737aa4` | 回填公开文档收口commit |
 | P8.6-4.2 | `eaa9e31` | 项目状态阶段标题收口 |
-| P8.7-0 | — | 发布前总复盘与下一阶段边界设计 |
+| P8.7-0 | `5edefbe` | 发布前总复盘与下一阶段边界设计 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-P8.6 已完成)
