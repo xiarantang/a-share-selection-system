@@ -32,7 +32,7 @@
 | P8.2-4 | `caac7b2` | 小白依赖收口：requirements-ui加入baostock/状态同步/全链路通过 |
 | P8.4-0 | `9361433` | 策略管理设计文档 |
 | P8.5-0 | `75209c7` | AI辅助解释边界评审决策文档 |
-| P8.5-0.1 | — | 文档字段名一致性收口（top_candidates → top），无代码改动 |
+| P8.5-0.1 | `fdbab4f` | 修正 P8.5 决策文档中的旧候选字段名表述，统一为 selection_latest.json 顶层 top/all |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.4 已完成)
@@ -307,7 +307,7 @@ P8.5-0 AI 辅助解释边界评审：
 下一步建议：**暂不进入 AI 实现**。可选择：① 如确需推进，先做 P8.5-1 设计文档（含可自动验收的边界守卫方案）；② 转向 UI/验收稳定性小优化。
 
 P8.5-0.1 文档字段名一致性收口：
-- `docs/P8_5_AI_EXPLANATION_DECISION.md` 中 `top_candidates` 修正为 `selection_latest.json` 真实顶层字段名 `top`（候选列表）和 `all`（全集列表）
+- `docs/P8_5_AI_EXPLANATION_DECISION.md` 中旧候选字段名表述修正，统一为 `selection_latest.json` 真实顶层字段名 `top`（候选列表）和 `all`（全集列表）
 - PROJECT_STATE.md P8.5-0 commit 从 `—` 更新为 `75209c7`
 - 无代码改动，未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / 评分/排序/数据链路
 
