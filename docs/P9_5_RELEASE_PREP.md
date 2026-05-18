@@ -67,7 +67,7 @@
 
 | 阶段 | 内容 | 改动范围 |
 |------|------|----------|
-| P9.5-1 | 更新 RELEASE_CHECKLIST.md | RELEASE_CHECKLIST.md、PROJECT_STATE.md |
+| P9.5-1 | 更新 RELEASE_CHECKLIST.md | RELEASE_CHECKLIST.md、PROJECT_STATE.md | ✅ 已完成 |
 | P9.5-2 | 更新 CHANGELOG.md | CHANGELOG.md、PROJECT_STATE.md |
 | P9.5-3 | tag 前最终验收记录 | PROJECT_STATE.md（输出建议命令，不打 tag） |
 

@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.5-0.1 完成）
+> 最后更新：2026-05-19（P9.5-1 完成）
 
 ## 1. 项目总目标
 
@@ -85,6 +85,7 @@
 | P9.4-4.2 | — | 排障体验验收接入发布前一键验收 |
 | P9.5-0 | — | 发布版打标准备设计文档 |
 | P9.5-0.1 | — | 发布准备设计文档版本口径返工 |
+| P9.5-1 | — | 更新 RELEASE_CHECKLIST.md |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -722,6 +723,24 @@ P9.5-0 发布版打标准备设计文档：
 - 未修改任何产品代码、脚本、评分、排序、数据链路、报告逻辑
 - 未创建 git tag
 - 下一步建议：P9.5-1 更新 RELEASE_CHECKLIST.md
+
+P9.5-0.1 发布准备设计文档版本口径返工：
+- docs/P9_5_RELEASE_PREP.md：选项 A 从 v0.5-p9 改为 v0.5-p8，基线 commit 表述修正
+- 未修改任何产品代码、脚本、评分、排序、数据链路、报告逻辑
+
+P9.5-1 更新 RELEASE_CHECKLIST.md：
+- RELEASE_CHECKLIST.md 全面更新：
+  - 新增第 1 节「自动验收」：一键验收 12 项 + 3 个独立验收脚本
+  - 第 2 节「环境」：fallback 改为可选第三级兜底
+  - 第 3 节「启动」：新增 test -x start_ui.command 权限检查
+  - 第 4 节「选股」：新增白话错误提示检查
+  - 第 5 节「CLI 全链路」：命令统一为 .venv/bin/python
+  - 新增第 7 节「tag 前确认」：git status/log/tag 手动确认，不自动打 tag
+  - 保留免责声明
+- docs/P9_5_RELEASE_PREP.md：P9.5-1 标记已完成
+- 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
+- 未创建 git tag
+- 下一步建议：P9.5-2 更新 CHANGELOG.md
 
 ## 5. 关键文件
 
