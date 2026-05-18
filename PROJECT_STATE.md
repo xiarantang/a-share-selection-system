@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P8.7-1）
+> 最后更新：2026-05-18（P8.7-2）
 
 ## 1. 项目总目标
 
@@ -47,6 +47,7 @@
 | P8.6-4.2 | `eaa9e31` | 项目状态阶段标题收口 |
 | P8.7-0 | `5edefbe` | 发布前总复盘与下一阶段边界设计 |
 | P8.7-1 | `33081e5` | 发布前一键验收脚本最小整合 |
+| P8.7-2 | — | 小白手动验收清单一致性收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-P8.6 已完成)
@@ -64,7 +65,7 @@
 
 ## 4. 阶段记录（P8.1-P8.7 已完成）
 
-当前推进：P8.7-1 发布前一键验收脚本最小整合已完成。以下保留 P8.1-P8.7-1 的关键验收记录。
+当前推进：P8.7-2 小白手动验收清单一致性收口已完成。以下保留 P8.1-P8.7-2 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -407,6 +408,14 @@ P8.7-1 发布前一键验收脚本最小整合：
 - 未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / start_ui.command / requirements*.txt
 - 未修改评分、排序、数据链路、报告逻辑
 - 保留免责声明：仅供研究学习，不构成投资建议
+
+P8.7-2 小白手动验收清单一致性收口：
+- docs/MANUAL_UI_CHECKLIST.md：更新为当前真实 UI 路径（双击 start_ui.command → 选参数 → 开始选股 → 看结果），新增 Top3 速览、中文标签（决策/风险/置信度）、因子图标、技术指标折叠等验收项
+- docs/UI_ACCEPTANCE.md：同步更新，移除旧「三步引导卡片」「步骤编号」等表述，新增 Top3 速览、数据概览、逐只详情中文展示等验收项
+- 替换旧流程说法：「三步引导卡片」→「引导卡片（①选参数 ②等待结果）」、「步骤编号」→移除、「首页四步引导」→「首页引导卡片」
+- 保留免责声明：仅供研究学习，不构成投资建议
+- 未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / scripts/ / start_ui.command / requirements*.txt / README.md / docs/USER_GUIDE.md / docs/P8_7_RELEASE_REVIEW.md
+- 未修改评分、排序、数据链路、报告逻辑
 
 ## 5. 关键文件
 
