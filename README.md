@@ -2,7 +2,7 @@
 
 > 🎯 小白也能用的可视化 A 股选股系统 — 双击就能用，不写一行命令。
 
-基于 **akshare → baostock → skill fallback + backtrader** 的 A 股选股系统。Streamlit 本地可视化界面，选参数 → 开始选股 → 看结果，含验证、复盘、报告和排障指南。**仅供研究学习，不构成投资建议。**
+基于 **akshare → baostock → skill_fallback + backtrader** 的 A 股选股系统。Streamlit 本地可视化界面，选参数 → 开始选股 → 看结果，含验证、复盘、报告和排障指南。**仅供研究学习，不构成投资建议。**
 
 ---
 
@@ -31,7 +31,7 @@
 
 ---
 
-## ✨ 当前能力 (v0.5)
+## ✨ 当前能力 (v0.5 + P8)
 
 - ✅ **可视化 UI**：Streamlit 本地界面，左侧参数 + 右侧结果，无需命令行
 - ✅ **小白体验**：一键启动脚本、环境自检、选参数→开始选股→看结果、就绪状态判定
@@ -46,7 +46,7 @@
 - ✅ **Pipeline**：PASS/FAIL 退出码可信
 - ✅ **UI 兼容性**：已清理 `use_container_width` / `applymap` 等废弃 API，首页/结果页截图已更新（P8.6-1/2）
 - ✅ **启动验证**：`start_ui.command` 双击启动路径已冒烟验收通过（P8.6-3）
-- 🧪 **AI/qlib**：experimental（未来 P8 阶段，不参与当前小白启动）
+- ⏸️ **AI/qlib**：暂不进入当前评分、排序、数据链路和小白启动路径
 
 ---
 
@@ -214,9 +214,9 @@ a-share-selection-system/
 ├── scripts/                # 脚本 (启动/安装/截图)
 ├── docs/                   # 文档 (截图/指南/排障/验收)
 ├── config/                 # 配置
-├── agent/                  # AI Agent (experimental)
+├── agent/                  # AI Agent (暂存，不进入当前主链路)
 ├── paper_trading/          # 模拟交易
-└── ai_models/              # AI 模型 (experimental)
+└── ai_models/              # AI 模型 (暂存，不进入当前主链路)
 ```
 
 ## 📚 文档索引

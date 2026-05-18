@@ -48,7 +48,7 @@
 | P8.7-0 | `5edefbe` | 发布前总复盘与下一阶段边界设计 |
 | P8.7-1 | `33081e5` | 发布前一键验收脚本最小整合 |
 | P8.7-2 | `8ae0544` | 小白手动验收清单一致性收口 |
-| P8.7-3 | — | README公开入口与当前状态一致性收口 |
+| P8.7-3 | `58301ba` | README公开入口与当前状态一致性收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-P8.6 已完成)
@@ -423,7 +423,7 @@ P8.7-3 README公开入口与当前状态一致性收口：
 - README.md 已知限制表修正：不再将"fallback 约 120 条"描述为主状态，改为 baostock 稳定约 570 条，极端情况降级
 - README.md 文档索引新增：docs/MANUAL_UI_CHECKLIST.md（小白人工验收清单）、docs/P8_7_RELEASE_REVIEW.md（发布前总复盘）
 - README.md CLI 命令区新增发布前一键验收入口：python3 scripts/confirm_release_ready.py（维护者用，非小白日常步骤）
-- README.md 标题描述同步为 akshare → baostock → skill fallback + backtrader
+- README.md 标题描述同步为 akshare → baostock → skill_fallback + backtrader
 - 保留小白主路径：双击 start_ui.command → 选参数 → 开始选股 → 看结果
 - 保留免责声明：仅供研究学习，不构成投资建议
 - PROJECT_STATE.md 记录 P8.7-3 完成
