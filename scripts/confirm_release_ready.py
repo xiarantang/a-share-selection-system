@@ -31,6 +31,7 @@ CHECKS: list = [
     ("P8.4 文档验收", ["python3", "scripts/confirm_p84_docs.py"], 0, None),
     ("CLI 选股 (static 10→Top5)", [".venv/bin/python", "main.py", "select", "--universe", "static", "--limit", "10", "--top", "5"], 0, None),
     ("CLI 报告生成", [".venv/bin/python", "main.py", "report"], 0, None),
+    ("run_metadata 复盘记录验收", ["python3", "scripts/confirm_run_metadata.py"], 0, None),
     ("废弃 API 残留检查 (应为空)", ["rg", "-n", "use_container_width|\\.applymap\\(", "app.py"], 1, None),
     ("文档口径一致性检查", ["python3", "scripts/confirm_docs_consistency.py"], 0, None),
 ]

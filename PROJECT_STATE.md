@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.3-4.1.1 完成）
+> 最后更新：2026-05-19（P9.3-4.2 完成）
 
 ## 1. 项目总目标
 
@@ -70,6 +70,7 @@
 | P9.3-3.1 | — | UI/CLI 输出边界措辞收口 |
 | P9.3-4.1 | — | 新增独立 run_metadata 复盘记录验收脚本 |
 | P9.3-4.1.1 | — | 设计文档表格格式返工收口 |
+| P9.3-4.2 | — | run_metadata 验收接入发布前一键验收 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -622,6 +623,12 @@ P9.3-4.1 新增独立 run_metadata 复盘记录验收脚本：
 P9.3-4.1.1 设计文档表格格式返工收口：
 - docs/P9_3_REPLAY_TRACE_DESIGN.md：「P9.3 后续拆分」表格表头从 3 列补齐为 4 列（阶段/内容/改动范围/状态）
 - 未修改任何产品代码、脚本、评分、排序、数据链路、报告逻辑
+
+P9.3-4.2 run_metadata 验收接入发布前一键验收：
+- scripts/confirm_release_ready.py：CHECKS 新增第 10 项「run_metadata 复盘记录验收」，调用 confirm_run_metadata.py
+- 公开文档检查项数量从 10 项更新为 11 项：README.md / docs/P8_7_RELEASE_REVIEW.md / docs/P9_ROADMAP.md
+- 未修改 confirm_run_metadata.py / app.py / main.py / strategies/selection.py / reports/generator.py / 评分 / 排序 / 数据链路
+- 验收：confirm_release_ready 11/11 | confirm_docs_consistency 19/19
 
 ## 5. 关键文件
 

@@ -271,7 +271,7 @@ git status --short
 python3 scripts/confirm_release_ready.py
 ```
 
-聚合 10 项检查（语法、UI 验收、策略验收、CLI 选股/报告、废弃 API 残留、文档口径一致性等），全部通过 exit 0，任一失败 exit 1。
+聚合 11 项检查（语法、UI 验收、策略验收、CLI 选股/报告、run_metadata 复盘记录、废弃 API 残留、文档口径一致性等），全部通过 exit 0，任一失败 exit 1。
 
 ### 10.4 边界：不能做什么
 

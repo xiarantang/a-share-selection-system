@@ -161,7 +161,7 @@ JSON 顶层新增 `run_metadata` 字段，结构设计如下：
 | P9.3-1 | JSON 复盘记录字段实现 | strategies/selection.py（新增 `_build_run_metadata()`） | ✅ 已完成 |
 | P9.3-2 | Markdown 报告接入复盘记录 | reports/generator.py | ✅ 已完成 |
 | P9.3-3 | UI 轻量展示与小白说明 | app.py（数据概览区下方折叠） | ✅ 已完成 |
-| P9.3-4 | 验收脚本与文档收口 | scripts/ + docs/ | P9.3-4.1 已完成（独立验收脚本） |
+| P9.3-4 | 验收脚本与文档收口 | scripts/ + docs/ | ✅ 已完成（P9.3-4.2 已接入发布前一键验收） |
 
 ---
 
