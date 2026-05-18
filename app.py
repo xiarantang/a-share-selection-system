@@ -355,7 +355,7 @@ def render_backtest_summary(summary: dict, per_stock: list):
 
     st.markdown("### 📋 逐只复盘详情")
     df = build_backtest_df(per_stock)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, width="stretch", hide_index=True)
 
 
 # ========== 辅助：流程引导卡片 ==========
@@ -489,9 +489,9 @@ with st.sidebar:
 
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        btn_select = st.button("🚀 开始选股", type="primary", use_container_width=True)
+        btn_select = st.button("🚀 开始选股", type="primary", width="stretch")
     with col_btn2:
-        btn_backtest = st.button("📈 历史复盘", use_container_width=True,
+        btn_backtest = st.button("📈 历史复盘", width="stretch",
                                  disabled=(st.session_state.selection_data is None),
                                  help="对 Top 候选做 In-Sample 窗口验证（较慢）")
 
@@ -654,10 +654,10 @@ if st.session_state.selection_data is not None:
                     return "background-color: #f8d7da; color: #721c24"
                 return ""
 
-            styled_df = df.style.applymap(color_decision, subset=["决策"])
+            styled_df = df.style.map(color_decision, subset=["决策"])
             st.dataframe(
                 styled_df,
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
                 column_config={
                     "决策": st.column_config.TextColumn(help="强观察 > 观察 > 中性 > 回避"),
