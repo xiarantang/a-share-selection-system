@@ -30,7 +30,66 @@ FALLBACK_SCRIPT = Path.home() / ".agents/skills/a-share-data/scripts/fetch_histo
 
 # ========== 展示层中文化映射（只改 UI 展示，不改底层 JSON/CSV/策略字段） ==========
 DECISION_ZH = {"strong_watch": "强观察", "watch": "观察", "neutral": "中性", "avoid": "回避"}
-RISK_LABEL = {"low": "🟢 低", "medium": "🟡 中", "high": "🔴 高"}
+RISK_ZH = {"low": "低风险", "medium": "中风险", "high": "高风险"}
+
+# ---------- UI 展示 helper（仅用于页面渲染，不改底层字段） ----------
+RISK_TEXT_COLOR = {"low": "#155724", "medium": "#856404", "high": "#721c24"}
+RISK_BG_COLOR = {"low": "#d4edda", "medium": "#fff3cd", "high": "#f8d7da"}
+DECISION_TEXT_COLOR = {"strong_watch": "#155724", "watch": "#1b5e20", "neutral": "#856404", "avoid": "#721c24"}
+DECISION_BG_COLOR = {"strong_watch": "#d4edda", "watch": "#e8f5e9", "neutral": "#fff3cd", "avoid": "#f8d7da"}
+
+FACTOR_ICONS = {
+    "trend": "📈 趋势", "momentum": "🚀 动量", "volume": "📊 量能",
+    "risk": "🛡️ 风控", "data_quality": "📋 数据质量", "pattern": "🔮 形态",
+}
+
+
+def _badge(text: str, bg: str, color: str) -> str:
+    """生成 HTML 彩色标签（仅用于 st.markdown unsafe_allow_html）。"""
+    return (
+        f'<span style="background:{bg};color:{color};padding:2px 10px;'
+        f'border-radius:4px;font-weight:bold;font-size:0.9em;">{text}</span>'
+    )
+
+
+def risk_badge(level: str) -> str:
+    """风险等级 HTML 标签。"""
+    return _badge(
+        RISK_ZH.get(level, level),
+        RISK_BG_COLOR.get(level, "#e2e3e5"),
+        RISK_TEXT_COLOR.get(level, "#6c757d"),
+    )
+
+
+def decision_badge(dec: str) -> str:
+    """决策标签 HTML 标签。"""
+    return _badge(
+        DECISION_ZH.get(dec, dec),
+        DECISION_BG_COLOR.get(dec, "#e2e3e5"),
+        DECISION_TEXT_COLOR.get(dec, "#6c757d"),
+    )
+
+
+def friendly_date_range(start: str, end: str) -> str:
+    """日期区间 + 友好'约近 X 个月'提示。"""
+    try:
+        s = datetime.strptime(start, "%Y-%m-%d")
+        e = datetime.strptime(end, "%Y-%m-%d")
+        months = round((e - s).days / 30)
+        suffix = f"（约近 {months} 个月）" if months >= 1 else ""
+        return f"{start} ~ {end} {suffix}"
+    except Exception:
+        return f"{start} ~ {end}"
+
+
+def risk_alert(level: str, message: str):
+    """按风险等级用不同颜色展示提示：高→error 红 / 中→warning 橙 / 低→info 绿灰。"""
+    if level == "high":
+        st.error(message)
+    elif level == "medium":
+        st.warning(message)
+    else:
+        st.info(message)
 
 
 # ========== 页面配置 ==========
@@ -128,7 +187,7 @@ def build_candidates_df(top_results: list) -> pd.DataFrame:
             "行业": r.get("sector", ""),
             "评分": r.get("score", 0),
             "决策": DECISION_ZH.get(r.get("decision", "?"), r.get("decision", "?")),
-            "风险": r.get("risk_level", "?"),
+            "风险": RISK_ZH.get(r.get("risk_level", "?"), r.get("risk_level", "?")),
             "置信度": r.get("confidence", "?"),
             "收盘价": r.get("latest_close", "?"),
             "趋势": fs.get("trend", "?"),
@@ -475,14 +534,15 @@ if st.session_state.selection_data is not None:
                     name = r.get("name", "")
                     score = r.get("score", 0)
                     dec = r.get("decision", "?")
-                    dec_zh = DECISION_ZH.get(dec, dec)
                     rl = r.get("risk_level", "?")
-                    risk_label = RISK_LABEL.get(rl, rl)
                     exp = r.get("explain", {})
                     summary = exp.get("summary", "")
                     st.markdown(f"**{medals[i]} #{r.get('rank', i+1)} {sym} {name}**")
-                    st.markdown(f"**{score}分** · {dec_zh}")
-                    st.markdown(f"风险: {risk_label}")
+                    st.markdown(
+                        f"**{score}分** "
+                        f'{decision_badge(dec)} {risk_badge(rl)}',
+                        unsafe_allow_html=True,
+                    )
                     if summary:
                         st.caption(f"_{summary}_")
     else:
@@ -498,7 +558,10 @@ if st.session_state.selection_data is not None:
 
     ov_cols = st.columns(4)
     ov_cols[0].metric("股票池", f"{universe_meta.get('universe_source','?')} | 扫描 {stats.get('total','?')} 只")
-    ov_cols[1].metric("数据区间", f"{cov.get('earliest_actual','?')} ~ {cov.get('latest_actual','?')}")
+    ov_cols[1].metric(
+        "数据区间",
+        friendly_date_range(cov.get("earliest_actual", "?"), cov.get("latest_actual", "?")),
+    )
     ov_cols[2].metric("K线 / 数据源", f"平均{cov.get('avg_rows','?')}条 | {source_str or 'N/A'}")
     ov_cols[3].metric("整体质量", quality_short)
 
@@ -548,7 +611,7 @@ if st.session_state.selection_data is not None:
                 hide_index=True,
                 column_config={
                     "决策": st.column_config.TextColumn(help="强观察 > 观察 > 中性 > 回避"),
-                    "风险": st.column_config.TextColumn(help="low/medium/high"),
+                    "风险": st.column_config.TextColumn(help="低风险 / 中风险 / 高风险"),
                     "覆盖": st.column_config.TextColumn(width="small", help="✓正常 ⚠️不全=数据起始日晚于请求日"),
                 },
             )
@@ -571,8 +634,10 @@ if st.session_state.selection_data is not None:
                 actual_start = r.get("actual_start", "?")
                 actual_end = r.get("actual_end", "?")
 
-                # 标题加覆盖警告
-                title = f"#{r.get('rank','?')} {sym} {name} [{r.get('sector','')}] — {score}/100 {dec} {rl}"
+                # 标题加覆盖警告（中文决策+风险）
+                dec_zh_detail = DECISION_ZH.get(dec, dec)
+                rl_zh_detail = RISK_ZH.get(rl, rl)
+                title = f"#{r.get('rank','?')} {sym} {name} [{r.get('sector','')}] — {score}/100 {dec_zh_detail} · {rl_zh_detail}"
                 if cov_warn:
                     title += " ⚠️覆盖不全"
 
@@ -597,20 +662,35 @@ if st.session_state.selection_data is not None:
                                 st.caption(exp.get("confidence_note", ""))
                     col_a, col_b = st.columns(2)
                     with col_a:
-                        st.markdown(f"**评分**: {score}/100 | **决策**: {dec} | **风险**: {rl} | **置信度**: {conf}")
+                        st.markdown(
+                            f"**评分**: {score}/100 | **决策**: "
+                            f'{decision_badge(dec)} | **风险**: '
+                            f'{risk_badge(rl)} | **置信度**: {conf}',
+                            unsafe_allow_html=True,
+                        )
                         st.markdown(f"**收盘价**: {r.get('latest_close','?')} | **数据源**: {r.get('data_source','?')} | **K线条数**: {r.get('rows','?')}")
-                        st.markdown(f"**数据区间**: {actual_start} ~ {actual_end}")
+                        st.markdown(f"**数据区间**: {friendly_date_range(actual_start, actual_end)}")
                         if cov_warn:
                             st.warning(f"⚠️ 数据覆盖不全：请求起始日早于实际数据起始日 {actual_start}，模型已自动下调评分和置信度。")
                     with col_b:
                         st.markdown("**因子得分**:")
-                        st.markdown(f"趋势{fs.get('trend','?')}/动量{fs.get('momentum','?')}/量能{fs.get('volume','?')}/风控{fs.get('risk','?')}/数据质量{fs.get('data_quality','?')}/形态{fs.get('pattern','?')}")
-                        st.markdown("**因子数值**:")
-                        st.markdown(f"MA5:{fv.get('MA5','?')} MA20:{fv.get('MA20','?')} MA60:{fv.get('MA60','?')} | 20日动量:{fv.get('return_20d','?')}% | RSI:{fv.get('RSI14','?')} | 波动率:{fv.get('volatility_20d','?')}%")
+                        factor_parts = []
+                        for fk, label in FACTOR_ICONS.items():
+                            fv_score = fs.get(fk, "?")
+                            factor_parts.append(f"{label}: {fv_score}")
+                        st.markdown(" / ".join(factor_parts))
+                        # 技术指标详情（默认收起）
+                        with st.expander("📐 技术指标详情"):
+                            st.markdown(
+                                f"- MA5: {fv.get('MA5','?')} | MA20: {fv.get('MA20','?')} | MA60: {fv.get('MA60','?')}\n"
+                                f"- 20日动量: {fv.get('return_20d','?')}%\n"
+                                f"- RSI(14): {fv.get('RSI14','?')}\n"
+                                f"- 波动率(20日): {fv.get('volatility_20d','?')}%"
+                            )
                     if reasons:
                         st.success("✅ " + reasons)
                     if risks_text:
-                        st.error("⚠️ " + risks_text)
+                        risk_alert(rl, "⚠️ " + risks_text)
 
     with tab2:
         v = data.get("validation")

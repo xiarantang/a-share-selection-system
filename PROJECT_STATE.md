@@ -150,7 +150,22 @@ P8.3-2 结果首屏 Top3 + 总览卡片：
 - 未修改评分、排序、数据链路、报告逻辑
 - 验收：py_compile ✅ | select EXIT:0 (10/10 baostock) ✅ | backtest-validate EXIT:0 ✅ | report EXIT:0 ✅
 
-下一步建议 P8.3-3：风险视觉统一和小白解释优化。
+P8.3-3 风险视觉统一和小白解释优化：
+- 统一风险展示颜色：low → 低风险（绿色 #d4edda）、medium → 中风险（橙色 #fff3cd）、high → 高风险（红色 #f8d7da）
+- Top3 速览卡片：决策和风险等级改用 HTML 彩色标签（`decision_badge` / `risk_badge`），视觉与逐只详情一致
+- 候选表格：风险列中文化（低风险/中风险/高风险），决策列保持中文并着色
+- 逐只详情标题：决策和风险改为中文展示（强观察/观察/中性/回避 · 低风险/中风险/高风险）
+- 逐只详情正文：决策和风险使用 HTML 彩色标签，与 Top3 卡片风格统一
+- 因子得分：添加小图标（📈趋势/🚀动量/📊量能/🛡️风控/📋数据质量/🔮形态），不改变分数
+- 技术指标详情：MA5/MA20/MA60/RSI/波动率等移入默认收起的「📐 技术指标详情」expander，不堆在首层
+- 风险提示分级着色：高风险 → `st.error`(红)、中风险 → `st.warning`(橙)、低风险 → `st.info`(绿灰)，不再一律红底
+- 数据区间友好化：保留日期同时补充「约近 X 个月」提示
+- 保留免责声明：仅供研究学习，不构成投资建议
+- 新增 UI 展示 helper 函数：`risk_badge()` / `decision_badge()` / `friendly_date_range()` / `risk_alert()`，仅用于页面渲染
+- 未修改评分、排序、数据链路、报告逻辑
+- 验收：py_compile ✅ | select EXIT:0 (10/10 baostock) ✅ | backtest-validate EXIT:0 ✅ | report EXIT:0 ✅ | 禁词检查 ✅
+
+下一步建议 P8.3-4：UI 验收脚本和截图更新。
 
 ## 5. 关键文件
 
