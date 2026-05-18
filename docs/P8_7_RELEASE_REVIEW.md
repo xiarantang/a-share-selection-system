@@ -165,7 +165,40 @@
 
 ---
 
-## 7. 验收检查
+## 7. 发布前一键验收入口（P8.7-1）
+
+> 从项目根目录运行，一条命令完成所有发布前检查。
+
+```bash
+python3 scripts/confirm_release_ready.py
+```
+
+### 检查项一览
+
+| 序号 | 检查内容 | 对应命令 |
+|------|---------|---------|
+| 1 | app.py 语法检查 | `python3 -m py_compile app.py` |
+| 2 | P8.3 UI 验收 (44项) | `python3 scripts/confirm_p83_ui.py` |
+| 3 | P8.4 策略注册验收 | `python3 scripts/confirm_p84_registry.py` |
+| 4 | P8.4 CLI 策略参数验收 | `python3 scripts/confirm_p84_cli.py` |
+| 5 | P8.4 UI 策略选择器验收 | `python3 scripts/confirm_p84_ui.py` |
+| 6 | P8.4 文档验收 | `python3 scripts/confirm_p84_docs.py` |
+| 7 | CLI 选股 (static 10→Top5) | `.venv/bin/python main.py select --universe static --limit 10 --top 5` |
+| 8 | CLI 报告生成 | `.venv/bin/python main.py report` |
+| 9 | 废弃 API 残留检查 (应为空) | `rg -n "use_container_width\|\.applymap\(" app.py` |
+
+### 退出码
+
+- `0`：全部通过，可以发布。
+- `1`：任一项失败，请修复后再发布。
+
+### 输出格式
+
+每项显示"通过/失败/跳过原因"，失败时附上命令和最后一段输出，方便定位问题。
+
+---
+
+## 8. 验收检查
 
 ```bash
 # 关键词检查

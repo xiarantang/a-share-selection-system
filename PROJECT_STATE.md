@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P8.7-0）
+> 最后更新：2026-05-18（P8.7-1）
 
 ## 1. 项目总目标
 
@@ -46,6 +46,7 @@
 | P8.6-4.1 | `5737aa4` | 回填公开文档收口commit |
 | P8.6-4.2 | `eaa9e31` | 项目状态阶段标题收口 |
 | P8.7-0 | `5edefbe` | 发布前总复盘与下一阶段边界设计 |
+| P8.7-1 | — | 发布前一键验收脚本最小整合 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-P8.6 已完成)
@@ -63,7 +64,7 @@
 
 ## 4. 阶段记录（P8.1-P8.7 已完成）
 
-当前推进：P8.7-0 发布前总复盘与下一阶段边界设计已完成。以下保留 P8.1-P8.7-0 的关键验收记录。
+当前推进：P8.7-1 发布前一键验收脚本最小整合已完成。以下保留 P8.1-P8.7-1 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -395,6 +396,18 @@ P8.7-0 发布前总复盘与下一阶段边界设计：
 - 本阶段仅写文档，未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / scripts/ / start_ui.command
 - 保留免责声明：仅供研究学习，不构成投资建议
 
+P8.7-1 发布前一键验收脚本最小整合：
+- 新增 `scripts/confirm_release_ready.py`：聚合 9 项发布前检查为一个入口
+- 检查项：app.py 语法、P8.3 UI 验收 (44项)、P8.4 策略注册/CLI/UI/文档验收、CLI 选股 (static 10→Top5)、CLI 报告生成、废弃 API 残留检查
+- 使用 Python 标准库 subprocess/pathlib/sys，不引入新依赖
+- 从项目根目录运行：`python3 scripts/confirm_release_ready.py`
+- 全部通过 exit 0，任一失败 exit 1；中文输出"通过/失败/跳过原因"
+- docs/P8_7_RELEASE_REVIEW.md 新增第 7 节"发布前一键验收入口"
+- PROJECT_STATE.md 记录 P8.7-1 完成
+- 未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / start_ui.command / requirements*.txt
+- 未修改评分、排序、数据链路、报告逻辑
+- 保留免责声明：仅供研究学习，不构成投资建议
+
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / scripts/confirm_p84_cli.py / scripts/confirm_p84_ui.py / scripts/confirm_p84_docs.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_5_AI_EXPLANATION_DECISION.md / docs/P8_6_UI_STABILITY_AUDIT.md / docs/P8_7_RELEASE_REVIEW.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / scripts/confirm_p84_cli.py / scripts/confirm_p84_ui.py / scripts/confirm_p84_docs.py / scripts/confirm_release_ready.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_5_AI_EXPLANATION_DECISION.md / docs/P8_6_UI_STABILITY_AUDIT.md / docs/P8_7_RELEASE_REVIEW.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
