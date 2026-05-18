@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P8.7-4）
+> 最后更新：2026-05-18（P8.7-5）
 
 ## 1. 项目总目标
 
@@ -50,6 +50,7 @@
 | P8.7-2 | `8ae0544` | 小白手动验收清单一致性收口 |
 | P8.7-3 | `58301ba` | README公开入口与当前状态一致性收口 |
 | P8.7-4 | — | 公开文档数据层描述一致性收口 |
+| P8.7-5 | — | 启动入口fallback可选状态收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-P8.6 已完成)
@@ -67,7 +68,7 @@
 
 ## 4. 阶段记录（P8.1-P8.7 已完成）
 
-当前推进：P8.7-4 公开文档数据层描述一致性收口已完成。以下保留 P8.1-P8.7-4 的关键验收记录。
+当前推进：P8.7-5 启动入口fallback可选状态收口已完成。以下保留 P8.1-P8.7-5 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -439,6 +440,17 @@ P8.7-4 公开文档数据层描述一致性收口：
 - 未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / scripts/ / start_ui.command / requirements*.txt / README.md / docs/P8_7_RELEASE_REVIEW.md
 - 未修改评分、排序、数据链路、报告逻辑
 - 验收：rg 禁词零命中 ✅ | confirm_release_ready ✅
+
+P8.7-5 启动入口fallback可选状态收口：
+- app.py：FALLBACK_SCRIPT 不存在时从 st.error（阻止选股）改为 st.info（可选提示）；环境检查将 skill_fallback 标为可选（💡 而非 ❌）；选股失败提示改为先检查网络，必要时安装第三级兜底
+- start_ui.command：缺少 fallback 只提示"可选"，移除"重要/缺少/必须/安装后再启动"等阻塞性文案
+- scripts/install_fallback.command：标题改为"可选：安装第三级兜底数据通道"，不说首次必装
+- README.md：三步启动改为两步启动；安装 fallback 章节改为可选
+- docs/USER_GUIDE.md：移除"如果页面显示「需要先安装备用数据通道」"旧入口，改为"如果选股全部失败"
+- docs/TROUBLESHOOTING.md：已在 P8.7-4 完成同步，无需额外修改
+- 未修改 data/ / strategies/ / reports/ / validation/ / main.py / requirements*.txt / scripts/confirm*.py / docs/screenshots/
+- 未修改评分、排序、数据链路、报告逻辑
+- 验收：rg 禁词零命中 ✅ | py_compile ✅ | bash -n ✅ | test -x ✅ | confirm_release_ready ✅
 
 ## 5. 关键文件
 

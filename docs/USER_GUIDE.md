@@ -48,9 +48,9 @@ http://localhost:8501
 
 > ✅ 双击启动路径已通过冒烟验收（P8.6-3），兼容 macOS 环境。UI 已清理废弃 API 警告（`use_container_width` / `applymap`），截图已更新（P8.6-1/2）。
 
-### 如果页面显示「需要先安装备用数据通道」
+### 如果选股全部失败
 
-说明 baostock 和 akshare 都连不上，系统需要 skill_fallback 兜底。请关闭页面，双击 `scripts/install_fallback.command`，安装完成后再重新双击 `start_ui.command`。
+说明 akshare 和 baostock 都连不上。请先检查网络连接，然后重试。如持续失败，可双击 `scripts/install_fallback.command` 安装第三级兜底数据通道（skill_fallback），再重新双击 `start_ui.command`。
 
 ---
 

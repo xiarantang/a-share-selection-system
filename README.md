@@ -16,15 +16,12 @@
 
 ---
 
-## ⚡ 三步启动
+## ⚡ 两步启动
 
-1. **安装备用数据通道**（仅首次，约 1 分钟）  
-   双击 `scripts/install_fallback.command`
-
-2. **启动系统**  
+1. **启动系统**  
    双击 `start_ui.command` → 浏览器自动打开 `http://localhost:8501`
 
-3. **开始选股**  
+2. **开始选股**  
    点击「🚀 开始选股」→ 等待 30-60 秒 → 查看结果
 
 > 💡 **不会写命令？** → [📖 小白使用指南](docs/USER_GUIDE.md) · 遇到问题 → [🛠️ 排障指南](docs/TROUBLESHOOTING.md)
@@ -73,8 +70,8 @@
 1. 检测 Python3 → 创建虚拟环境 → 安装轻量依赖 → 启动 Streamlit
 2. 浏览器打开 **http://localhost:8501**
 
-首次使用前建议先双击 **`scripts/install_fallback.command`** 安装 A 股备用数据通道。  
-说明：`akshare` 在部分网络环境下可能临时失败，系统会自动使用备用数据通道继续出结果；这不代表系统坏了。
+首次使用前建议先双击 **`scripts/install_fallback.command`** 安装第三级兜底数据通道（可选，约 1 分钟）。  
+说明：系统已内置 baostock（约 570 条日 K），skill_fallback 为第三级兜底，仅在网络不稳定时需要。
 
 左侧栏选择股票池、策略和参数，点击「🚀 开始选股」即可。首次体验建议保持默认 **static + 10 只**，通常需要 **30-60 秒**。当前只有「默认规则策略」，策略选择为将来扩展预留的入口，不改变评分公式。选股完成后可切换 Tab 查看候选表格、验证摘要、历史复盘和完整报告。
 
@@ -88,11 +85,11 @@ pip install -r requirements.txt        # 完整依赖（含回测/AI）
 .venv/bin/streamlit run app.py
 ```
 
-### 小白首次安装数据通道（推荐）
+### 可选：安装第三级兜底数据通道
 
-双击 `scripts/install_fallback.command` 即可自动安装 A 股备用数据通道。安装完成后，再双击 `start_ui.command` 启动系统。
+双击 `scripts/install_fallback.command` 即可安装 skill_fallback 第三级兜底数据通道（可选，约 1 分钟）。系统已内置 baostock（约 570 条日 K），不安装也能正常使用。
 
-### Skill 手动安装（数据 fallback）
+### Skill 手动安装（可选第三级兜底）
 
 ```bash
 cd /tmp && git clone https://github.com/shouldnotappearcalm/a-share-skill.git

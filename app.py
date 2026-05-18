@@ -363,13 +363,12 @@ def render_step_guide():
     """未选股前的引导卡片：简洁操作引导，含首次安装提示。"""
     st.markdown("### 👋 欢迎使用 A 股智能选股系统")
 
-    # 首次安装提示（仅未安装时显示）
+    # 可选第三级兜底提示（仅未安装时显示）
     if not FALLBACK_SCRIPT.exists():
         with st.container(border=True):
-            st.markdown("#### ⓪ 首次安装备用数据通道")
-            st.markdown(
-                "双击 `scripts/install_fallback.command`，安装 A 股备用数据通道。"
-                "只需安装一次。\n> 说明：akshare 在网络不稳定时可能临时不可用，备用数据通道确保系统仍可正常出结果。"
+            st.info(
+                "💡 **可选**：双击 `scripts/install_fallback.command` 可安装第三级兜底数据通道（skill_fallback），"
+                "在网络不稳定时多一层保障。系统已内置 baostock（约 570 条日 K），不装也能正常使用。"
             )
 
     # 核心操作引导
@@ -388,14 +387,11 @@ def render_step_guide():
 st.title("🏦 A股智能选股系统")
 st.caption("选参数 → 开始选股 → 看结果 · 小白也能用 · 仅供研究学习，不构成投资建议")
 
-if FALLBACK_SCRIPT.exists():
-    st.success("✅ **系统就绪** — 点击左侧「🚀 开始选股」即可开始，预计 30-60 秒出结果")
-else:
-    st.error("⚠️ **需要先安装备用数据通道才能开始选股**")
-    st.warning(
-        "请先双击 `scripts/install_fallback.command`，安装 A 股备用数据通道（只需一次，约 1 分钟）。"
-        "\n\n安装完成后刷新本页面或重新启动 `start_ui.command`。"
-        "\n\n如果跳过安装，选股可能全部失败。"
+st.success("✅ **系统就绪** — 点击左侧「🚀 开始选股」即可开始，预计 30-60 秒出结果")
+if not FALLBACK_SCRIPT.exists():
+    st.info(
+        "💡 **可选**：未安装第三级兜底数据通道（skill_fallback）。系统已内置 baostock（约 570 条日 K），"
+        "可以正常使用。如需在网络不稳定时多一层保障，可双击 `scripts/install_fallback.command` 安装。"
     )
 
 # 首次使用检查区（可折叠）
@@ -429,7 +425,7 @@ with st.expander("🔧 环境检查（点击展开）", expanded=False):
     col_a, col_b = st.columns(2)
     with col_a:
         st.markdown(f"{'✅' if py_ok else '❌'} **Python**: {_sys.version.split()[0]}")
-        st.markdown(f"{'✅' if fallback_ok else '❌'} **备用数据通道**: {'已安装' if fallback_ok else '未安装'}")
+        st.markdown(f"{'✅' if fallback_ok else '💡'} **第三级兜底**: {'已安装' if fallback_ok else '未安装（可选）'}")
     with col_b:
         st.markdown(f"{'✅' if cache_ok else '⚠️'} **本地缓存**: {cache_count} 个文件")
         if latest_ok:
@@ -441,9 +437,9 @@ with st.expander("🔧 环境检查（点击展开）", expanded=False):
     if fallback_ok and cache_ok:
         st.success("✅ 环境就绪，可以开始选股。点击左侧「🚀 开始选股」按钮即可。")
     elif not fallback_ok:
-        st.warning(
-            "⚠️ 备用数据通道未安装。首次使用请先双击 `scripts/install_fallback.command`，"
-            "安装后再点击「开始选股」。不安装也可以选股，但网络不稳定时可能失败。"
+        st.info(
+            "💡 第三级兜底数据通道（skill_fallback）未安装。系统已内置 baostock（约 570 条日 K），"
+            "可以正常选股。如需在网络不稳定时多一层保障，可双击 `scripts/install_fallback.command` 安装。"
         )
     else:
         st.info("💡 环境基本就绪，但本地缓存为空。首次选股会慢一些（需要拉取数据），之后会变快。")
@@ -528,7 +524,7 @@ if btn_select:
             else:
                 st.error(
                     f"❌ 选股异常：{total_count} 只股票全部获取失败。"
-                    "请先确认已安装 A 股备用数据通道：运行 `scripts/install_fallback.command`，然后重试。"
+                    "请先检查网络连接，然后重试。如持续失败，可安装第三级兜底数据通道：双击 `scripts/install_fallback.command`。"
                 )
 
         except Exception as e:

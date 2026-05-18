@@ -105,22 +105,12 @@ echo "  ✅ 依赖就绪"
 FALLBACK_SCRIPT="$HOME/.agents/skills/a-share-data/scripts/fetch_history_fallback.py"
 if [ ! -f "$FALLBACK_SCRIPT" ]; then
     echo ""
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "  ⚠️  重要：缺少 A 股备用数据通道"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo ""
-    echo "  akshare 在网络不稳定时可能暂时不可用，"
-    echo "  备用数据通道可以确保系统仍能正常出结果。"
-    echo ""
-    echo "  👉 下一步做什么："
-    echo "     双击 scripts/install_fallback.command"
-    echo "     （安装只需运行一次，约 1 分钟）"
-    echo "     安装后重新双击本启动脚本即可。"
-    echo ""
-    echo "  ⚡ 也可以跳过安装直接继续，但新数据可能拉取失败。"
+    echo "  💡 可选：第三级兜底数据通道（skill_fallback）未安装"
+    echo "  系统已内置 baostock（约 570 条日 K），可以正常使用。"
+    echo "  如需在网络不稳定时多一层保障，可双击 scripts/install_fallback.command 安装。"
     echo ""
 else
-    echo "  ✅ 备用数据通道已安装"
+    echo "  ✅ 第三级兜底数据通道已安装"
 fi
 
 # ---- 5. 端口检测 ----
