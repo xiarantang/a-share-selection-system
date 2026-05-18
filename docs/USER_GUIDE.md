@@ -46,6 +46,8 @@ http://localhost:8501
 
 看到标题「🏦 A股智能选股系统」就说明启动成功了。
 
+> ✅ 双击启动路径已通过冒烟验收（P8.6-3），兼容 macOS 环境。UI 已清理废弃 API 警告（`use_container_width` / `applymap`），截图已更新（P8.6-1/2）。
+
 ### 如果页面显示「需要先安装备用数据通道」
 
 说明第二步的安装没有完成。请关闭页面，双击 `scripts/install_fallback.command`，安装完成后再重新双击 `start_ui.command`。

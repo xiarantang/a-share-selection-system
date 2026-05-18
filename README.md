@@ -44,6 +44,8 @@
 - ✅ **截图证据**：Playwright 自动截图脚本，验收结果持久化到仓库
 - ✅ **排障指南**：10 个小白常见问题，覆盖安装/启动/数据/端口/术语
 - ✅ **Pipeline**：PASS/FAIL 退出码可信
+- ✅ **UI 兼容性**：已清理 `use_container_width` / `applymap` 等废弃 API，首页/结果页截图已更新（P8.6-1/2）
+- ✅ **启动验证**：`start_ui.command` 双击启动路径已冒烟验收通过（P8.6-3）
 - 🧪 **AI/qlib**：experimental（未来 P8 阶段，不参与当前小白启动）
 
 ---
@@ -215,7 +217,7 @@ a-share-selection-system/
 |------|------|
 | [📖 小白使用指南](docs/USER_GUIDE.md) | 不会写命令的人看这个，双击就能用 |
 | [🛠️ 排障指南](docs/TROUBLESHOOTING.md) | 打不开/没数据/一直等待等 10 个常见问题 |
-| [📋 UI 验收结果](docs/UI_ACCEPTANCE_RESULT.md) | P7.6 真实验收截图 + 全链路证据 |
+| [📋 UI 验收结果](docs/UI_ACCEPTANCE_RESULT.md) | P8.6 UI 兼容性修复 + 冒烟验收 + 启动脚本验收 |
 | [📝 变更日志](CHANGELOG.md) | v0.5 已完成能力一览 |
 | [✅ 发布检查清单](RELEASE_CHECKLIST.md) | 发布前逐项检查 |
 | [📂 项目状态](PROJECT_STATE.md) | 开发阶段/commit 记录/真实能力 |

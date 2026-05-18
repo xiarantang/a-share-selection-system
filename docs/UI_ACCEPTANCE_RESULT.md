@@ -1,4 +1,4 @@
-# UI 真实验收结果 (P7.6 - 最终版)
+# UI 真实验收结果 (P7.6 / P8.6)
 
 > 验收日期：2026-05-16
 > 方式：Playwright + Chrome headless 真实浏览器截图 + CLI 全链路
@@ -74,3 +74,58 @@
 ## 结论
 
 P7.6 最终验收通过。小白打开页面后能看到明确状态（✅ 可以开始选股）、首页有四步引导。选股完成后，数据区间和覆盖不全提示在首屏直接可见；候选表格、验证摘要等核心信息已通过浏览器文本检测确认，无需依赖命令行才能理解结果。CLI 全链路通过。UI 文案修正已完成（整体质量中文化、覆盖不全 delta 修正）。
+
+---
+
+## P8.6 UI 兼容性修复与冒烟验收
+
+> 验收日期：2026-05-18
+> P8.6-1 Commit: `30e0fb9`
+> P8.6-2 Commit: `08c26c0`
+> P8.6-3 Commit: `ed4d27b`
+
+### P8.6-1 UI 兼容性最小修复
+
+| 修复项 | 修改前 | 修改后 |
+|--------|--------|--------|
+| Streamlit `use_container_width` | 4 处 `use_container_width=True` | 替换为 `width="stretch"` |
+| Pandas `Styler.applymap` | 1 处 `df.style.applymap(...)` | 替换为 `df.style.map(...)` |
+| streamlit 版本约束 | `>=1.28.0` | `>=1.39.0` |
+| pandas 版本约束 | `>=2.0.0` | `>=2.1.0` |
+
+### P8.6-2 截图更新
+
+| 截图 | 路径 | 内容 |
+|------|------|------|
+| 首页 | `docs/screenshots/home.png` | 参数区（股票池/策略/扫描数量/展示数量/起始日期）、开始选股按钮、免责声明 |
+| 结果页 | `docs/screenshots/result.png` | 选股完成 10/10、Top3 速览卡片（中文决策/风险/置信度标签）、候选表格 5 行 |
+
+**废弃 API 检查**：`app.py` 无 `use_container_width` / `applymap` 残留。
+
+### P8.6-3 start_ui.command 启动脚本验收
+
+| 检查项 | 结果 |
+|--------|------|
+| start_ui.command 存在且可执行（-rwxr-xr-x） | ✅ |
+| Python3 检测 | ✅（Python 3.9.6） |
+| 虚拟环境已存在 | ✅ |
+| 依赖就绪 | ✅（streamlit=1.50.0, pandas=2.3.3） |
+| 备用数据通道已安装 | ✅ |
+| Streamlit HTTP 200 返回确认 | ✅ |
+| 启动日志无 use_container_width / applymap / DeprecationWarning / FutureWarning / 错误 | ✅ |
+| 端口清理：8501 无残留 | ✅ |
+
+### P8.6-4 公开文档状态一致性收口
+
+| 文件 | 更新内容 |
+|------|----------|
+| README.md | 新增 UI 兼容性/启动验证条目；文档索引表更新为 P8.6 |
+| docs/USER_GUIDE.md | 双击启动区补充 P8.6 验证状态说明 |
+| docs/UI_ACCEPTANCE_RESULT.md | 追加 P8.6 验收记录 |
+| PROJECT_STATE.md | 记录 P8.6-4 完成 |
+
+未修改产品代码 / 启动脚本 / 评分 / 排序 / 数据链路 / 报告逻辑。
+
+### 结论
+
+P8.6 UI 兼容性修复与冒烟验收通过。废弃 API 已清理（`use_container_width` → `width="stretch"`，`applymap` → `map`），首页/结果页截图已更新，`start_ui.command` 双击启动路径已验证通过。公开文档状态已同步至 P8.6 完成状态。
