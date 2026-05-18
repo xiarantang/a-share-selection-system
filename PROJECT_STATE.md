@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P9.3-1 完成）
+> 最后更新：2026-05-19（P9.3-1.1 完成）
 
 ## 1. 项目总目标
 
@@ -62,7 +62,8 @@
 | P9.2-1 | — | 新增独立文档一致性检查脚本 |
 | P9.2-2 | `994dcd5` | 将文档一致性检查接入发布前一键验收 |
 | P9.3-0 | `24d38c0` | 复盘记录增强设计文档 |
-| P9.3-1 | — | JSON 复盘记录字段实现 |
+| P9.3-1 | `3c9f299` | JSON 复盘记录字段实现 |
+| P9.3-1.1 | — | run_metadata 字段结构收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -566,6 +567,16 @@ P9.3-1 JSON 复盘记录字段实现：
 - 未改变 Top 排序（同参数同数据源，结果与 P9.3-1 之前一致：601939 建设银行 69 分 #1）
 - 未修改评分公式、排序逻辑、数据源优先级、Markdown 报告逻辑、UI 展示区域
 - 验收：py_compile OK | CLI select EXIT:0 | run_metadata 含全部 9 个字段 | report EXIT:0 | confirm_docs_consistency 19/19 | confirm_release_ready 10/10
+
+P9.3-1.1 run_metadata 字段结构收口：
+- strategies/selection.py build_run_metadata() 收口：
+  - data_summary 新增 data_source_dist（优先 validation.data_source_dist，fallback stats.source_dist）
+  - data_summary 新增 rows_summary（min/max/avg/count）
+  - 保留 source_dist / avg_rows 兼容字段
+  - result_summary 的 total/success/top_score/avg_score 优先从 validation 取，缺失时降级从 top 数组计算
+- 验证：result_summary.avg_score == validation.avg_score (54.4)、top_score == validation.top_score (69)
+- 未修改 app.py / main.py / reports/generator.py / 评分 / 排序 / 数据链路 / UI 展示
+- 验收：py_compile OK | CLI select EXIT:0 | 字段结构验证通过 | confirm_docs_consistency 19/19 | confirm_release_ready 10/10
 
 ## 5. 关键文件
 

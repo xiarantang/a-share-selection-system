@@ -210,19 +210,31 @@ def build_run_metadata(selection_data, params, entrypoint, command,
     rows_list = [r.get("rows", 0) for r in successful]
     avg_rows = round(sum(rows_list) / len(rows_list), 1) if rows_list else 0
 
+    data_source_dist = (validation.get("data_source_dist")
+                        or stats.get("source_dist", {}))
+
+    rows_summary = {
+        "min": min(rows_list) if rows_list else 0,
+        "max": max(rows_list) if rows_list else 0,
+        "avg": avg_rows,
+        "count": len(rows_list),
+    }
+
     data_summary = {
         "source_dist": stats.get("source_dist", {}),
         "avg_rows": avg_rows,
+        "data_source_dist": data_source_dist,
+        "rows_summary": rows_summary,
         "coverage_warning_ratio": validation.get("coverage_warning_ratio", 0),
     }
 
-    # result_summary
+    # result_summary：优先从 validation 取，没有时降级从 top 数组计算
     scores = [r.get("score", 0) for r in successful]
     result_summary = {
-        "total": stats.get("total", 0),
-        "success": stats.get("success", 0),
-        "top_score": max(scores) if scores else 0,
-        "avg_score": round(sum(scores) / len(scores), 1) if scores else 0,
+        "total": validation.get("total_count", stats.get("total", 0)),
+        "success": validation.get("success_count", stats.get("success", 0)),
+        "top_score": validation.get("top_score", max(scores) if scores else 0),
+        "avg_score": validation.get("avg_score", round(sum(scores) / len(scores), 1) if scores else 0),
         "confidence_dist": validation.get("confidence_dist", {}),
         "decision_dist": validation.get("decision_dist", {}),
         "risk_level_dist": validation.get("risk_level_dist", {}),
