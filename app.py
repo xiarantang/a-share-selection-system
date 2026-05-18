@@ -20,6 +20,7 @@ import pandas as pd
 
 from data.universe import get_universe, lookup_meta
 from strategies.selection import SelectionEngine
+from strategies.registry import DEFAULT_STRATEGY_ID, get_strategy, list_strategies
 from validation.selection_validator import validate_selection
 from validation.backtest_validator import run_backtest_validation
 from reports.generator import ReportGenerator
@@ -107,14 +108,20 @@ st.set_page_config(
 
 
 # ========== 初始化 session_state ==========
-for key in ["selection_data", "backtest_per_stock", "backtest_summary", "last_params"]:
+for key in ["selection_data", "backtest_per_stock", "backtest_summary", "last_params", "last_strategy"]:
     if key not in st.session_state:
         st.session_state[key] = None
 
 
 # ========== 函数：执行选股 ==========
-def run_selection(universe: str, limit: int, top: int, start_date: str):
+def run_selection(universe: str, limit: int, top: int, start_date: str,
+                  strategy_id: str = DEFAULT_STRATEGY_ID):
     """执行选股流程，复用底层模块。返回 selection_data dict。"""
+    # 校验策略
+    strategy_meta = get_strategy(strategy_id)
+    if strategy_meta is None or not strategy_meta.get("enabled", True):
+        raise ValueError(f"策略 '{strategy_id}' 不可用或已禁用")
+
     symbols, meta = get_universe(universe, limit=limit)
     engine = SelectionEngine()
     all_results = engine.select(symbols, start_date=start_date)
@@ -137,8 +144,18 @@ def run_selection(universe: str, limit: int, top: int, start_date: str):
 
     top_results = [r for r in all_results if not r.get("error")][:top]
 
+    strategy_info = {
+        "id": strategy_meta["id"],
+        "name": strategy_meta["name"],
+        "description": strategy_meta["description"],
+        "suitable_scenario": strategy_meta["suitable_scenario"],
+        "risk_reminder": strategy_meta["risk_reminder"],
+    }
+
     data = {
         "generated_at": datetime.now().isoformat(),
+        "strategy_id": strategy_id,
+        "strategy": strategy_info,
         "requested_start": start_date,
         "universe": meta,
         "stats": {
@@ -442,6 +459,19 @@ with st.sidebar:
         help="static: 55只精选A股 | hs300: 沪深300成分股 | top_amount: 全市场成交额排序",
         label_visibility="collapsed",
     )
+
+    # 策略选择器
+    enabled_strategies = list_strategies(enabled_only=True)
+    strategy_options = {s["id"]: s["name"] for s in enabled_strategies}
+    strategy_ids = list(strategy_options.keys())
+    default_sid = DEFAULT_STRATEGY_ID if DEFAULT_STRATEGY_ID in strategy_ids else (strategy_ids[0] if strategy_ids else DEFAULT_STRATEGY_ID)
+    selected_strategy = st.selectbox(
+        "策略",
+        options=strategy_ids,
+        format_func=lambda x: strategy_options.get(x, x),
+        index=strategy_ids.index(default_sid) if default_sid in strategy_ids else 0,
+        help="当前为规则策略选择，不改变评分公式；仅供研究学习，不构成投资建议。",
+    )
     limit = st.slider("扫描数量", min_value=10, max_value=55, value=10, step=5,
                       help="首次体验建议保持 10 只，通常需要 30-60 秒。数量越多等待越久。")
     top = st.slider("展示数量", min_value=3, max_value=20, value=5, step=1,
@@ -472,13 +502,14 @@ with st.sidebar:
 if btn_select:
     with st.spinner("⏳ 正在选股中，通常需要 30-60 秒。正在拉取数据、计算评分，请不要关闭页面..."):
         try:
-            data = run_selection(universe, limit, top, start_str)
+            data = run_selection(universe, limit, top, start_str, strategy_id=selected_strategy)
             st.session_state.selection_data = data
             st.session_state.backtest_per_stock = None
             st.session_state.backtest_summary = None
             st.session_state.last_params = {
                 "universe": universe, "limit": limit, "top": top, "start": start_str,
             }
+            st.session_state.last_strategy = selected_strategy
 
             # 人性化提示
             success_count = data["stats"]["success"]
@@ -576,6 +607,15 @@ if st.session_state.selection_data is not None:
         st.markdown(f"**{quality_short}**")
 
     # 紧凑提示行
+    # 当前策略说明（克制展示）
+    strategy_display = data.get("strategy", {})
+    if strategy_display:
+        st.caption(
+            f"📋 当前策略：{strategy_display.get('name', '?')} | "
+            f"适用场景：{strategy_display.get('suitable_scenario', '')} | "
+            f"⚠️ {strategy_display.get('risk_reminder', '')}"
+        )
+
     warn_parts = []
     if cov.get("coverage_warn_count", 0) > 0:
         warn_parts.append(f"覆盖不全: {cov['coverage_warn_count']}/{cov['total_success']}只")

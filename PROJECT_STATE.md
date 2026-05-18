@@ -254,8 +254,22 @@ P8.4-2 CLI策略参数接入：
 - 验收脚本：`scripts/confirm_p84_cli.py`
 - 未修改 app.py / strategies/selection.py / strategies/registry.py / data/ / reports/ / validation/
 
-下一步建议：P8.4-3 UI 策略选择器。
+下一步建议：P8.4-4 文档验收。
+
+P8.4-3 UI 策略选择器接入：
+- `app.py` 从 `strategies.registry` 导入 `DEFAULT_STRATEGY_ID` / `get_strategy` / `list_strategies`
+- `run_selection` 新增可选 `strategy_id` 参数（默认 `DEFAULT_STRATEGY_ID`），函数开头用 `get_strategy(strategy_id)` 校验：无效或 disabled 抛出 ValueError
+- `run_selection` 仍然使用 `SelectionEngine()` 和 `engine.select(...)`，不调用 registry 的 `execute_strategy`，不动态 import，不调用 `entry_function`
+- `run_selection` 返回数据顶层新增 `strategy_id`（字符串）和 `strategy`（含 id/name/description/suitable_scenario/risk_reminder 的字典）
+- 侧栏股票池下方增加策略选择器：使用 `list_strategies(enabled_only=True)` 渲染，显示 `name`（如"默认规则策略"），help 提示"当前为规则策略选择，不改变评分公式；仅供研究学习，不构成投资建议"
+- 点击"开始选股"时将选中的 `strategy_id` 传给 `run_selection`，写入 `session_state.last_strategy`
+- 结果页数据概览下方用 `st.caption` 克制展示当前策略名称、适用场景、风险提醒，不影响 Top3 第一眼可读性
+- session_state 新增 `last_strategy`，不破坏已有状态
+- 验收脚本：`scripts/confirm_p84_ui.py`（36 项检查）
+- 未修改 main.py / strategies/selection.py / strategies/registry.py / data/ / reports/ / validation/
+- 未修改评分、排序、数据链路、报告逻辑
+- 验收：py_compile ✅ | confirm_p84_registry 35/35 ✅ | confirm_p84_cli 17/17 ✅ | confirm_p84_ui 36/36 ✅ | select EXIT:0 (10/10 baostock) ✅ | report EXIT:0 ✅
 
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / scripts/confirm_p84_cli.py / scripts/confirm_p84_ui.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
