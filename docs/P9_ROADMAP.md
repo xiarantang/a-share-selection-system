@@ -211,6 +211,8 @@ python3 scripts/confirm_release_ready.py
 
 ## 9. P9.4 小白排障增强
 
+> **P9.4-0 设计已完成**，详见 `docs/P9_4_TROUBLESHOOTING_DESIGN.md`。
+
 ### 目标
 
 减少小白遇到问题时的迷路感。系统应尽量告诉用户：发生了什么、是否严重、下一步怎么做。
