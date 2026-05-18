@@ -30,7 +30,7 @@
 | P8.2-2文档 | `c07eeae` | 同步P8.2-2报告解释状态 |
 | P8.2-3 | `8379657` | UI接入explain：expander顶部展示解释/可靠性折叠 |
 | P8.2-4 | `caac7b2` | 小白依赖收口：requirements-ui加入baostock/状态同步/全链路通过 |
-| P8.4-0 | — | 策略管理设计文档 |
+| P8.4-0 | `9361433` | 策略管理设计文档 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.2-4)
@@ -42,7 +42,9 @@
 - ✅ 小白启动：start_ui.command 安装 requirements-ui.txt；轻量依赖已包含 baostock
 - ✅ Pipeline：PASS/FAIL退出码可信
 
-## 4. 当前阶段 P8.4（策略管理）
+## 4. 阶段记录（P8.1-P8.4）
+
+当前推进：P8.4 策略管理；以下保留 P8.1-P8.4 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
