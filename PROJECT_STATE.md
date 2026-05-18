@@ -33,7 +33,7 @@
 | P8.4-0 | `9361433` | 策略管理设计文档 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
-## 3. 真实能力 (v0.5 + P8.4)
+## 3. 真实能力 (v0.5 + P8.4 已完成)
 
 - ✅ 数据：akshare + **baostock** + skill_fallback + 缓存；baostock稳定570条K线
 - ✅ 选股：6因子评分 + decision/risk_level/confidence + explain 小白解释字段
@@ -43,9 +43,9 @@
 - ✅ 小白启动：start_ui.command 安装 requirements-ui.txt；轻量依赖已包含 baostock
 - ✅ Pipeline：PASS/FAIL退出码可信
 
-## 4. 阶段记录（P8.1-P8.4）
+## 4. 阶段记录（P8.1-P8.4 已完成）
 
-当前推进：P8.4 策略管理；以下保留 P8.1-P8.4 的关键验收记录。
+当前推进：P8.4 策略管理已全部完成（P8.4-1 → P8.4-4 + P8.4-4.1 路线图一致性收口）。以下保留 P8.1-P8.4 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -257,6 +257,15 @@ P8.4-2 CLI策略参数接入：
 
 下一步建议：P8.4-4 文档验收。 → **已完成**
 
+P8.4-4.1 路线图状态一致性收口：
+- docs/P8_ROADMAP.md P8.4 部分修正为真实完成状态：默认策略 ID 是 `default`（非 `multi-factor-v1`），当前只有一套默认策略，Markdown 报告逻辑未改，策略管理只是入口壳
+- docs/P8_ROADMAP.md P8.5 部分增加 P8.5-0 决策评审门：AI 默认关闭、不进评分/排序/风控/买卖决策链路、不输出买入/卖出/目标价/收益预测、不需要 API Key 才能启动、不能保证边界则暂缓
+- docs/P8_ROADMAP.md 阶段总览表和执行顺序更新为已完成状态
+- PROJECT_STATE.md 更新：P8.4 已完成，下一步建议为 P8.5-0 可选 AI 辅助解释边界评审/暂缓决策
+- scripts/confirm_p84_docs.py 新增路线图一致性检查
+- 未修改 app.py / main.py / strategies/ / data/ / reports/generator.py / validation/ / 评分/排序/数据链路
+- 验收：py_compile ✅ | confirm_p84_docs ✅ | confirm_p84_registry ✅ | confirm_p84_cli ✅ | confirm_p84_ui ✅
+
 P8.4-3 UI 策略选择器接入：
 - `app.py` 从 `strategies.registry` 导入 `DEFAULT_STRATEGY_ID` / `get_strategy` / `list_strategies`
 - `run_selection` 新增可选 `strategy_id` 参数（默认 `DEFAULT_STRATEGY_ID`），函数开头用 `get_strategy(strategy_id)` 校验：无效或 disabled 抛出 ValueError
@@ -281,7 +290,9 @@ P8.4-4 策略管理文档与验收收口：
 - 未修改评分、排序、数据链路、报告逻辑
 - 验收：py_compile ✅ | confirm_p84_registry ✅ | confirm_p84_cli ✅ | confirm_p84_ui ✅ | confirm_p84_docs ✅ | select EXIT:0 ✅ | report EXIT:0 ✅
 
-**P8.4 策略管理阶段已完成**（P8.4-1 注册骨架 → P8.4-2 CLI 参数 → P8.4-3 UI 选择器 → P8.4-4 文档验收）。
+**P8.4 策略管理阶段已完成**（P8.4-1 注册骨架 → P8.4-2 CLI 参数 → P8.4-3 UI 选择器 → P8.4-4 文档验收 → P8.4-4.1 路线图一致性收口）。
+
+下一步建议：P8.5-0 可选 AI 辅助解释边界评审/暂缓决策。进入 P8.5 前必须先完成 P8.5-0 决策评审，确认 AI 默认关闭、不进评分/排序/风控/买卖决策链路、不输出买入/卖出/目标价/收益预测、不需要 API Key 才能启动小白 UI、不能保证边界则暂缓。P8.5-0 的产出应该是决策文档，不是代码。
 
 ## 5. 关键文件
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-P8.4-4 文档验收脚本
+P8.4-4 / P8.4-4.1 文档验收脚本
 ==================
 检查:
 1. README.md 包含「默认规则策略」、「--strategy default」、「不传」等同/默认策略说明
@@ -9,6 +9,8 @@ P8.4-4 文档验收脚本
 4. PROJECT_STATE.md 包含 P8.4-4 完成和 P8.4 阶段完成
 5. README.md / docs/USER_GUIDE.md 不含旧说法「四步引导|三步引导|两步核心」
 6. 不新增正向投资建议措辞（允许免责声明中的「不构成投资建议」「不是收益预测」）
+7. docs/P8_ROADMAP.md 路线图一致性：不含 multi-factor-v1、含 default、含 P8.5-0 决策评审门
+8. PROJECT_STATE.md 含 P8.4-4.1 路线图一致性收口记录
 """
 
 import re
@@ -120,6 +122,27 @@ has_forbidden_positive(guide_text, "USER_GUIDE")
 # 免责声明中允许的措辞应存在
 check("README 含免责声明「不构成投资建议」", "不构成投资建议" in readme_text)
 check("USER_GUIDE 含免责声明「不构成投资建议」", "不构成投资建议" in guide_text)
+
+# ── 7. P8_ROADMAP 一致性检查 ──────────────────────────────────────
+print("\n[7] P8_ROADMAP 路线图一致性")
+
+ROADMAP = PROJECT_ROOT / "docs" / "P8_ROADMAP.md"
+roadmap_text = read_file(ROADMAP)
+check("P8_ROADMAP 存在", len(roadmap_text) > 0)
+
+check("P8_ROADMAP 不含旧策略 ID「multi-factor-v1」", "multi-factor-v1" not in roadmap_text)
+check("P8_ROADMAP 含正确策略 ID「default」", "default" in roadmap_text)
+check("P8_ROADMAP 含「P8.5-0」决策评审门", "P8.5-0" in roadmap_text)
+check("P8_ROADMAP 含「决策评审」", "决策评审" in roadmap_text)
+check("P8_ROADMAP 不把「报告策略名称和版本」作为已完成验收",
+      "报告策略名称和版本" not in roadmap_text and "报告里能看到策略名称和版本" not in roadmap_text)
+
+# ── 8. PROJECT_STATE P8.4-4.1 检查 ────────────────────────────────
+print("\n[8] PROJECT_STATE P8.4-4.1 收口")
+
+check("PROJECT_STATE 含 P8.4-4.1", "P8.4-4.1" in state_text)
+check("PROJECT_STATE 含路线图一致性收口", "路线图一致性收口" in state_text)
+check("PROJECT_STATE 含 P8.5-0 下一步建议", "P8.5-0" in state_text)
 
 # ── 汇总 ──────────────────────────────────────────────────────────
 print(f"\n{'='*50}")
