@@ -763,7 +763,7 @@ P9.5-2 更新 CHANGELOG.md：
 - 下一步建议：P9.5-3 tag 前最终验收记录
 
 P9.5-3 tag 前最终验收记录：
-- 最终验收结果（基于 commit `895bdd7`）：
+- 最终验收结果（基于 P9.5-3 最终记录阶段，见 git log 最新提交）：
   - confirm_release_ready.py：12/12 通过
   - confirm_docs_consistency.py：19/19 通过
   - confirm_run_metadata.py：20/20 通过
