@@ -539,7 +539,7 @@ if btn_select:
                     "**下一步**：\n"
                     "1. 检查网络连接（打开浏览器看看能不能正常上网）\n"
                     "2. 刷新页面（按 F5 或 Cmd+R），重新点击「开始选股」\n"
-                    "3. 如持续失败，可**可选**安装第三级兜底数据通道：双击 `scripts/install_fallback.command`"
+                    "3. 如持续失败，可选择安装第三级兜底数据通道：双击 `scripts/install_fallback.command`"
                 )
 
         except Exception as e:
