@@ -36,7 +36,7 @@
 | P8.5-0.2 | `d8191a4` | 项目状态字段名零残留收口 |
 | P8.6-0 | `468c240` | UI兼容性预检与修复方案（未修改产品代码） |
 | P8.6-0.1 | `9d76805` | UI兼容性方案范围收口 |
-| P8.6-1 | `—` | UI兼容性最小修复（commit hash 待回填） |
+| P8.6-1 | `30e0fb9` | UI兼容性最小修复 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.4 已完成)
@@ -324,18 +324,18 @@ P8.6-0 UI兼容性预检与修复方案：
 - 版本约束建议：`streamlit>=1.28.0` → `>=1.39.0`，`pandas>=2.0.0` → `>=2.1.0`
 - 本阶段仅写预检文档，未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / 评分/排序/数据链路
 
-	P8.6-0.1 UI兼容性方案范围收口：
-	- `docs/P8_6_UI_STABILITY_AUDIT.md` 补充范围收口说明，明确只做 9 处机械替换
-	- 本阶段仅更新文档，未修改 app.py / requirements.txt / requirements-ui.txt
+P8.6-0.1 UI兼容性方案范围收口：
+- `docs/P8_6_UI_STABILITY_AUDIT.md` 补充范围收口说明，明确只做 9 处机械替换
+- 本阶段仅更新文档，未修改 app.py / requirements.txt / requirements-ui.txt
 
-	P8.6-1 UI兼容性最小修复：
-	- app.py 4 处 `use_container_width=True` → `width="stretch"`：逐只复盘详情表格、侧栏"开始选股"按钮、侧栏"历史复盘"按钮、结果页候选表格
-	- app.py 1 处 `df.style.applymap(...)` → `df.style.map(...)`
-	- requirements.txt 2 处：`streamlit>=1.28.0` → `>=1.39.0`，`pandas>=2.0.0` → `>=2.1.0`
-	- requirements-ui.txt 2 处：同上
-	- PROJECT_STATE.md 记录 P8.6-1 完成
-	- 未修改评分、排序、数据链路、报告逻辑
-	- 未新增任何脚本，未改 docs/P8_6_UI_STABILITY_AUDIT.md
+P8.6-1 UI兼容性最小修复：
+- app.py 4 处 `use_container_width=True` → `width="stretch"`：逐只复盘详情表格、侧栏"开始选股"按钮、侧栏"历史复盘"按钮、结果页候选表格
+- app.py 1 处 `df.style.applymap(...)` → `df.style.map(...)`
+- requirements.txt 2 处：`streamlit>=1.28.0` → `>=1.39.0`，`pandas>=2.0.0` → `>=2.1.0`
+- requirements-ui.txt 2 处：同上
+- PROJECT_STATE.md 记录 P8.6-1 完成
+- 未修改评分、排序、数据链路、报告逻辑
+- 未新增任何脚本，未改 docs/P8_6_UI_STABILITY_AUDIT.md
 
 ## 5. 关键文件
 
