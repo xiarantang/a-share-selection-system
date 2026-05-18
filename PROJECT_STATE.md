@@ -39,6 +39,8 @@
 | P8.6-1 | `30e0fb9` | UI兼容性最小修复 |
 | P8.6-1.1 | `4aefa5c` | 项目状态commit回填修正 |
 | P8.6-2 | `08c26c0` | UI冒烟验收与截图确认 |
+| P8.6-2.1 | `e2b8e4b` | 回填UI冒烟验收commit |
+| P8.6-3 | — | 小白启动脚本冒烟验收 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.4 已完成)
@@ -53,7 +55,7 @@
 
 ## 4. 阶段记录（P8.1-P8.4 已完成）
 
-当前推进：P8.6-2 UI冒烟验收与截图确认已完成。以下保留 P8.1-P8.6-2 的关键验收记录。
+当前推进：P8.6-3 小白启动脚本冒烟验收已完成。以下保留 P8.1-P8.6-3 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -352,6 +354,20 @@ P8.6-2 UI冒烟验收与截图确认：
 - 警告检查：app.py 无 use_container_width / applymap 残留 ✅
 - 未修改产品代码/评分/排序/数据链路/报告逻辑
 - 仅修改 PROJECT_STATE.md、docs/screenshots/home.png、docs/screenshots/result.png
+
+P8.6-3 小白启动脚本冒烟验收：
+- start_ui.command 存在且可执行（-rwxr-xr-x）
+- 基础验收：py_compile app.py ✅ | requirements-ui.txt 含 streamlit>=1.39.0、pandas>=2.1.0 ✅
+- 启动脚本关键步骤验证：
+  - Python3 检测 ✅（Python 3.9.6）
+  - 虚拟环境已存在 ✅
+  - 依赖就绪 ✅（streamlit=1.50.0, pandas=2.3.3）
+  - 备用数据通道已安装 ✅
+- Streamlit 后台启动：HTTP 200 返回确认（1s 内响应） ✅
+- 启动日志检查：无 use_container_width / applymap / DeprecationWarning / FutureWarning / 错误 ✅
+- 端口清理：启动进程已停止，8501 端口无残留 ✅
+- 未修改产品代码/启动脚本/评分/排序/数据链路/报告逻辑
+- 仅修改 PROJECT_STATE.md
 
 ## 5. 关键文件
 
