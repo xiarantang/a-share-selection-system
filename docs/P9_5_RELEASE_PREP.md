@@ -69,7 +69,7 @@
 |------|------|----------|
 | P9.5-1 | 更新 RELEASE_CHECKLIST.md | RELEASE_CHECKLIST.md、PROJECT_STATE.md | ✅ 已完成 |
 | P9.5-2 | 更新 CHANGELOG.md | CHANGELOG.md、PROJECT_STATE.md | ✅ 已完成 |
-| P9.5-3 | tag 前最终验收记录 | PROJECT_STATE.md（输出建议命令，不打 tag） |
+| P9.5-3 | tag 前最终验收记录 | PROJECT_STATE.md（输出建议命令，不打 tag） | ✅ 已完成 |
 
 ### 4.1 P9.5-1 更新 RELEASE_CHECKLIST.md
 
@@ -147,6 +147,21 @@ git tag -l          # 确认 tag 状态
 
 ---
 
-## 7. 免责声明
+## 7. P9.5 完成结论
+
+P9.5 发布版打标准备阶段已全部完成（P9.5-1 / P9.5-2 / P9.5-3）。最终验收结果：
+
+| 验收脚本 | 结果 |
+|----------|------|
+| confirm_release_ready.py | 12/12 通过 |
+| confirm_docs_consistency.py | 19/19 通过 |
+| confirm_run_metadata.py | 20/20 通过 |
+| confirm_troubleshooting.py | 13/13 通过 |
+
+推荐 tag 版本：`v0.6-rc1`。建议 tag 命令已记录在 PROJECT_STATE.md，由人工确认后手动执行。本文档未抢先打 tag，不把 tag 当成功证明。
+
+---
+
+## 8. 免责声明
 
 本系统仅供研究学习，不构成投资建议。发布版打标准备不改变选股结果，只确保发布前验收完整。

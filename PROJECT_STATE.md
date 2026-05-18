@@ -88,6 +88,7 @@
 | P9.5-1 | — | 更新 RELEASE_CHECKLIST.md |
 | P9.5-1.1 | — | PROJECT_STATE.md 中 fallback 历史措辞微修 |
 | P9.5-2 | — | 更新 CHANGELOG.md |
+| P9.5-3 | — | tag 前最终验收记录（未打 tag） |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -760,6 +761,23 @@ P9.5-2 更新 CHANGELOG.md：
 - 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
 - 未创建 git tag
 - 下一步建议：P9.5-3 tag 前最终验收记录
+
+P9.5-3 tag 前最终验收记录：
+- 最终验收结果（基于 commit `895bdd7`）：
+  - confirm_release_ready.py：12/12 通过
+  - confirm_docs_consistency.py：19/19 通过
+  - confirm_run_metadata.py：20/20 通过
+  - confirm_troubleshooting.py：13/13 通过
+  - git status：工作树干净
+  - git tag --points-at HEAD：无 tag（正确，本阶段不创建 tag）
+- 推荐 tag 版本：`v0.6-rc1`
+- 建议 tag 命令（仅建议，未执行）：
+  - `git tag -a v0.6-rc1 -m "v0.6-rc1: A股选股系统发布候选"`
+  - `git push origin v0.6-rc1`
+- 重要提醒：tag 是不可变标记，以上命令仅供人工确认后手动执行。本文档不抢先 tag，不把 tag 当成功证明。
+- 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md / docs/TROUBLESHOOTING.md / docs/USER_GUIDE.md
+- 未创建 git tag
+- P9.5 发布准备阶段完成
 
 ## 5. 关键文件
 
