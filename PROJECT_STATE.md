@@ -36,7 +36,7 @@
 | P8.5-0.2 | `d8191a4` | 项目状态字段名零残留收口 |
 | P8.6-0 | `468c240` | UI兼容性预检与修复方案（未修改产品代码） |
 | P8.6-0.1 | `9d76805` | UI兼容性方案范围收口 |
-| P8.6-1 | `2bc15aa` | UI兼容性最小修复 |
+| P8.6-1 | `—` | UI兼容性最小修复（commit hash 待回填） |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.4 已完成)
