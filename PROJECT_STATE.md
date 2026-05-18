@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.4-2.1 完成）
+> 最后更新：2026-05-19（P9.4-3 完成）
 
 ## 1. 项目总目标
 
@@ -78,6 +78,7 @@
 | P9.4-1.1 | — | 排障文档手动安装依赖说明微修 |
 | P9.4-2 | — | UI 错误/等待/空结果提示增强 |
 | P9.4-2.1 | — | UI 排障提示文案返工 |
+| P9.4-3 | — | 启动脚本提示增强 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -673,6 +674,19 @@ P9.4-2 UI 错误/等待/空结果提示增强：
 - docs/P9_4_TROUBLESHOOTING_DESIGN.md：P9.4-2 标记已完成
 - 未修改 run_selection / run_backtest / 数据结构 / session_state / 报告逻辑 / 评分 / 排序 / 数据链路
 - 下一步建议：P9.4-3 启动脚本提示增强
+
+P9.4-2.1 UI 排障提示文案返工：
+- app.py：「可选择安装」修正冗余表达；设计文档诊断表旧写法修正
+
+P9.4-3 启动脚本提示增强：
+- start_ui.command 4 处文案增强（只改 echo 输出，不改脚本逻辑）：
+  - 启动成功提示：加入主路径（环境自检→选参数→选股→看结果）
+  - 依赖安装失败：指向 docs/TROUBLESHOOTING.md 第 2 条，移除"找懂技术朋友"
+  - 端口占用自动切换：补充"这通常不是故障，不影响正常使用"
+  - Streamlit 启动失败：指向 docs/TROUBLESHOOTING.md 第 5 条 + Issues 截图
+- docs/P9_4_TROUBLESHOOTING_DESIGN.md：P9.4-3 标记已完成
+- 未修改 app.py / main.py / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
+- 下一步建议：P9.4-4 排障验收脚本与发布前收口
 
 ## 5. 关键文件
 
