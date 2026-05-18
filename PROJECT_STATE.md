@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P9.0 完成）
+> 最后更新：2026-05-18（P9.1 完成）
 
 ## 1. 项目总目标
 
@@ -57,6 +57,7 @@
 | P8.7-6.1 | `f46731b` | 修正发布候选禁词口径 |
 | P8完成态 | `96909eb` | 发布候选状态最终收口 |
 | P9.0 | `—` | 从 P1 到 P8 的完整来时路复盘与 P9 路线图设计 |
+| P9.1 | — | 公开文档一致性治理 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -491,6 +492,20 @@ P9.0 来时路复盘与路线图设计：
 - P9 分阶段：P9.1 公开文档一致性治理、P9.2 验收体系增强、P9.3 复盘记录增强、P9.4 小白排障增强、P9.5 发布版打标准备
 - 本阶段仅新增/更新文档，未修改 app.py / main.py / data/ / strategies/ / reports/ / validation/ / requirements*.txt / 启动脚本
 - 继续遵守边界：不碰实盘交易、不引入 AI/qlib 到评分排序链路、不做数据库/登录/复杂前后端、不重写评分/排序、不改数据链路、不输出投资建议措辞
+
+P9.1 公开文档一致性治理：
+- CHANGELOG.md：
+  - 新增顶部标注：v0.5 为历史基线，当前已由 P8 更新
+  - 修正「三步启动」→ 启动方式：双击 start_ui.command → 选参数 → 开始选股 → 看结果
+  - 修正「四步引导」→ 首页引导：选参数 → 开始选股 → 看结果
+  - 标注 v0.5 数据层（skill_fallback ~120 条）已被 baostock ~570 条替代
+- README.md：
+  - 修正「首次使用前建议先双击 install_fallback」→「如需多一层保障，可双击 install_fallback」（可选第三级兜底，不是启动前提）
+- docs/USER_GUIDE.md / docs/TROUBLESHOOTING.md / docs/MANUAL_UI_CHECKLIST.md / docs/UI_ACCEPTANCE.md：确认无旧口径残留，无需修改
+- docs/P8_7_RELEASE_REVIEW.md：确认无旧口径残留，无需修改
+- 未修改产品代码（app.py / main.py / start_ui.command / scripts/install_fallback.command / data/ / strategies/ / reports/ / validation/ / requirements*.txt）
+- 未修改评分、排序、数据链路、报告逻辑
+- 验收：confirm_release_ready 9/9 通过 | rg 旧口径零命中 | rg 禁词零新增命中
 
 ## 5. 关键文件
 
