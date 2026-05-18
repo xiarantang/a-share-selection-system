@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.4-3.1 完成）
+> 最后更新：2026-05-19（P9.4-4.1 完成）
 
 ## 1. 项目总目标
 
@@ -80,6 +80,7 @@
 | P9.4-2.1 | — | UI 排障提示文案返工 |
 | P9.4-3 | — | 启动脚本提示增强 |
 | P9.4-3.1 | — | 恢复 start_ui.command 可执行权限 |
+| P9.4-4.1 | — | 新增独立排障体验验收脚本 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -689,6 +690,18 @@ P9.4-3 启动脚本提示增强：
 - 未修改 app.py / main.py / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
 - 下一步建议：P9.4-4 排障验收脚本与发布前收口
 
+P9.4-4.1 新增独立排障体验验收脚本：
+- scripts/confirm_troubleshooting.py：独立验收入口，13 项检查
+  - start_ui.command：可执行权限 / bash 语法 / 主路径关键词
+  - app.py：无旧直暴露写法 / 含折叠提示 / 含 TROUBLESHOOTING 指引
+  - TROUBLESHOOTING.md：无旧流程词 / 无旧误导说法 / 无旧 cd 中文写法
+  - USER_GUIDE.md：FAQ 覆盖关键排障场景
+  - PROJECT_STATE.md：记录 P9.4-3.1 或之后状态
+  - 禁词检查 + fallback 可选口径
+  - 未接入 confirm_release_ready.py（留到 P9.4-4.2）
+- docs/P9_4_TROUBLESHOOTING_DESIGN.md：P9.4-4 状态更新
+- 未修改 app.py / main.py / start_ui.command / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
+
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / scripts/confirm_p84_cli.py / scripts/confirm_p84_ui.py / scripts/confirm_p84_docs.py / scripts/confirm_release_ready.py / scripts/confirm_run_metadata.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_5_AI_EXPLANATION_DECISION.md / docs/P8_6_UI_STABILITY_AUDIT.md / docs/P8_7_RELEASE_REVIEW.md / docs/P8_ROADMAP.md / docs/P9_3_REPLAY_TRACE_DESIGN.md / docs/P9_4_TROUBLESHOOTING_DESIGN.md / docs/MANUAL_UI_CHECKLIST.md / docs/screenshots/home.png / docs/screenshots/result.png
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / scripts/confirm_p84_cli.py / scripts/confirm_p84_ui.py / scripts/confirm_p84_docs.py / scripts/confirm_release_ready.py / scripts/confirm_run_metadata.py / scripts/confirm_troubleshooting.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_5_AI_EXPLANATION_DECISION.md / docs/P8_6_UI_STABILITY_AUDIT.md / docs/P8_7_RELEASE_REVIEW.md / docs/P8_ROADMAP.md / docs/P9_3_REPLAY_TRACE_DESIGN.md / docs/P9_4_TROUBLESHOOTING_DESIGN.md / docs/MANUAL_UI_CHECKLIST.md / docs/screenshots/home.png / docs/screenshots/result.png

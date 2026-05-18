@@ -118,7 +118,7 @@
 | P9.4-1 | 公开排障文档口径收口 | docs/TROUBLESHOOTING.md / docs/USER_GUIDE.md | ✅ 已完成 |
 | P9.4-2 | UI 错误/等待/空结果提示增强 | app.py（只改 inline 提示文案和布局） | ✅ 已完成 |
 | P9.4-3 | 启动脚本提示增强 | start_ui.command（只改 echo 输出文案） | ✅ 已完成 |
-| P9.4-4 | 排障验收脚本与发布前收口 | PROJECT_STATE.md / docs/ | confirm_release_ready + confirm_docs_consistency |
+| P9.4-4 | 排障验收脚本与发布前收口 | PROJECT_STATE.md / docs/ | P9.4-4.1 已完成（独立验收脚本） |
 
 ### 6.1 P9.4-1 公开排障文档口径收口
 
