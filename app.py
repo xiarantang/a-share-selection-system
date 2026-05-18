@@ -562,13 +562,18 @@ if st.session_state.selection_data is not None:
     quality_short = {"good": "🟢 良好", "usable_with_caution": "🟡 需谨慎", "poor": "🔴 差"}.get(quality, quality)
 
     ov_cols = st.columns(4)
-    ov_cols[0].metric("股票池", f"{universe_meta.get('universe_source','?')} | 扫描 {stats.get('total','?')} 只")
-    ov_cols[1].metric(
-        "数据区间",
-        friendly_date_range(cov.get("earliest_actual", "?"), cov.get("latest_actual", "?")),
-    )
-    ov_cols[2].metric("K线 / 数据源", f"平均{cov.get('avg_rows','?')}条 | {source_str or 'N/A'}")
-    ov_cols[3].metric("整体质量", quality_short)
+    with ov_cols[0]:
+        st.caption("股票池")
+        st.markdown(f"**{universe_meta.get('universe_source','?')}** | 扫描 {stats.get('total','?')} 只")
+    with ov_cols[1]:
+        st.caption("数据区间")
+        st.markdown(f"**{friendly_date_range(cov.get('earliest_actual', '?'), cov.get('latest_actual', '?'))}**")
+    with ov_cols[2]:
+        st.caption("K线 / 数据源")
+        st.markdown(f"平均 **{cov.get('avg_rows','?')}** 条 | {source_str or 'N/A'}")
+    with ov_cols[3]:
+        st.caption("整体质量")
+        st.markdown(f"**{quality_short}**")
 
     # 紧凑提示行
     warn_parts = []

@@ -202,6 +202,15 @@ P8.3-4 UI 验收脚本和截图更新：
 - 未修改 app.py、评分、排序、数据链路、报告逻辑
 - 验收：confirm_p83_ui 44/44 ✅ | py_compile ✅ | select EXIT:0 ✅ | backtest-validate EXIT:0 ✅ | report EXIT:0 ✅ | 禁词检查 ✅
 
+P8.3-4.1 结果页数据概览可读性收口：
+- 问题：结果页数据概览区域使用 `st.metric` 大字号展示，长文本（数据区间、K线/数据源）被截断
+- 修复：将 4 列 `st.metric`（股票池/数据区间/K线数据源/整体质量）替换为 `st.caption` + `st.markdown` 紧凑文本展示
+- 改动仅限 `app.py` 第 564-571 行（数据概览区域），从 `ov_cols[N].metric(label, value)` 改为 `with ov_cols[N]: st.caption(label); st.markdown(value)`
+- 以下信息完整显示无截断：股票池/扫描数量、完整数据区间（含"约近 X 个月"）、平均K线条数/数据源、整体质量
+- 未修改 Top3 卡片、逐只详情、候选表格、评分、排序、数据链路、报告逻辑
+- 截图更新：`docs/screenshots/result.png`（~243KB）从真实 Streamlit 页面截取，数据概览文字无截断
+- 验收：py_compile ✅ | confirm_p83_ui 44/44 ✅ | select EXIT:0 (10/10 baostock) ✅ | report EXIT:0 ✅
+
 下一步建议：P8.3 全部完成，可考虑 P8.4 或后续阶段。
 
 ## 5. 关键文件
