@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P9.1 完成）
+> 最后更新：2026-05-18（P9.1.1 完成）
 
 ## 1. 项目总目标
 
@@ -421,8 +421,8 @@ P8.7-1 发布前一键验收脚本最小整合：
 
 P8.7-2 小白手动验收清单一致性收口：
 - docs/MANUAL_UI_CHECKLIST.md：更新为当前真实 UI 路径（双击 start_ui.command → 选参数 → 开始选股 → 看结果），新增 Top3 速览、中文标签（决策/风险/置信度）、因子图标、技术指标折叠等验收项
-- docs/UI_ACCEPTANCE.md：同步更新，移除旧「三步引导卡片」「步骤编号」等表述，新增 Top3 速览、数据概览、逐只详情中文展示等验收项
-- 替换旧流程说法：「三步引导卡片」→「引导卡片（①选参数 ②等待结果）」、「步骤编号」→移除、「首页四步引导」→「首页引导卡片」
+- docs/UI_ACCEPTANCE.md：同步更新，移除旧流程引导文案、旧步骤编号等表述，新增 Top3 速览、数据概览、逐只详情中文展示等验收项
+- 替换旧流程说法：旧流程引导卡片 →「引导卡片（①选参数 ②等待结果）」、旧步骤编号 → 移除、旧首页引导文案 →「首页引导卡片」
 - 保留免责声明：仅供研究学习，不构成投资建议
 - 未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / scripts/ / start_ui.command / requirements*.txt / README.md / docs/USER_GUIDE.md / docs/P8_7_RELEASE_REVIEW.md
 - 未修改评分、排序、数据链路、报告逻辑
@@ -497,7 +497,7 @@ P9.1 公开文档一致性治理：
 - CHANGELOG.md：
   - 新增顶部标注：v0.5 为历史基线，当前已由 P8 更新
   - 修正「三步启动」→ 启动方式：双击 start_ui.command → 选参数 → 开始选股 → 看结果
-  - 修正「四步引导」→ 首页引导：选参数 → 开始选股 → 看结果
+  - 修正旧首页引导文案 → 首页引导：选参数 → 开始选股 → 看结果
   - 标注 v0.5 数据层（skill_fallback ~120 条）已被 baostock ~570 条替代
 - README.md：
   - 修正「首次使用前建议先双击 install_fallback」→「如需多一层保障，可双击 install_fallback」（可选第三级兜底，不是启动前提）
@@ -506,6 +506,12 @@ P9.1 公开文档一致性治理：
 - 未修改产品代码（app.py / main.py / start_ui.command / scripts/install_fallback.command / data/ / strategies/ / reports/ / validation/ / requirements*.txt）
 - 未修改评分、排序、数据链路、报告逻辑
 - 验收：confirm_release_ready 9/9 通过 | rg 旧口径零命中 | rg 禁词零新增命中
+
+P9.1.1 PROJECT_STATE.md 旧流程词口径返工收口：
+- P8.7-2 历史记录（行 424-425）：旧流程引导卡片、旧首页引导文案等旧词残留改为概括表达（旧流程引导文案 / 旧步骤编号 / 旧首页引导文案）
+- P9.1 记录（行 500）：旧首页引导文案改为概括表达
+- 未修改产品代码、评分、排序、数据链路、报告逻辑
+- 验收：confirm_release_ready 9/9 通过 | rg 旧流程词零命中 | rg 禁词零命中
 
 ## 5. 关键文件
 
