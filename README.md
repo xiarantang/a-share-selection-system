@@ -2,7 +2,7 @@
 
 > 🎯 小白也能用的可视化 A 股选股系统 — 双击就能用，不写一行命令。
 
-基于 **akshare + skill fallback + backtrader** 的 A 股选股系统。Streamlit 本地可视化界面，选参数 → 开始选股 → 看结果，含验证、复盘、报告和排障指南。**仅供研究学习，不构成投资建议。**
+基于 **akshare → baostock → skill fallback + backtrader** 的 A 股选股系统。Streamlit 本地可视化界面，选参数 → 开始选股 → 看结果，含验证、复盘、报告和排障指南。**仅供研究学习，不构成投资建议。**
 
 ---
 
@@ -35,7 +35,7 @@
 
 - ✅ **可视化 UI**：Streamlit 本地界面，左侧参数 + 右侧结果，无需命令行
 - ✅ **小白体验**：一键启动脚本、环境自检、选参数→开始选股→看结果、就绪状态判定
-- ✅ **数据层**：akshare + skill_fallback（120 条 K 线）+ 本地缓存
+- ✅ **数据层**：akshare → baostock → skill_fallback + 缓存；baostock 稳定约 570 条 K 线
 - ✅ **股票池**：static 55 只精选 A 股，含名称/行业元数据
 - ✅ **选股引擎**：6 因子评分 + decision/risk_level/confidence
 - ✅ **策略管理**：策略元数据注册表 + CLI/UI 策略选择入口（当前只有「默认规则策略」，不改变评分公式）
@@ -54,8 +54,8 @@
 
 | 限制 | 说明 |
 |------|------|
-| 数据覆盖 | 当前 fallback 约 120 条 K 线（~6 个月），请求较早日期会触发「覆盖不全」标记 |
-| akshare 不稳定 | 受网络影响经常失败，系统会自动切换到 skill_fallback |
+| 数据覆盖 | baostock 稳定约 570 条 K 线（~2 年），覆盖充足；极端降级时数据量会减少 |
+| 数据源波动 | akshare 偶发网络失败时自动降级到 baostock，极端情况下再用 skill_fallback |
 | 选股等待 | 默认 10 只约 30-60 秒，数量越多越慢 |
 | 非收益预测 | 评分为规则因子打分（满分 100），不是机器学习预测 |
 
@@ -106,6 +106,14 @@ cp -R /tmp/a-share-skill/macd-second-golden-cross ~/.agents/skills/
 ---
 
 ## 📖 CLI 命令（开发者/验收入口）
+
+### 发布前一键验收（维护者用）
+
+```bash
+python3 scripts/confirm_release_ready.py
+```
+
+> 维护者/发布前验收用，聚合语法检查、UI 验收、策略验收、CLI 选股/报告等 9 项检查。不是小白日常使用步骤。
 
 ### 查看股票池
 
@@ -218,6 +226,8 @@ a-share-selection-system/
 | [📖 小白使用指南](docs/USER_GUIDE.md) | 不会写命令的人看这个，双击就能用 |
 | [🛠️ 排障指南](docs/TROUBLESHOOTING.md) | 打不开/没数据/一直等待等 10 个常见问题 |
 | [📋 UI 验收结果](docs/UI_ACCEPTANCE_RESULT.md) | P8.6 UI 兼容性修复 + 冒烟验收 + 启动脚本验收 |
+| [🧪 小白人工验收清单](docs/MANUAL_UI_CHECKLIST.md) | 小白手动 UI 验收清单 |
+| [📋 发布前总复盘](docs/P8_7_RELEASE_REVIEW.md) | 发布前总复盘与下一阶段边界 |
 | [📝 变更日志](CHANGELOG.md) | v0.5 已完成能力一览 |
 | [✅ 发布检查清单](RELEASE_CHECKLIST.md) | 发布前逐项检查 |
 | [📂 项目状态](PROJECT_STATE.md) | 开发阶段/commit 记录/真实能力 |

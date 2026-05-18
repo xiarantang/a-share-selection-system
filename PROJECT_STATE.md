@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-18（P8.7-2）
+> 最后更新：2026-05-18（P8.7-3）
 
 ## 1. 项目总目标
 
@@ -48,6 +48,7 @@
 | P8.7-0 | `5edefbe` | 发布前总复盘与下一阶段边界设计 |
 | P8.7-1 | `33081e5` | 发布前一键验收脚本最小整合 |
 | P8.7-2 | `8ae0544` | 小白手动验收清单一致性收口 |
+| P8.7-3 | — | README公开入口与当前状态一致性收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8.1-P8.6 已完成)
@@ -65,7 +66,7 @@
 
 ## 4. 阶段记录（P8.1-P8.7 已完成）
 
-当前推进：P8.7-2 小白手动验收清单一致性收口已完成。以下保留 P8.1-P8.7-2 的关键验收记录。
+当前推进：P8.7-3 README公开入口与当前状态一致性收口已完成。以下保留 P8.1-P8.7-3 的关键验收记录。
 
 baostock 小步接入数据层：
 1. baostock 加入 requirements.txt
@@ -417,6 +418,18 @@ P8.7-2 小白手动验收清单一致性收口：
 - 未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / scripts/ / start_ui.command / requirements*.txt / README.md / docs/USER_GUIDE.md / docs/P8_7_RELEASE_REVIEW.md
 - 未修改评分、排序、数据链路、报告逻辑
 
+P8.7-3 README公开入口与当前状态一致性收口：
+- README.md 数据层描述同步为：akshare → baostock → skill_fallback + 缓存；baostock 稳定约 570 条 K 线
+- README.md 已知限制表修正：不再将"fallback 约 120 条"描述为主状态，改为 baostock 稳定约 570 条，极端情况降级
+- README.md 文档索引新增：docs/MANUAL_UI_CHECKLIST.md（小白人工验收清单）、docs/P8_7_RELEASE_REVIEW.md（发布前总复盘）
+- README.md CLI 命令区新增发布前一键验收入口：python3 scripts/confirm_release_ready.py（维护者用，非小白日常步骤）
+- README.md 标题描述同步为 akshare → baostock → skill fallback + backtrader
+- 保留小白主路径：双击 start_ui.command → 选参数 → 开始选股 → 看结果
+- 保留免责声明：仅供研究学习，不构成投资建议
+- PROJECT_STATE.md 记录 P8.7-3 完成
+- 未修改 app.py / main.py / strategies/ / data/ / reports/ / validation/ / scripts/ / start_ui.command / requirements*.txt / docs/USER_GUIDE.md / docs/MANUAL_UI_CHECKLIST.md / docs/UI_ACCEPTANCE.md / docs/P8_7_RELEASE_REVIEW.md
+- 未修改评分、排序、数据链路、报告逻辑
+
 ## 5. 关键文件
 
-app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / scripts/confirm_p84_cli.py / scripts/confirm_p84_ui.py / scripts/confirm_p84_docs.py / scripts/confirm_release_ready.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_5_AI_EXPLANATION_DECISION.md / docs/P8_6_UI_STABILITY_AUDIT.md / docs/P8_7_RELEASE_REVIEW.md / docs/P8_ROADMAP.md / docs/screenshots/home.png / docs/screenshots/result.png
+app.py / main.py / data/fetcher.py / data/universe.py / strategies/selection.py / strategies/registry.py / reports/generator.py / requirements.txt / requirements-ui.txt / scripts/test_baostock.py / scripts/confirm_coverage_fix.py / scripts/confirm_explain.py / scripts/confirm_report_explain.py / scripts/confirm_ui_dependencies.py / scripts/confirm_p83_ui.py / scripts/confirm_p84_registry.py / scripts/confirm_p84_cli.py / scripts/confirm_p84_ui.py / scripts/confirm_p84_docs.py / scripts/confirm_release_ready.py / docs/P8_1_ACCEPTANCE.md / docs/P8_2_EXPLANATION_DESIGN.md / docs/P8_3_UI_EXPERIENCE_DESIGN.md / docs/P8_4_STRATEGY_MANAGEMENT_DESIGN.md / docs/P8_5_AI_EXPLANATION_DECISION.md / docs/P8_6_UI_STABILITY_AUDIT.md / docs/P8_7_RELEASE_REVIEW.md / docs/P8_ROADMAP.md / docs/MANUAL_UI_CHECKLIST.md / docs/screenshots/home.png / docs/screenshots/result.png
