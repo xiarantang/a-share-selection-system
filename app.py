@@ -31,7 +31,11 @@ FALLBACK_SCRIPT = Path.home() / ".agents/skills/a-share-data/scripts/fetch_histo
 # ========== 展示层中文化映射（只改 UI 展示，不改底层 JSON/CSV/策略字段） ==========
 DECISION_ZH = {"strong_watch": "强观察", "watch": "观察", "neutral": "中性", "avoid": "回避"}
 RISK_ZH = {"low": "低风险", "medium": "中风险", "high": "高风险"}
-CONFIDENCE_ZH = {"high": "高置信度", "medium": "中置信度", "low": "低置信度"}
+CONFIDENCE_ZH = {
+    "high": "高置信度",
+    "medium": "中置信度",
+    "low": "低置信度",
+}
 
 # ---------- UI 展示 helper（仅用于页面渲染，不改底层字段） ----------
 RISK_TEXT_COLOR = {"low": "#155724", "medium": "#856404", "high": "#721c24"}
