@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.3-1.1 完成）
+> 最后更新：2026-05-19（P9.3-2 完成）
 
 ## 1. 项目总目标
 
@@ -63,7 +63,8 @@
 | P9.2-2 | `994dcd5` | 将文档一致性检查接入发布前一键验收 |
 | P9.3-0 | `24d38c0` | 复盘记录增强设计文档 |
 | P9.3-1 | `3c9f299` | JSON 复盘记录字段实现 |
-| P9.3-1.1 | — | run_metadata 字段结构收口 |
+| P9.3-1.1 | `82c836e` | run_metadata 字段结构收口 |
+| P9.3-2 | — | Markdown 报告接入 run_metadata |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -577,6 +578,16 @@ P9.3-1.1 run_metadata 字段结构收口：
 - 验证：result_summary.avg_score == validation.avg_score (54.4)、top_score == validation.top_score (69)
 - 未修改 app.py / main.py / reports/generator.py / 评分 / 排序 / 数据链路 / UI 展示
 - 验收：py_compile OK | CLI select EXIT:0 | 字段结构验证通过 | confirm_docs_consistency 19/19 | confirm_release_ready 10/10
+
+P9.3-2 Markdown 报告接入 run_metadata：
+- reports/generator.py：新增「本次运行复盘信息」小节
+  - 位置：历史窗口复盘之后、免责声明之前
+  - 展示：生成时间 / 运行方式 / 命令 / 参数 / 策略 / 数据源分布 / rows_summary / 覆盖不足率 / 整体质量 / Top评分 / 平均评分 / selection_path
+  - 优雅降级：run_metadata 不存在时不显示，不报错
+- reports/generator.py：修复「收益预测」边界词 → 「非未来收益表现」「不代表未来表现」
+- 未修改 JSON 生成（strategies/selection.py / main.py / app.py）
+- 未修改评分公式、排序逻辑、数据源优先级、UI 展示区域
+- 验收：py_compile OK | CLI report EXIT:0 | 复盘小节完整显示 | 收益预测零命中 | confirm_docs_consistency 19/19 | confirm_release_ready 10/10
 
 ## 5. 关键文件
 

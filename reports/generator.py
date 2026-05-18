@@ -55,7 +55,7 @@ class ReportGenerator:
         # 验证摘要
         v = (selection_data or {}).get("validation")
         if v:
-            lines.extend(["", "---", "", "## 📋 验证摘要（非收益预测）", ""])
+            lines.extend(["", "---", "", "## 📋 验证摘要", ""])
             lines.append(f"- 整体质量: {v.get('overall_quality','?')}")
             lines.append(f"- 覆盖不足率: {v.get('coverage_warning_ratio','?')} ({v.get('coverage_warning_ratio',0)*100:.0f}%)")
             lines.append(f"- 置信度分布: {v.get('confidence_dist',{})}")
@@ -131,7 +131,7 @@ class ReportGenerator:
         # 历史窗口复盘
         bt = (selection_data or {}).get("backtest_validation")
         if bt:
-            lines.extend(["", "---", "", "## 📈 历史窗口复盘（非未来收益预测）", ""])
+            lines.extend(["", "---", "", "## 📈 历史窗口复盘（非未来收益表现）", ""])
             lines.append(f"- 验证数量: {bt.get('total_checked','?')} 跳过: {bt.get('skipped','?')}")
             lines.append(f"- win: {bt.get('win_count','?')} flat: {bt.get('flat_count','?')} loss: {bt.get('loss_count','?')}")
             lines.append(f"- 平均 forward return: {bt.get('avg_forward_return_pct','?')}%")
@@ -141,12 +141,65 @@ class ReportGenerator:
                 for w in bt['warnings']:
                     lines.append(f"- ⚠️ {w}")
 
+        # 本次运行复盘信息（优雅降级：无 run_metadata 时不显示）
+        rm = (selection_data or {}).get("run_metadata")
+        if rm:
+            lines.extend(["", "---", "", "## 🧾 本次运行复盘信息", ""])
+            entry_map = {"cli": "命令行", "ui": "可视化界面 (Streamlit)", "script": "脚本调用"}
+            entry_label = entry_map.get(rm.get("entrypoint", ""), rm.get("entrypoint", ""))
+            lines.append(f"- 生成时间: {rm.get('generated_at', '')}")
+            lines.append(f"- 运行方式: {entry_label}")
+            cmd = rm.get("command", "")
+            if cmd:
+                lines.append(f"- 命令/入口: `{cmd}`")
+            p = rm.get("params", {})
+            if p:
+                p_parts = []
+                for k in ["universe", "limit", "top", "start", "strategy_id"]:
+                    if k in p:
+                        label_map = {"universe": "股票池", "limit": "扫描数量",
+                                     "top": "展示数量", "start": "起始日期",
+                                     "strategy_id": "策略ID"}
+                        p_parts.append(f"{label_map.get(k, k)}={p[k]}")
+                if "symbols" in p:
+                    p_parts.append(f"指定代码={p['symbols']}")
+                if p_parts:
+                    lines.append(f"- 参数: {' / '.join(p_parts)}")
+            stg = rm.get("strategy", {})
+            if stg:
+                lines.append(f"- 策略: {stg.get('name', '')} ({stg.get('id', '')})")
+            ds = rm.get("data_summary", {})
+            dsd = ds.get("data_source_dist", {})
+            if dsd:
+                dsd_parts = [f"{k}: {v}只" for k, v in dsd.items()]
+                lines.append(f"- 数据源分布: {' / '.join(dsd_parts)}")
+            rs_rows = ds.get("rows_summary", {})
+            if rs_rows:
+                lines.append(f"- 数据条数: 最少 {rs_rows.get('min', '?')} / 最多 {rs_rows.get('max', '?')} / 平均 {rs_rows.get('avg', '?')} / 共 {rs_rows.get('count', '?')} 只")
+            cwr = ds.get("coverage_warning_ratio")
+            if cwr is not None:
+                lines.append(f"- 覆盖不足率: {cwr:.0%}")
+            rsum = rm.get("result_summary", {})
+            oq = rsum.get("overall_quality", "")
+            if oq:
+                lines.append(f"- 整体质量: {oq}")
+            ts_score = rsum.get("top_score")
+            as_score = rsum.get("avg_score")
+            if ts_score is not None or as_score is not None:
+                lines.append(f"- Top 评分: {ts_score} / 平均评分: {as_score}")
+            sp = rm.get("selection_path", "")
+            if sp:
+                lines.append(f"- 选股结果: `{sp}`")
+            rp = rm.get("report_path", "")
+            if rp:
+                lines.append(f"- 报告路径: `{rp}`")
+
         if ai_analysis:
             lines.extend(["", "---", "", "## 🤖 AI 综合分析", "", ai_analysis])
 
         lines.extend(["", "---", "", "## ⚠️ 免责声明", "",
             "> 当前结果基于可用K线数据评分；若出现覆盖不足，决策置信度会下调。",
-            "> 当前选股模型为规则因子评分（多因子分组，满分100），不是收益预测。",
+            "> 当前选股模型为规则因子评分（多因子分组，满分100），不代表未来表现。",
             "> 本报告由系统根据数据和规则自动生成，仅供研究学习，不构成投资建议。投资有风险，入市需谨慎。"])
 
         report = "\n".join(lines)
