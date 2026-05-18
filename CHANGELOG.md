@@ -2,6 +2,64 @@
 
 > 以下为 v0.5 发布时的基线记录。v0.5 之后经历了 P8.1–P8.7 持续增强（数据层升级为 baostock、UI 体验优化、策略管理等），当前已进入发布候选完成态。详见 [PROJECT_STATE.md](PROJECT_STATE.md)。
 
+## v0.6-rc1 候选（未打 tag，人工确认后再发布）
+
+### 数据层
+- **baostock 集成**：主数据源由 skill_fallback（~120 条 K 线）升级为 baostock（稳定 ~570 条日 K），覆盖不足率从 100% 降为 0%，整体质量从 `usable_with_caution` 提升为 `good`
+- **三级降级链路**：akshare → baostock → skill_fallback + 本地缓存，akshare 网络波动时自动降级
+- **覆盖提示修正**：570 条 baostock 数据不再误报覆盖不足
+
+### 策略解释
+- **explain 字段**：每只候选新增小白解释（summary / strengths / weaknesses / risk_note / confidence_note），从已有因子和规则生成，不改评分排序
+- **三端展示**：CLI JSON + Markdown 报告 + Streamlit UI 均展示解释字段，老数据优雅降级
+
+### UI 体验优化
+- **Top3 速览卡片**：结果页首屏展示前 3 名候选，含排名、评分、中文决策/风险/置信度标签
+- **中文标签映射**：决策（强观察/观察/中性/回避）、风险（低/中/高）、置信度（高/中/低），仅 UI 展示层，底层 JSON 保持英文
+- **风险分级着色**：低风险绿色、中风险橙色、高风险红色，统一 Top3 卡片与逐只详情视觉风格
+- **因子图标化**：6 因子添加中文标签和小图标（趋势/动量/量能/风控/数据质量/形态）
+- **技术指标折叠**：MA/RSI/波动率等移入默认收起的 expander，首屏更清爽
+- **数据概览紧凑化**：4 列紧凑展示替代 st.metric 大字号，长文本不再截断
+
+### 策略管理
+- **策略注册表**：元数据注册中心（id / name / description / suitable_scenario / risk_reminder），替代旧 Skill 脚本执行模式
+- **CLI `--strategy` 参数**：select 子命令新增可选参数，无效策略不触发数据拉取
+- **UI 策略选择器**：侧栏股票池下方选择策略，结果页展示策略名称/适用场景/风险提醒
+- **AI 辅助解释边界评审**：结论为暂缓实现，明确硬性禁止项
+
+### UI 兼容性
+- **废弃 API 清理**：`use_container_width` → `width="stretch"`、`applymap` → `map`，消除 Streamlit/Pandas 废弃警告
+- **版本约束升级**：streamlit ≥ 1.39.0、pandas ≥ 2.1.0
+
+### 复盘记录增强（P9.3）
+- **run_metadata 字段**：每次选股自动记录 9 字段（生成时间/入口/命令/参数/策略/数据摘要/结果摘要/路径），不重跑评分
+- **Markdown 报告**：新增「本次运行复盘信息」小节
+- **Streamlit UI**：数据概览下方新增默认收起的复盘信息折叠区
+- **独立验收**：confirm_run_metadata.py 20 项自动检查
+
+### 验收体系增强（P9.2-P9.4）
+- **文档一致性检查**：confirm_docs_consistency.py 19 项自动检查（主路径表述/数据层/禁词/免责声明）
+- **排障体验验收**：confirm_troubleshooting.py 13 项自动检查（权限/语法/关键词/禁词/fallback 可选）
+- **发布前一键验收**：confirm_release_ready.py 聚合 12 项检查
+- **UI 自动验收**：confirm_p83_ui.py 44 项检查（静态文案 + JSON 运行时 + 截图）
+
+### 排障与体验增强（P9.4）
+- **公开排障文档**：TROUBLESHOOTING.md 口径修正（数据源顺序/端口说明/安装失败路径/主路径表述）
+- **FAQ 扩充**：USER_GUIDE.md 从 5 条扩充到 8 条（新增浏览器/安装失败/全部失败）
+- **UI 提示增强**：选股 spinner/全部失败/error/warning 均增加白话说明和排障指引
+- **启动脚本增强**：start_ui.command 提示加入主路径和排障文档引用
+
+### 发布边界收口（P9.5）
+- **RELEASE_CHECKLIST.md 更新**：对齐当前 12 项一键验收口径
+- **fallback 可选**：三处文档统一为「可选第三级兜底」，不是启动前提
+- **禁词红线**：公开文档零命中投资建议类措辞
+- **免责声明**：全部公开文档保留「仅供研究学习，不构成投资建议」
+
+### 已知限制
+- akshare 受网络影响经常失败，自动切换 baostock 兜底
+- 选股等待：默认 10 只约 30-60 秒
+- 非未来表现预测：评分为规则因子打分（满分 100），不是机器学习预测
+
 ## v0.5 (2026-05-16)
 
 ### 🎯 产品形态

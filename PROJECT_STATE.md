@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.5-1.1 完成）
+> 最后更新：2026-05-19（P9.5-2 完成）
 
 ## 1. 项目总目标
 
@@ -87,6 +87,7 @@
 | P9.5-0.1 | — | 发布准备设计文档版本口径返工 |
 | P9.5-1 | — | 更新 RELEASE_CHECKLIST.md |
 | P9.5-1.1 | — | PROJECT_STATE.md 中 fallback 历史措辞微修 |
+| P9.5-2 | — | 更新 CHANGELOG.md |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -742,6 +743,23 @@ P9.5-1 更新 RELEASE_CHECKLIST.md：
 - 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
 - 未创建 git tag
 - 下一步建议：P9.5-2 更新 CHANGELOG.md
+
+P9.5-2 更新 CHANGELOG.md：
+- CHANGELOG.md 新增 v0.6-rc1 候选章节（未打 tag，人工确认后再发布）
+  - 数据层：baostock 集成、三级降级、覆盖提示修正
+  - 策略解释：explain 字段、三端展示
+  - UI 体验：Top3 卡片、中文标签、风险着色、因子图标、技术指标折叠、数据概览紧凑化
+  - 策略管理：注册表、CLI 参数、UI 选择器、AI 边界评审
+  - UI 兼容性：废弃 API 清理、版本约束升级
+  - 复盘记录增强（P9.3）：run_metadata 9 字段、报告小节、UI 折叠区、20 项验收
+  - 验收体系增强（P9.2-P9.4）：文档一致性 19 项、排障体验 13 项、一键验收 12 项、UI 44 项
+  - 排障与体验增强（P9.4）：排障文档口径、FAQ 扩充、UI 提示、启动脚本
+  - 发布边界收口（P9.5）：验收清单更新、fallback 可选、禁词红线、免责声明
+  - 已知限制
+- docs/P9_5_RELEASE_PREP.md：P9.5-2 标记已完成
+- 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
+- 未创建 git tag
+- 下一步建议：P9.5-3 tag 前最终验收记录
 
 ## 5. 关键文件
 
