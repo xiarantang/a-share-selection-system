@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.4-4.1.1 完成）
+> 最后更新：2026-05-19（P9.4-4.2 完成）
 
 ## 1. 项目总目标
 
@@ -82,6 +82,7 @@
 | P9.4-3.1 | — | 恢复 start_ui.command 可执行权限 |
 | P9.4-4.1 | — | 新增独立排障体验验收脚本 |
 | P9.4-4.1.1 | — | 补齐验收脚本关键词覆盖 |
+| P9.4-4.2 | — | 排障体验验收接入发布前一键验收 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -702,6 +703,14 @@ P9.4-4.1 新增独立排障体验验收脚本：
   - 未接入 confirm_release_ready.py（留到 P9.4-4.2）
 - docs/P9_4_TROUBLESHOOTING_DESIGN.md：P9.4-4 状态更新
 - 未修改 app.py / main.py / start_ui.command / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
+
+P9.4-4.2 排障体验验收接入发布前一键验收：
+- scripts/confirm_release_ready.py：CHECKS 新增「排障体验验收」，位置在 run_metadata 复盘记录验收之后
+- 公开文档检查项数量从 11 项更新为 12 项：README.md / docs/P8_7_RELEASE_REVIEW.md / docs/P9_ROADMAP.md
+- docs/P9_4_TROUBLESHOOTING_DESIGN.md：P9.4 排障增强闭环标记完成
+- 未修改 confirm_troubleshooting.py / app.py / main.py / start_ui.command / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
+- 验收：confirm_release_ready 12/12 | confirm_docs_consistency 19/19
+- 下一步建议：P9.5 发布版打标准备
 
 ## 5. 关键文件
 

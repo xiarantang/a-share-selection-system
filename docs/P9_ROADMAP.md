@@ -3,7 +3,7 @@
 > 规划日期：2026-05-18
 > 前置基线：v0.5 + P8 发布候选完成态
 > 最新基线 commit：`84bec90`
-> 发布前一键验收：`python3 scripts/confirm_release_ready.py`，当前 11/11 通过（含文档口径一致性检查 + run_metadata 复盘记录验收）
+> 发布前一键验收：`python3 scripts/confirm_release_ready.py`，当前 12/12 通过（含文档口径一致性检查 + run_metadata 复盘记录验收 + 排障体验验收）
 
 ## 1. 总目标
 
