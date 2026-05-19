@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.5-4 完成）
+> 最后更新：2026-05-19（P10-0 完成）
 
 ## 1. 项目总目标
 
@@ -91,6 +91,7 @@
 | P9.5-3 | — | tag 前最终验收记录（打标前记录） |
 | P9.5-4 | — | v0.6-rc1 打标后状态同步 |
 | P9.5-4.1 | — | P9_5_RELEASE_PREP 打标前/打标后口径分层收口 |
+| P10-0 | — | 发布后观察与真实小白验收路线图 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -805,6 +806,23 @@ P9.5-4.1 P9_5_RELEASE_PREP 打标前/打标后口径分层收口：
 - 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
 - 保留免责声明：仅供研究学习，不构成投资建议
 - 不直写投资建议类禁词
+
+P10-0 发布后观察与真实小白验收路线图：
+- 新增 docs/P10_ROADMAP.md：P10 路线图
+  - 总目标：发布后观察与真实小白验收，不是新增功能冲刺
+  - 当前基线：main 最新 commit `148701c`、v0.6-rc1 tag 指向 `3461390`、12/12 通过
+  - P10 原则：保护双击启动主路径、先观察再修复、修复只改体验/文档/验收、tag 不随便移动
+  - P10.1：tag/main/公开文档状态一致性守门
+  - P10.2：真实 UI 启动与截图复核
+  - P10.3：发布后问题记录模板（docs/POST_RELEASE_NOTES.md）
+  - P10.4：v0.6 正式版决策记录（基于观察结果，不自动打 tag）
+  - 明确不做：不加新策略、不改评分排序、不改数据链路、不引入 AI、不做登录/数据库/实盘
+  - 免责声明：仅供研究学习，不构成投资建议
+- README.md：文档索引新增 P10_ROADMAP.md
+- PROJECT_STATE.md：记录 P10-0 完成
+- 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / CHANGELOG.md / RELEASE_CHECKLIST.md / docs/TROUBLESHOOTING.md / docs/USER_GUIDE.md
+- 不直写投资建议类禁词
+- 下一步建议：P10.1 tag/main/公开文档状态一致性守门
 
 ## 5. 关键文件
 

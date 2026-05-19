@@ -228,6 +228,7 @@ a-share-selection-system/
 | [📝 变更日志](CHANGELOG.md) | v0.5 → v0.6-rc1 变更记录 |
 | [✅ 发布检查清单](RELEASE_CHECKLIST.md) | 发布前逐项检查 |
 | [📂 项目状态](PROJECT_STATE.md) | 开发阶段/commit 记录/真实能力 |
+| [🗺️ P10 路线图](docs/P10_ROADMAP.md) | 发布后观察与真实小白验收规划 |
 
 ## 📄 许可证
 
