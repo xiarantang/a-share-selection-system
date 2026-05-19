@@ -107,14 +107,18 @@ git diff v0.6-rc1..HEAD --name-only
 - 运行方式：`python3 scripts/confirm_release_state.py`
 - 验收结果：6/6 通过
 
-### P10.1-2 是否接入 confirm_release_ready.py 的取舍评估
+### P10.1-2 是否接入 confirm_release_ready.py 的取舍评估（已完成 ✅ — 暂不接入）
 
-**建议：暂不接入。** 原因：
+**决策结论：暂不将 `confirm_release_state.py` 接入 `confirm_release_ready.py`。**
 
-1. `confirm_release_ready.py` 关注的是"当前代码是否可以发布"，检查语法、UI、策略、CLI 等产品能力。
-2. `confirm_release_state.py` 关注的是"tag/main 状态是否一致"，检查 git 元数据。
-3. tag 固定在 `3461390` 而 main 会继续前进，两者生命周期不同。
-4. 将来如果进入 v0.6 正式版流程（P10.4），再评估是否合并。
+决策理由：
+
+1. **关注点不同**：`confirm_release_ready.py` 检查"当前 main 是否可发布/可运行"（语法、UI、策略、CLI 等产品能力）；`confirm_release_state.py` 检查"某个历史 release tag 与 main 后续文档提交关系是否清楚"（git 元数据）。
+2. **生命周期不同**：tag 固定在 `3461390`，而 main 会继续前进（P10 的文档提交、未来的小修等）。混在一起会让日常产品验收依赖 git 历史状态，反而不清晰。
+3. **日常使用场景分离**：
+   - 日常产品回归：`python3 scripts/confirm_release_ready.py`（关注产品能力是否正常）
+   - 发布状态复盘：`python3 scripts/confirm_release_state.py`（关注 tag/main 关系是否一致）
+4. **未来再评估**：如果进入 v0.6 正式版流程（P10.4），再评估是否合并。
 
 ### P10.1-3 文档收口
 

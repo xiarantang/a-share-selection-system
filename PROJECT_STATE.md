@@ -94,6 +94,7 @@
 | P10-0 | — | 发布后观察与真实小白验收路线图 |
 | P10.1-0 | — | tag/main/公开文档状态一致性守门设计 |
 | P10.1-1 | — | 新增独立 release tag/main 状态验收脚本 |
+| P10.1-2 | — | confirm_release_state 接入取舍决策（暂不接入） |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -854,6 +855,22 @@ P10.1-1 新增独立 release tag/main 状态验收脚本：
 - 未修改 app.py / main.py / start_ui.command / strategies/ / data/ / reports/ / validation/ / confirm_release_ready.py / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md
 - 不直写投资建议类禁词
 - 下一步建议：P10.1-2 接入评估（建议暂不接入）或 P10.1-3 文档收口
+
+P10.1-2 confirm_release_state 是否接入 confirm_release_ready 的取舍决策：
+- 决策结论：暂不将 confirm_release_state.py 接入 confirm_release_ready.py
+- 决策理由：
+  - confirm_release_ready.py 检查"当前 main 是否可发布/可运行"（产品能力）
+  - confirm_release_state.py 检查"某个历史 release tag 与 main 后续文档提交关系是否清楚"（git 元数据）
+  - tag 固定在 3461390 而 main 会继续前进，生命周期不同
+  - 混在一起会让日常产品验收依赖 git 历史状态，反而不清晰
+- 使用方式：
+  - 日常产品回归：python3 scripts/confirm_release_ready.py
+  - 发布状态复盘：python3 scripts/confirm_release_state.py（单独运行）
+- docs/P10_1_RELEASE_STATE_GUARD_DESIGN.md：P10.1-2 标记已完成
+- docs/P10_ROADMAP.md：P10.1-2 状态同步
+- 未修改 scripts/confirm_release_ready.py / scripts/confirm_release_state.py / app.py / main.py / start_ui.command / strategies/ / data/ / reports/ / validation/ / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md
+- 不直写投资建议类禁词
+- 下一步建议：P10.1-3 文档收口
 
 ## 5. 关键文件
 
