@@ -103,26 +103,18 @@ test -f docs/POST_RELEASE_NOTES.md && echo "文件存在"
 python3 scripts/confirm_docs_consistency.py
 ```
 
-### P10.4 v0.6 正式版决策记录
+### P10.4 v0.6 正式版决策记录（已完成 ✅）
 
 **目标**：基于 P10.1–P10.3 观察结果，决定是否从 rc1 升为 v0.6。不自动打 tag。
 
-允许修改：
-- PROJECT_STATE.md
-- docs/（决策记录文档）
-- README.md（仅版本号口径同步）
-- CHANGELOG.md（仅版本标题同步，如需）
+**决策文档**：[docs/P10_4_RELEASE_DECISION.md](P10_4_RELEASE_DECISION.md)
 
-禁止修改：
-- app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分/排序/数据链路
-- 不创建或移动 git tag（v0.6 仍需人工确认后手动打标）
-
-决策条件（参考）：
-- P10.1 状态一致性守门通过
-- P10.2 UI 复核无阻断性问题
-- P10.3 问题记录中无未处理的阻断性反馈
-- 发布前一键验收仍 12/12 通过
-- 如果以上条件满足，建议打 v0.6 tag；否则先修问题，考虑 v0.6-rc2
+**完成结论**：
+- 决策：暂不自动打 v0.6，进入真实小白试用观察期
+- 技术验收全部通过（12/12 + 19/19 + 6/6 + 截图复核），但尚未完成一轮真实小白试用
+- 升级条件：release_ready 12/12 + release_state 6/6 + docs_consistency 19/19 + POST_RELEASE_NOTES 无未处理阻断问题 + 至少一轮真实小白试用 + 人工确认
+- 回退规则：发现阻断问题则修复后考虑 v0.6-rc2，不移动 v0.6-rc1 tag
+- 未创建 v0.6 tag
 
 ---
 

@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P10.3 完成）
+> 最后更新：2026-05-19（P10 完成）
 
 ## 1. 项目总目标
 
@@ -103,6 +103,7 @@
 | P10.2-2.1 | — | 修正截图脚本首页关键词并重跑通过 |
 | P10.2-3 | — | 真实 UI 截图复核文档收口，P10.2 完成 |
 | P10.3 | — | 新增发布后问题记录模板 |
+| P10.4 | — | v0.6 正式版决策记录，暂不自动打 tag |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -983,6 +984,27 @@ P10.3 新增发布后问题记录模板：
 - 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分/排序/数据链路
 - 不直写投资建议类禁词
 - 下一步建议：P10.4 v0.6 正式版决策记录
+
+P10.4 v0.6 正式版决策记录：
+- 新增 docs/P10_4_RELEASE_DECISION.md：v0.6 正式版决策记录
+  - 当前基线：v0.6-rc1 tag 指向 commit 3461390，main 最新 5981531
+  - P10.1/P10.2/P10.3 结论摘要
+  - 决策：暂不自动打 v0.6，进入真实小白试用观察期
+  - 升级条件：release_ready 12/12、release_state 6/6、docs_consistency 19/19、POST_RELEASE_NOTES 无未处理阻断问题、至少一轮真实小白试用、人工确认
+  - 回退规则：发现阻断问题则修复后考虑 v0.6-rc2，不移动 v0.6-rc1 tag
+  - 保留免责声明：仅供研究学习，不构成投资建议
+- 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分/排序/数据链路
+- 未创建 v0.6 tag，未移动 v0.6-rc1 tag
+- 不直写投资建议类禁词
+
+**P10 完成结论**：
+- P10（发布后观察与真实小白验收）全部子阶段已完成
+- P10.1 release tag/main 状态守门 ✅
+- P10.2 真实 UI 启动与截图复核 ✅
+- P10.3 发布后问题记录模板 ✅
+- P10.4 v0.6 正式版决策记录 ✅
+- 当前状态：v0.6-rc1 处于发布后观察期，技术验收全部通过，等待真实小白试用反馈
+- 下一步建议：真实小白试用观察，用 docs/POST_RELEASE_NOTES.md 记录问题，确认无阻断性问题后人工决定是否打 v0.6 tag
 
 ## 5. 关键文件
 
