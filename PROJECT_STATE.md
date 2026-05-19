@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P10.1-1 完成）
+> 最后更新：2026-05-19（P10.1 已完成）
 
 ## 1. 项目总目标
 
@@ -95,6 +95,7 @@
 | P10.1-0 | — | tag/main/公开文档状态一致性守门设计 |
 | P10.1-1 | — | 新增独立 release tag/main 状态验收脚本 |
 | P10.1-2 | — | confirm_release_state 接入取舍决策（暂不接入） |
+| P10.1-3 | — | tag/main 状态守门文档收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -871,6 +872,21 @@ P10.1-2 confirm_release_state 是否接入 confirm_release_ready 的取舍决策
 - 未修改 scripts/confirm_release_ready.py / scripts/confirm_release_state.py / app.py / main.py / start_ui.command / strategies/ / data/ / reports/ / validation/ / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md
 - 不直写投资建议类禁词
 - 下一步建议：P10.1-3 文档收口
+
+P10.1-3 tag/main 状态守门文档收口：
+- docs/P10_1_RELEASE_STATE_GUARD_DESIGN.md：新增 P10.1 完成结论
+- docs/P10_ROADMAP.md：标记 P10.1 已完成，下一步建议 P10.2
+- PROJECT_STATE.md：记录 P10.1-3 完成
+- 未修改 scripts/ / app.py / main.py / start_ui.command / strategies/ / data/ / reports/ / validation/ / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md
+- 不直写投资建议类禁词
+
+**P10.1 已完成。** 完成结论：
+- v0.6-rc1 tag 固定指向 commit `3461390`
+- main 可以继续有文档/观察记录提交
+- 发布后文档提交不移动 rc1 tag
+- release 状态复盘用 `python3 scripts/confirm_release_state.py`（6/6 通过）
+- 产品回归验收用 `python3 scripts/confirm_release_ready.py`（12/12 通过）
+- 下一步建议：P10.2 真实 UI 启动与截图复核
 
 ## 5. 关键文件
 

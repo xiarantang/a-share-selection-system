@@ -47,11 +47,13 @@ P10 不是新增功能冲刺。目标是：
 
 ## 4. 阶段拆分
 
-### P10.1 tag/main/公开文档状态一致性守门（P10.1-0/1/2 已完成）
+### P10.1 tag/main/公开文档状态一致性守门（已完成 ✅）
 
 **目标**：明确 tag 指向与 main 后续文档提交的关系，确保复盘时不会误读。
 
 **设计文档**：[docs/P10_1_RELEASE_STATE_GUARD_DESIGN.md](P10_1_RELEASE_STATE_GUARD_DESIGN.md)
+
+**核心结论**：v0.6-rc1 tag 固定指向 `3461390`；发布后文档提交不移动 rc1 tag；release 状态复盘用 `confirm_release_state.py`，产品回归用 `confirm_release_ready.py`。
 
 允许修改：
 - docs/（新增说明文档或更新现有文档）

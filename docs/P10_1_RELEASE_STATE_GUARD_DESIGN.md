@@ -120,12 +120,31 @@ git diff v0.6-rc1..HEAD --name-only
    - 发布状态复盘：`python3 scripts/confirm_release_state.py`（关注 tag/main 关系是否一致）
 4. **未来再评估**：如果进入 v0.6 正式版流程（P10.4），再评估是否合并。
 
-### P10.1-3 文档收口
+### P10.1-3 文档收口（已完成 ✅）
 
 - 在 PROJECT_STATE.md 中明确记录"发布后文档提交不移动 rc1 tag"原则
-- 如有需要，在 P10_ROADMAP.md 中补充 tag/main 关系说明
-- 允许修改：PROJECT_STATE.md、docs/P10_ROADMAP.md
-- 禁止修改：产品代码、scripts/（除 P10.1-1 外）
+- 在 docs/P10_ROADMAP.md 中标记 P10.1 已完成，下一步建议 P10.2
+- 未修改任何脚本和产品文件
+
+---
+
+## 4.1 P10.1 完成结论
+
+P10.1 tag/main/公开文档状态一致性守门阶段已完成。产出汇总：
+
+| 阶段 | 产出 |
+|------|------|
+| P10.1-0 | 设计文档 docs/P10_1_RELEASE_STATE_GUARD_DESIGN.md |
+| P10.1-1 | 独立验收脚本 scripts/confirm_release_state.py（6/6 通过） |
+| P10.1-2 | 接入取舍决策：暂不接入 confirm_release_ready.py |
+| P10.1-3 | 文档收口，P10.1 标记已完成 |
+
+核心结论：
+- v0.6-rc1 tag 固定指向 commit `3461390`
+- main 可以继续有文档/观察记录提交
+- 发布后文档提交不移动 rc1 tag
+- release 状态复盘用 `python3 scripts/confirm_release_state.py`
+- 产品回归验收用 `python3 scripts/confirm_release_ready.py`
 
 ---
 
