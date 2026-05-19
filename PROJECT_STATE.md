@@ -98,6 +98,7 @@
 | P10.1-3 | — | tag/main 状态守门文档收口 |
 | P10.2-0 | — | 真实 UI 启动与截图复核设计/诊断 |
 | P10.2-1 | — | 修正截图脚本关键词/验收口径 |
+| P10.2-1.1 | — | 修正 release 状态守门规则，允许验收脚本白名单 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -916,6 +917,21 @@ P10.2-1 修正截图脚本关键词/验收口径：
 - docs/P10_ROADMAP.md：P10.2-1 状态同步
 - PROJECT_STATE.md：记录 P10.2-1 完成
 - 未修改 app.py / main.py / start_ui.command / docs/screenshots/ / strategies/ / data/ / reports/ / validation/ / 评分/排序/数据链路
+- 不直写投资建议类禁词
+- 下一步建议：P10.2-2 启动 Streamlit 做真实截图复核
+
+P10.2-1.1 修正 release 状态守门规则，允许验收脚本白名单：
+- scripts/confirm_release_state.py ALLOWED_SCRIPTS 从"只允许本脚本自身"扩展为白名单：
+  - scripts/confirm_release_state.py（本脚本）
+  - scripts/screenshot_home.py（发布后真实 UI 截图复核工具）
+- 白名单注释说明：这些脚本是发布后验收/截图复核工具，不是产品链路
+- 仍然禁止 app.py / main.py / start_ui.command / data/ / strategies/ / reports/ / validation/ 等产品代码变更
+- 输出文案微调为"tag..HEAD diff 无产品代码变更（允许验收脚本白名单）"
+- 修正后 confirm_release_state 6/6 通过
+- docs/P10_1_RELEASE_STATE_GUARD_DESIGN.md：同步白名单规则
+- docs/P10_2_UI_SMOKE_DESIGN.md：补充 P10.2-1.1 异常修正记录
+- docs/P10_ROADMAP.md：P10.2-1.1 状态同步
+- 未修改 app.py / main.py / start_ui.command / scripts/screenshot_home.py / docs/screenshots/ / strategies/ / data/ / reports/ / validation/ / 评分/排序/数据链路
 - 不直写投资建议类禁词
 - 下一步建议：P10.2-2 启动 Streamlit 做真实截图复核
 

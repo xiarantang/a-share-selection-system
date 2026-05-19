@@ -67,6 +67,8 @@
 3. 脚本头注释：P7.7 → 更新为 P10.2
 4. 覆盖不全关键词：改为可选诊断输出，不影响退出码
 
+> P10.2-1.1 补充：confirm_release_state.py 的 ALLOWED_SCRIPTS 白名单已扩展，允许 screenshot_home.py 作为发布后验收工具变更，仍禁止产品代码。
+
 ### P10.2-2 启动 Streamlit 做真实截图复核
 
 **目标**：用修正后的脚本从真实 Streamlit 页面截图，确认截图内容与当前 UI 一致。

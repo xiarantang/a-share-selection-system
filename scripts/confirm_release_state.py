@@ -18,8 +18,11 @@ import sys
 TAG = "v0.6-rc1"
 TAG_COMMIT = "3461390"
 
-# tag 后允许新增的 scripts/ 文件（本脚本自身）
-ALLOWED_SCRIPTS = {"scripts/confirm_release_state.py"}
+# tag 后允许变更的 scripts/ 文件（发布后验收/截图复核工具，不是产品链路）
+ALLOWED_SCRIPTS = {
+    "scripts/confirm_release_state.py",
+    "scripts/screenshot_home.py",
+}
 
 # 不允许出现在 tag..HEAD diff 中的路径前缀/文件
 PRODUCT_GUARDS = [
@@ -111,7 +114,7 @@ def main() -> None:
           f"git show 输出中未找到 {TAG_COMMIT}: {out[:120]!r}")
 
     # ── 检查 6：tag 到 HEAD 之间无产品代码变更 ──
-    print(f"  ▶ tag..HEAD diff 无产品代码变更 ...")
+    print(f"  ▶ tag..HEAD diff 无产品代码变更（允许验收脚本白名单） ...")
     rc, out = run_git("diff", f"{TAG}..HEAD", "--name-status")
     if rc != 0:
         check("tag..HEAD diff 可执行", False,
@@ -129,15 +132,15 @@ def main() -> None:
                     if filepath.startswith(guard) or filepath == guard:
                         violations.append(filepath)
                         break
-                # scripts/ 特殊处理：允许本脚本自身
+                # scripts/ 特殊处理：允许白名单中的验收脚本
                 if filepath.startswith("scripts/"):
                     if filepath not in ALLOWED_SCRIPTS:
                         violations.append(filepath)
         if violations:
-            check("tag..HEAD diff 无产品代码变更", False,
+            check("tag..HEAD diff 无产品代码变更（允许验收脚本白名单）", False,
                   f"发现不允许的文件: {', '.join(violations)}")
         else:
-            check("tag..HEAD diff 无产品代码变更", True)
+            check("tag..HEAD diff 无产品代码变更（允许验收脚本白名单）", True)
 
     # ── 汇总 ──
     print()
