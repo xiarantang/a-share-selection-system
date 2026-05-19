@@ -21,9 +21,9 @@ P10 不是新增功能冲刺。目标是：
 
 | 项目 | 值 |
 |------|-----|
-| main 最新 commit | `148701c`（P9.5-4.1） |
+| main 最新 commit | `f670716`（P10.4） |
 | tag | `v0.6-rc1`，指向 commit `3461390` |
-| main 与 tag 关系 | main 在 tag 之后有 P9.5-4 / P9.5-4.1 两个文档提交，均未改产品代码 |
+| main 与 tag 关系 | main 在 tag 之后有多个文档/验收提交，均未改产品代码 |
 | 发布前一键验收 | `confirm_release_ready.py` 12/12 通过 |
 | 文档口径一致性 | `confirm_docs_consistency.py` 19/19 通过 |
 | run_metadata 验收 | `confirm_run_metadata.py` 20/20 通过 |
