@@ -41,8 +41,8 @@ def main(port: int = 8501, timeout_sec: int = 120):
         print(f"  首页截图 → {HOME_PATH} ({len(home_text)} 字符)")
 
         home_checks = check_keywords(home_text, "首页", [
-            "A股智能选股系统", "开始选股", "可以开始选股",
-            "首次使用检查", "免责声明",
+            "A股智能选股系统", "开始选股", "系统就绪",
+            "环境检查", "免责声明",
         ])
         for kw, ok in home_checks.items():
             print(f"  {'✅' if ok else '❌'} {kw}")
