@@ -90,6 +90,7 @@
 | P9.5-2 | — | 更新 CHANGELOG.md |
 | P9.5-3 | — | tag 前最终验收记录（打标前记录） |
 | P9.5-4 | — | v0.6-rc1 打标后状态同步 |
+| P9.5-4.1 | — | P9_5_RELEASE_PREP 打标前/打标后口径分层收口 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -792,6 +793,18 @@ P9.5-4 v0.6-rc1 打标后状态同步：
 - 不直写投资建议类禁词
 - 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
 - 未重新打 tag，未执行 git push --tags
+
+P9.5-4.1 P9_5_RELEASE_PREP 打标前/打标后口径分层收口：
+- docs/P9_5_RELEASE_PREP.md：
+  - 顶部新增文档分层说明：第 1–7 节为打标前设计记录，第 7.1 节为打标后状态确认，当前真实状态以 7.1 为准
+  - 版本建议结论：补充"打标前设计记录：该建议已由人工确认并执行，见 7.1 节"
+  - P9.5-3 拆分说明：标题标注"打标前步骤"，"不实际打 tag"改为"打标前步骤要求：当时不实际打 tag"
+  - 第 7 节完成结论：标题标注"打标前记录"，增加引导说明指向 7.1 节
+- PROJECT_STATE.md：记录 P9.5-4.1 完成
+- tag 未移动，v0.6-rc1 仍指向 commit `3461390`
+- 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
+- 保留免责声明：仅供研究学习，不构成投资建议
+- 不直写投资建议类禁词
 
 ## 5. 关键文件
 
