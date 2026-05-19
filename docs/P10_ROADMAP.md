@@ -88,19 +88,14 @@ python3 scripts/confirm_release_ready.py   # 含 P8.3 UI 验收 44 项
 ls -la docs/screenshots/home.png docs/screenshots/result.png
 ```
 
-### P10.3 发布后问题记录模板
+### P10.3 发布后问题记录模板（已完成 ✅）
 
 **目标**：建立 `docs/POST_RELEASE_NOTES.md`，记录小白试用反馈、复现步骤、处理状态。
 
-允许修改：
-- docs/POST_RELEASE_NOTES.md（新增）
-- PROJECT_STATE.md
-
-禁止修改：
-- app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分/排序/数据链路
-
-问题记录模板字段建议：
-- 编号 / 日期 / 发现者 / 问题描述 / 复现步骤 / 影响范围 / 处理状态 / 修复阶段 / 备注
+**完成结论**：
+- 新增 docs/POST_RELEASE_NOTES.md，含问题分级（阻断/重要/一般/观察）、状态定义（待复现/已确认/处理中/已修复/暂不处理/已关闭）、13 字段记录表格和空白模板行
+- 未修改产品代码、评分、排序、数据链路
+- 下一步：P10.4 v0.6 正式版决策记录
 
 验收命令：
 ```bash
