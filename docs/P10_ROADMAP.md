@@ -70,13 +70,19 @@ python3 scripts/confirm_release_ready.py
 python3 scripts/confirm_docs_consistency.py
 ```
 
-### P10.2 真实 UI 启动与截图复核（P10.2-0 设计已完成）
+### P10.2 真实 UI 启动与截图复核（P10.2-2 截图复核已完成）
 
 **目标**：双击路径 / Streamlit 页面 / 首页结果截图确认。如 UI 无实际改动，不强制更新截图。
 
 **设计文档**：[docs/P10_2_UI_SMOKE_DESIGN.md](P10_2_UI_SMOKE_DESIGN.md)
 
-**诊断结论**：截图脚本旧关键词已修正（P10.2-1），现有截图来自 P8.6-2 且 app.py 未改，应仍有效。
+**复核结果**（P10.2-2）：
+- 本地 Streamlit 启动于端口 8502，从真实 UI 截取首页和结果页截图
+- 截图已更新：home.png ~198KB、result.png ~185KB
+- 结果页关键词全部通过，中文决策标签确认（观察、中性）
+- 首页 2 项关键词（「可以开始选股」「首次使用检查」）与脚本预期有微小差异，需后续修正脚本
+- 未修改产品代码、评分、排序、数据链路
+- 下一步：P10.2-3 文档收口
 
 允许修改：
 - docs/screenshots/（如截图需更新）

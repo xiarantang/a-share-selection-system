@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P10.2-1 完成）
+> 最后更新：2026-05-19（P10.2-2 完成）
 
 ## 1. 项目总目标
 
@@ -99,6 +99,7 @@
 | P10.2-0 | — | 真实 UI 启动与截图复核设计/诊断 |
 | P10.2-1 | — | 修正截图脚本关键词/验收口径 |
 | P10.2-1.1 | — | 修正 release 状态守门规则，允许验收脚本白名单 |
+| P10.2-2 | — | 真实 UI 截图复核并更新截图 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -934,6 +935,23 @@ P10.2-1.1 修正 release 状态守门规则，允许验收脚本白名单：
 - 未修改 app.py / main.py / start_ui.command / scripts/screenshot_home.py / docs/screenshots/ / strategies/ / data/ / reports/ / validation/ / 评分/排序/数据链路
 - 不直写投资建议类禁词
 - 下一步建议：P10.2-2 启动 Streamlit 做真实截图复核
+
+P10.2-2 真实 UI 截图复核并更新截图：
+- 本地 Streamlit 启动于端口 8502，运行 screenshot_home.py 执行真实截图复核
+- 截图脚本结果：
+  - 首页关键词 3/5 通过（A股智能选股 ✅、开始选股 ✅、免责声明 ✅）
+  - 首页 2 项关键词未精确匹配：「可以开始选股」（实际 UI 为「系统就绪 – 点击左侧「🚀 开始选股」即可开始」）、「首次使用检查」（实际 UI 为「🔧 环境检查（点击展开）」折叠标签）
+  - 结果页关键词全部通过（选股完成、候选表格、数据区间、验证摘要、整体质量、免责声明）
+  - 决策标签中文展示确认（观察、中性）
+  - 脚本退出码 1（因首页 2 项关键词未精确匹配）
+- 首页 2 项关键词差异说明：screenshot_home.py 在 P10.2-1 修正时保留了这两项关键词，但实际 UI 文案与脚本预期有微小差异；因 screenshot_home.py 在 P10.2-2 禁止修改，需后续步骤修正
+- 截图已更新：
+  - docs/screenshots/home.png：~183KB → ~198KB（从真实 Streamlit 首页截取）
+  - docs/screenshots/result.png：~147KB → ~185KB（从真实 Streamlit 结果页截取）
+- Streamlit 后台进程已停止，端口 8502 已释放
+- 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分/排序/数据链路
+- 不直写投资建议类禁词
+- 下一步建议：P10.2-3 文档收口
 
 ## 5. 关键文件
 
