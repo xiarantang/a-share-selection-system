@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P10.1 已完成）
+> 最后更新：2026-05-19（P10.2-0 完成）
 
 ## 1. 项目总目标
 
@@ -96,6 +96,7 @@
 | P10.1-1 | — | 新增独立 release tag/main 状态验收脚本 |
 | P10.1-2 | — | confirm_release_state 接入取舍决策（暂不接入） |
 | P10.1-3 | — | tag/main 状态守门文档收口 |
+| P10.2-0 | — | 真实 UI 启动与截图复核设计/诊断 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -887,6 +888,22 @@ P10.1-3 tag/main 状态守门文档收口：
 - release 状态复盘用 `python3 scripts/confirm_release_state.py`（6/6 通过）
 - 产品回归验收用 `python3 scripts/confirm_release_ready.py`（12/12 通过）
 - 下一步建议：P10.2 真实 UI 启动与截图复核
+
+P10.2-0 真实 UI 启动与截图复核设计/诊断：
+- 新增 docs/P10_2_UI_SMOKE_DESIGN.md：P10.2 设计/诊断文档
+  - 诊断截图脚本 scripts/screenshot_home.py 旧关键词残留：首页旧步骤计数词（行 45）、结果页原始英文决策标签（行 68）
+  - 现有截图来自 P8.6-2（2026-05-18），app.py 自 P8.6 后未改产品代码，截图应仍有效但需 P10.2-2 实际确认
+  - confirm_p83_ui.py（44 项静态/运行时）vs screenshot_home.py（真实浏览器截图）角色区分
+- P10.2 拆分：
+  - P10.2-1：修正截图脚本关键词/验收口径（只改脚本，不改 UI）
+  - P10.2-2：启动 Streamlit 做真实截图复核（确认截图是否仍代表当前 UI）
+  - P10.2-3：文档收口（记录复核结果和是否更新截图）
+- 明确不做：不改 UI 文案、不改产品逻辑、不改评分排序数据链路、不移动 tag
+- docs/P10_ROADMAP.md：P10.2-0 状态同步
+- PROJECT_STATE.md：记录 P10.2-0 完成
+- 未修改 app.py / main.py / start_ui.command / scripts/ / docs/screenshots/ / strategies/ / data/ / reports/ / validation/
+- 不直写投资建议类禁词
+- 下一步建议：P10.2-1 修正截图脚本关键词/验收口径
 
 ## 5. 关键文件
 
