@@ -1,4 +1,4 @@
-"""P7.7 验收截图脚本 — 生成首页和结果页截图到 docs/screenshots/。
+"""P10.2 真实 UI 截图复核脚本 — 生成首页和结果页截图到 docs/screenshots/。
 
 用法:
     python scripts/screenshot_home.py               # 默认 localhost:8501
@@ -42,7 +42,7 @@ def main(port: int = 8501, timeout_sec: int = 120):
 
         home_checks = check_keywords(home_text, "首页", [
             "A股智能选股系统", "开始选股", "可以开始选股",
-            "首次使用检查", "免责声明", "四步完成选股",
+            "首次使用检查", "免责声明",
         ])
         for kw, ok in home_checks.items():
             print(f"  {'✅' if ok else '❌'} {kw}")
@@ -64,19 +64,38 @@ def main(port: int = 8501, timeout_sec: int = 120):
         result_text = page.inner_text("body")
         print(f"  结果页截图 → {RESULT_PATH} ({len(result_text)} 字符)")
 
-        result_checks = check_keywords(result_text, "结果页", [
-            "选股完成", "候选表格", "数据区间", "覆盖不全",
-            "验证摘要", "整体质量", "strong_watch", "免责声明",
+        # 必选关键词：应在结果页始终出现
+        result_required = check_keywords(result_text, "结果页", [
+            "选股完成", "候选表格", "数据区间",
+            "验证摘要", "整体质量", "免责声明",
         ])
-        for kw, ok in result_checks.items():
+        for kw, ok in result_required.items():
             print(f"  {'✅' if ok else '❌'} {kw}")
+
+        # 可选诊断关键词：仅在特定条件出现，不影响退出码
+        result_optional = check_keywords(result_text, "结果页（可选）", [
+            "覆盖不全",
+        ])
+        for kw, ok in result_optional.items():
+            print(f"  {'ℹ️' if ok else '—'} {kw}（可选，不影响结果）")
+
+        # 决策标签中文检查：至少应出现一种中文决策标签
+        decision_labels = ["强观察", "观察", "中性", "回避"]
+        found_decision = [label for label in decision_labels if label in result_text]
+        decision_ok = len(found_decision) > 0
+        if decision_ok:
+            print(f"  ✅ 决策标签中文: {', '.join(found_decision)}")
+        else:
+            print(f"  ❌ 未找到中文决策标签（期望：强观察/观察/中性/回避）")
 
         browser.close()
 
-    # 汇总
-    all_ok = all(home_checks.values()) and all(result_checks.values())
+    # 汇总（只看必选关键词和决策标签）
+    all_ok = (all(home_checks.values())
+              and all(result_required.values())
+              and decision_ok)
     print(f"\n{'='*40}")
-    print(f"  {'✅ 验收截图完成' if all_ok else '⚠️ 部分关键词未检出，请检查截图'}")
+    print(f"  {'✅ 验收截图完成' if all_ok else '⚠️ 部分必选关键词未检出，请检查截图'}")
     print(f"  首页: {HOME_PATH}")
     print(f"  结果: {RESULT_PATH}")
     print(f"{'='*40}")
@@ -84,7 +103,7 @@ def main(port: int = 8501, timeout_sec: int = 120):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="P7.7 验收截图脚本")
+    parser = argparse.ArgumentParser(description="P10.2 真实 UI 截图复核脚本")
     parser.add_argument("--port", type=int, default=8501, help="Streamlit 端口 (默认 8501)")
     parser.add_argument("--timeout", type=int, default=120, help="选股超时秒数 (默认 120)")
     args = parser.parse_args()

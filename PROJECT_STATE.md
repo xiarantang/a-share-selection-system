@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P10.2-0 完成）
+> 最后更新：2026-05-19（P10.2-1 完成）
 
 ## 1. 项目总目标
 
@@ -97,6 +97,7 @@
 | P10.1-2 | — | confirm_release_state 接入取舍决策（暂不接入） |
 | P10.1-3 | — | tag/main 状态守门文档收口 |
 | P10.2-0 | — | 真实 UI 启动与截图复核设计/诊断 |
+| P10.2-1 | — | 修正截图脚本关键词/验收口径 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -904,6 +905,19 @@ P10.2-0 真实 UI 启动与截图复核设计/诊断：
 - 未修改 app.py / main.py / start_ui.command / scripts/ / docs/screenshots/ / strategies/ / data/ / reports/ / validation/
 - 不直写投资建议类禁词
 - 下一步建议：P10.2-1 修正截图脚本关键词/验收口径
+
+P10.2-1 修正截图脚本关键词/验收口径：
+- scripts/screenshot_home.py 修正 3 处：
+  - 文件头从 P7.7 更新为 P10.2 真实 UI 截图复核脚本
+  - 首页关键词：移除旧步骤计数词（行 45），保留当前 UI 确定性文本
+  - 结果页关键词：移除原始英文决策标签（行 68），改为检查中文决策标签（强观察/观察/中性/回避）至少出现一种
+  - 覆盖不全改为可选诊断输出，不影响退出码
+- docs/P10_2_UI_SMOKE_DESIGN.md：标记 P10.2-1 已完成
+- docs/P10_ROADMAP.md：P10.2-1 状态同步
+- PROJECT_STATE.md：记录 P10.2-1 完成
+- 未修改 app.py / main.py / start_ui.command / docs/screenshots/ / strategies/ / data/ / reports/ / validation/ / 评分/排序/数据链路
+- 不直写投资建议类禁词
+- 下一步建议：P10.2-2 启动 Streamlit 做真实截图复核
 
 ## 5. 关键文件
 

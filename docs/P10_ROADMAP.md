@@ -76,7 +76,7 @@ python3 scripts/confirm_docs_consistency.py
 
 **设计文档**：[docs/P10_2_UI_SMOKE_DESIGN.md](P10_2_UI_SMOKE_DESIGN.md)
 
-**诊断结论**：截图脚本有旧关键词残留（待修），现有截图来自 P8.6-2 且 app.py 未改，应仍有效。
+**诊断结论**：截图脚本旧关键词已修正（P10.2-1），现有截图来自 P8.6-2 且 app.py 未改，应仍有效。
 
 允许修改：
 - docs/screenshots/（如截图需更新）
