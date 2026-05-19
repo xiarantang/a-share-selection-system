@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P10.1-0 完成）
+> 最后更新：2026-05-19（P10.1-1 完成）
 
 ## 1. 项目总目标
 
@@ -93,6 +93,7 @@
 | P9.5-4.1 | — | P9_5_RELEASE_PREP 打标前/打标后口径分层收口 |
 | P10-0 | — | 发布后观察与真实小白验收路线图 |
 | P10.1-0 | — | tag/main/公开文档状态一致性守门设计 |
+| P10.1-1 | — | 新增独立 release tag/main 状态验收脚本 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -837,6 +838,22 @@ P10.1-0 tag/main/公开文档状态一致性守门设计：
 - 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md
 - 不直写投资建议类禁词
 - 下一步建议：P10.1-1 新增独立脚本 scripts/confirm_release_state.py
+
+P10.1-1 新增独立 release tag/main 状态验收脚本：
+- 新增 scripts/confirm_release_state.py：独立验收入口，6 项检查
+  - 本地 tag v0.6-rc1 存在
+  - tag v0.6-rc1 指向 commit 3461390
+  - HEAD 可无 tag（正常：main 在 tag 后有文档提交）
+  - 远端 tag v0.6-rc1 存在
+  - tag 指向的提交内容正确
+  - tag..HEAD diff 无产品代码变更（允许本脚本自身和文档文件）
+- 运行方式：python3 scripts/confirm_release_state.py
+- 不接入 confirm_release_ready.py（tag 固定而 main 会继续前进，生命周期不同）
+- docs/P10_1_RELEASE_STATE_GUARD_DESIGN.md：标记 P10.1-1 已完成
+- PROJECT_STATE.md：记录 P10.1-1 完成
+- 未修改 app.py / main.py / start_ui.command / strategies/ / data/ / reports/ / validation/ / confirm_release_ready.py / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md
+- 不直写投资建议类禁词
+- 下一步建议：P10.1-2 接入评估（建议暂不接入）或 P10.1-3 文档收口
 
 ## 5. 关键文件
 

@@ -99,13 +99,13 @@ git diff v0.6-rc1..HEAD --name-only
 
 ## 4. 后续拆分建议
 
-### P10.1-1 新增独立脚本 scripts/confirm_release_state.py
+### P10.1-1 新增独立脚本 scripts/confirm_release_state.py（已完成 ✅）
 
-- 自动运行上述 5 项检查
+- 自动运行上述 5 项检查（实际实现为 6 项：tag 存在 / tag 指向 / HEAD 状态 / 远端 tag / tag 内容 / diff 无产品代码）
 - 输出中文通过/失败结果
 - 不依赖其他验收脚本，可独立运行
-- 允许修改：scripts/confirm_release_state.py（新增）、PROJECT_STATE.md
-- 禁止修改：app.py / main.py / start_ui.command / data/ / strategies/ / reports/ / validation/
+- 运行方式：`python3 scripts/confirm_release_state.py`
+- 验收结果：6/6 通过
 
 ### P10.1-2 是否接入 confirm_release_ready.py 的取舍评估
 
