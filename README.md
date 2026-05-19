@@ -1,4 +1,4 @@
-# 🏦 A 股智能选股系统 v0.5
+# 🏦 A 股智能选股系统 v0.6-rc1
 
 > 🎯 小白也能用的可视化 A 股选股系统 — 双击就能用，不写一行命令。
 
@@ -28,7 +28,7 @@
 
 ---
 
-## ✨ 当前能力 (v0.5 + P8)
+## ✨ 当前能力 (v0.6-rc1)
 
 - ✅ **可视化 UI**：Streamlit 本地界面，左侧参数 + 右侧结果，无需命令行
 - ✅ **小白体验**：一键启动脚本、环境自检、选参数→开始选股→看结果、就绪状态判定
@@ -225,7 +225,7 @@ a-share-selection-system/
 | [📋 UI 验收结果](docs/UI_ACCEPTANCE_RESULT.md) | P8.6 UI 兼容性修复 + 冒烟验收 + 启动脚本验收 |
 | [🧪 小白人工验收清单](docs/MANUAL_UI_CHECKLIST.md) | 小白手动 UI 验收清单 |
 | [📋 发布前总复盘](docs/P8_7_RELEASE_REVIEW.md) | 发布前总复盘与下一阶段边界 |
-| [📝 变更日志](CHANGELOG.md) | v0.5 已完成能力一览 |
+| [📝 变更日志](CHANGELOG.md) | v0.5 → v0.6-rc1 变更记录 |
 | [✅ 发布检查清单](RELEASE_CHECKLIST.md) | 发布前逐项检查 |
 | [📂 项目状态](PROJECT_STATE.md) | 开发阶段/commit 记录/真实能力 |
 

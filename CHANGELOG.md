@@ -2,7 +2,7 @@
 
 > 以下为 v0.5 发布时的基线记录。v0.5 之后经历了 P8.1–P8.7 持续增强（数据层升级为 baostock、UI 体验优化、策略管理等），当前已进入发布候选完成态。详见 [PROJECT_STATE.md](PROJECT_STATE.md)。
 
-## v0.6-rc1 候选（未打 tag，人工确认后再发布）
+## v0.6-rc1 (2026-05-19，已打 tag)
 
 ### 数据层
 - **baostock 集成**：主数据源由 skill_fallback（~120 条 K 线）升级为 baostock（稳定 ~570 条日 K），覆盖不足率从 100% 降为 0%，整体质量从 `usable_with_caution` 提升为 `good`

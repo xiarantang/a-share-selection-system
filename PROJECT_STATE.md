@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P9.5-2 完成）
+> 最后更新：2026-05-19（P9.5-4 完成）
 
 ## 1. 项目总目标
 
@@ -88,7 +88,8 @@
 | P9.5-1 | — | 更新 RELEASE_CHECKLIST.md |
 | P9.5-1.1 | — | PROJECT_STATE.md 中 fallback 历史措辞微修 |
 | P9.5-2 | — | 更新 CHANGELOG.md |
-| P9.5-3 | — | tag 前最终验收记录（未打 tag） |
+| P9.5-3 | — | tag 前最终验收记录（打标前记录） |
+| P9.5-4 | — | v0.6-rc1 打标后状态同步 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -718,20 +719,20 @@ P9.4-4.2 排障体验验收接入发布前一键验收：
 - 验收：confirm_release_ready 12/12 | confirm_docs_consistency 19/19
 - 下一步建议：P9.5 发布版打标准备
 
-P9.5-0 发布版打标准备设计文档：
+P9.5-0 发布版打标准备设计文档（打标前记录）：
 - docs/P9_5_RELEASE_PREP.md：P9.5 设计文档
   - 当前基线：commit 4b944a9、v0.5 tag、12/12 一键验收通过
   - 版本建议：推荐 v0.6-rc1（最终是否打 tag 仍需人工确认）
   - 后续拆分：P9.5-1 更新 RELEASE_CHECKLIST.md / P9.5-2 更新 CHANGELOG.md / P9.5-3 tag 前最终验收记录
 - 未修改任何产品代码、脚本、评分、排序、数据链路、报告逻辑
-- 未创建 git tag
+- 打标前记录：当时未创建 git tag
 - 下一步建议：P9.5-1 更新 RELEASE_CHECKLIST.md
 
 P9.5-0.1 发布准备设计文档版本口径返工：
 - docs/P9_5_RELEASE_PREP.md：选项 A 从 v0.5-p9 改为 v0.5-p8，基线 commit 表述修正
 - 未修改任何产品代码、脚本、评分、排序、数据链路、报告逻辑
 
-P9.5-1 更新 RELEASE_CHECKLIST.md：
+P9.5-1 更新 RELEASE_CHECKLIST.md（打标前记录）：
 - RELEASE_CHECKLIST.md 全面更新：
   - 新增第 1 节「自动验收」：一键验收 12 项 + 3 个独立验收脚本
   - 第 2 节「环境」：fallback 改为可选第三级兜底
@@ -742,11 +743,11 @@ P9.5-1 更新 RELEASE_CHECKLIST.md：
   - 保留免责声明
 - docs/P9_5_RELEASE_PREP.md：P9.5-1 标记已完成
 - 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
-- 未创建 git tag
+- 打标前记录：当时未创建 git tag
 - 下一步建议：P9.5-2 更新 CHANGELOG.md
 
-P9.5-2 更新 CHANGELOG.md：
-- CHANGELOG.md 新增 v0.6-rc1 候选章节（未打 tag，人工确认后再发布）
+P9.5-2 更新 CHANGELOG.md（打标前记录）：
+- CHANGELOG.md 新增 v0.6-rc1 候选章节（打标前记录：当时未打 tag）
   - 数据层：baostock 集成、三级降级、覆盖提示修正
   - 策略解释：explain 字段、三端展示
   - UI 体验：Top3 卡片、中文标签、风险着色、因子图标、技术指标折叠、数据概览紧凑化
@@ -758,26 +759,39 @@ P9.5-2 更新 CHANGELOG.md：
   - 发布边界收口（P9.5）：验收清单更新、fallback 可选、禁词红线、免责声明
   - 已知限制
 - docs/P9_5_RELEASE_PREP.md：P9.5-2 标记已完成
-- 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
-- 未创建 git tag
+- 打标前记录：当时未创建 git tag
 - 下一步建议：P9.5-3 tag 前最终验收记录
 
-P9.5-3 tag 前最终验收记录：
+P9.5-3 tag 前最终验收记录（打标前记录）：
 - 最终验收结果（基于 P9.5-3 最终记录阶段，见 git log 最新提交）：
   - confirm_release_ready.py：12/12 通过
   - confirm_docs_consistency.py：19/19 通过
   - confirm_run_metadata.py：20/20 通过
   - confirm_troubleshooting.py：13/13 通过
   - git status：工作树干净
-  - git tag --points-at HEAD：无 tag（正确，本阶段不创建 tag）
+  - git tag --points-at HEAD：当时无 tag（正确，本阶段不创建 tag）
 - 推荐 tag 版本：`v0.6-rc1`
-- 建议 tag 命令（仅建议，未执行）：
+- 建议 tag 命令（打标前建议，已由人工确认后执行）：
   - `git tag -a v0.6-rc1 -m "v0.6-rc1: A股选股系统发布候选"`
   - `git push origin v0.6-rc1`
-- 重要提醒：tag 是不可变标记，以上命令仅供人工确认后手动执行。本文档不抢先 tag，不把 tag 当成功证明。
+- 重要提醒：tag 是不可变标记，以上命令已由人工确认后执行完毕。
 - 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md / docs/TROUBLESHOOTING.md / docs/USER_GUIDE.md
-- 未创建 git tag
-- P9.5 发布准备阶段完成
+- 打标前记录：当时未创建 git tag
+
+P9.5-3.1 最终验收记录 commit 号同步（打标前记录）：
+- PROJECT_STATE.md 中 P9.5-3 的 commit 号引用改为阶段描述，避免过期
+
+P9.5-4 v0.6-rc1 打标后状态同步：
+- v0.6-rc1 tag 已创建并推送到远端，指向 commit `3461390`（P9.5-3.1）
+- 发布前验收结果：confirm_release_ready 12/12、confirm_docs_consistency 19/19、confirm_run_metadata 20/20、confirm_troubleshooting 13/13
+- CHANGELOG.md：顶部章节从「候选（未打 tag）」改为「v0.6-rc1 (2026-05-19，已打 tag)」
+- PROJECT_STATE.md：打标前历史记录标注「打标前记录」，当前状态为已打 tag
+- docs/P9_5_RELEASE_PREP.md：新增打标后状态确认
+- README.md：标题和能力说明从 v0.5 同步为 v0.6-rc1 发布候选
+- 保留免责声明：仅供研究学习，不构成投资建议
+- 不直写投资建议类禁词
+- 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / 评分 / 排序 / 数据链路
+- 未重新打 tag，未执行 git push --tags
 
 ## 5. 关键文件
 
