@@ -47,9 +47,11 @@ P10 不是新增功能冲刺。目标是：
 
 ## 4. 阶段拆分
 
-### P10.1 tag/main/公开文档状态一致性守门
+### P10.1 tag/main/公开文档状态一致性守门（P10.1-0 设计已完成）
 
 **目标**：明确 tag 指向与 main 后续文档提交的关系，确保复盘时不会误读。
+
+**设计文档**：[docs/P10_1_RELEASE_STATE_GUARD_DESIGN.md](P10_1_RELEASE_STATE_GUARD_DESIGN.md)
 
 允许修改：
 - docs/（新增说明文档或更新现有文档）

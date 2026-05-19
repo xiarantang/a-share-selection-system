@@ -1,6 +1,6 @@
 # 项目状态交接摘要
 
-> 最后更新：2026-05-19（P10-0 完成）
+> 最后更新：2026-05-19（P10.1-0 完成）
 
 ## 1. 项目总目标
 
@@ -92,6 +92,7 @@
 | P9.5-4 | — | v0.6-rc1 打标后状态同步 |
 | P9.5-4.1 | — | P9_5_RELEASE_PREP 打标前/打标后口径分层收口 |
 | P10-0 | — | 发布后观察与真实小白验收路线图 |
+| P10.1-0 | — | tag/main/公开文档状态一致性守门设计 |
 - GitHub: https://github.com/xiarantang/a-share-selection-system
 
 ## 3. 真实能力 (v0.5 + P8 已完成)
@@ -823,6 +824,19 @@ P10-0 发布后观察与真实小白验收路线图：
 - 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / CHANGELOG.md / RELEASE_CHECKLIST.md / docs/TROUBLESHOOTING.md / docs/USER_GUIDE.md
 - 不直写投资建议类禁词
 - 下一步建议：P10.1 tag/main/公开文档状态一致性守门
+
+P10.1-0 tag/main/公开文档状态一致性守门设计：
+- 新增 docs/P10_1_RELEASE_STATE_GUARD_DESIGN.md：P10.1 设计文档
+  - 目标：让维护者区分 release tag、main 最新提交、远端 tag 状态，避免误以为 tag 必须指向最新 main
+  - 当前事实：v0.6-rc1 指向 3461390；main 最新 51db203；tag 后 3 个提交均为文档/状态记录
+  - 守门检查 5 项：tag 指向 / HEAD 可无 tag / 远端 tag / tag 内容 / tag-HEAD diff 无产品代码
+  - 后续拆分：P10.1-1 独立脚本 / P10.1-2 接入评估（建议暂不接入）/ P10.1-3 文档收口
+  - 核心结论：tag 后 main 文档提交是正常收口，不应移动 tag
+- docs/P10_ROADMAP.md：标记 P10.1 已进入设计阶段
+- PROJECT_STATE.md：记录 P10.1-0 完成
+- 未修改 app.py / main.py / start_ui.command / scripts/ / strategies/ / data/ / reports/ / validation/ / README.md / CHANGELOG.md / RELEASE_CHECKLIST.md
+- 不直写投资建议类禁词
+- 下一步建议：P10.1-1 新增独立脚本 scripts/confirm_release_state.py
 
 ## 5. 关键文件
 
